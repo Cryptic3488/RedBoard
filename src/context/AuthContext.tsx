@@ -13,7 +13,10 @@ interface AuthContextValue {
   user: User | null
   role: Role | null
   profile: Profile | null
+  /** True while the initial session check OR any profile fetch is in flight. */
   loading: boolean
+  /** Non-null when the user is authenticated but has no profiles row. */
+  profileError: string | null
   signOut: () => Promise<void>
 }
 
@@ -23,8 +26,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [session, setSession] = useState<Session | null>(null)
   const [profile, setProfile] = useState<Profile | null>(null)
   const [loading, setLoading] = useState(true)
+  const [profileError, setProfileError] = useState<string | null>(null)
 
   async function loadProfile(userId: string) {
+    setLoading(true)
+    setProfileError(null)
+
     const { data, error } = await supabase
       .from('profiles')
       .select('role, name')
@@ -32,17 +39,22 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       .single<Profile>()
 
     if (error || !data) {
+      console.error('[AuthContext] loadProfile failed:', error?.message ?? 'no row returned')
       setProfile(null)
+      setProfileError('No profile found for this account. Ask your administrator to create one.')
     } else {
       setProfile(data)
+      setProfileError(null)
     }
+
+    setLoading(false)
   }
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session)
       if (session?.user) {
-        loadProfile(session.user.id).finally(() => setLoading(false))
+        loadProfile(session.user.id)
       } else {
         setLoading(false)
       }
@@ -54,6 +66,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         loadProfile(session.user.id)
       } else {
         setProfile(null)
+        setProfileError(null)
+        setLoading(false)
       }
     })
 
@@ -63,10 +77,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   async function signOut() {
     await supabase.auth.signOut()
     setProfile(null)
+    setProfileError(null)
   }
 
   return (
-    <AuthContext.Provider value={{ session, user: session?.user ?? null, role: profile?.role ?? null, profile, loading, signOut }}>
+    <AuthContext.Provider value={{
+      session,
+      user: session?.user ?? null,
+      role: profile?.role ?? null,
+      profile,
+      loading,
+      profileError,
+      signOut,
+    }}>
       {children}
     </AuthContext.Provider>
   )

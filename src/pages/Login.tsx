@@ -4,7 +4,7 @@ import { supabase } from '../lib/supabase'
 import { useAuth } from '../context/AuthContext'
 
 export default function Login() {
-  const { role, loading } = useAuth()
+  const { role, loading, profileError } = useAuth()
   const navigate = useNavigate()
 
   const [email, setEmail] = useState('')
@@ -12,12 +12,21 @@ export default function Login() {
   const [error, setError] = useState<string | null>(null)
   const [submitting, setSubmitting] = useState(false)
 
-  // Redirect once role is known (handles both: already-logged-in and post-login)
   useEffect(() => {
-    if (!loading && role) {
+    if (loading) return
+
+    // Redirect when role is confirmed
+    if (role) {
       navigate(role === 'admin' ? '/admin' : '/app/feed', { replace: true })
+      return
     }
-  }, [role, loading, navigate])
+
+    // Authentication succeeded but the profiles row is missing
+    if (profileError) {
+      setError(profileError)
+      setSubmitting(false)
+    }
+  }, [loading, role, profileError, navigate])
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault()
@@ -30,14 +39,14 @@ export default function Login() {
       setError(error.message)
       setSubmitting(false)
     }
-    // On success: onAuthStateChange fires → profile loads → role sets → useEffect above redirects.
-    // Leave submitting=true so the button stays in loading state during that transition.
+    // On success: onAuthStateChange → loadProfile → role set → useEffect redirects.
+    // If profile is missing: profileError is set → useEffect shows the error above.
   }
 
   return (
     <div className="min-h-screen bg-gray-950 flex flex-col items-center justify-center px-4">
       <div className="w-full max-w-sm">
-        {/* Logo / wordmark */}
+        {/* Logo */}
         <div className="mb-8 text-center">
           <span className="text-brand text-4xl font-black tracking-tight">Red</span>
           <span className="text-white text-4xl font-black tracking-tight">Board</span>
@@ -91,7 +100,8 @@ export default function Login() {
             type="submit"
             disabled={submitting}
             className="w-full bg-brand hover:bg-brand-dark disabled:opacity-60 disabled:cursor-not-allowed
-                       text-white font-semibold rounded-lg py-3 text-sm transition-colors flex items-center justify-center gap-2"
+                       text-white font-semibold rounded-lg py-3 text-sm transition-colors
+                       flex items-center justify-center gap-2"
           >
             {submitting && (
               <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
