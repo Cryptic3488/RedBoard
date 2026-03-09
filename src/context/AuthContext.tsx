@@ -3,10 +3,16 @@ import type { Session, User } from '@supabase/supabase-js'
 import { supabase } from '../lib/supabase'
 import type { Role } from '../types/database'
 
+interface Profile {
+  role: Role
+  name: string
+}
+
 interface AuthContextValue {
   session: Session | null
   user: User | null
   role: Role | null
+  profile: Profile | null
   loading: boolean
   signOut: () => Promise<void>
 }
@@ -15,20 +21,20 @@ const AuthContext = createContext<AuthContextValue | null>(null)
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [session, setSession] = useState<Session | null>(null)
-  const [role, setRole] = useState<Role | null>(null)
+  const [profile, setProfile] = useState<Profile | null>(null)
   const [loading, setLoading] = useState(true)
 
-  async function loadRole(userId: string) {
+  async function loadProfile(userId: string) {
     const { data, error } = await supabase
       .from('profiles')
-      .select('role')
+      .select('role, name')
       .eq('id', userId)
-      .single<{ role: Role }>()
+      .single<Profile>()
 
     if (error || !data) {
-      setRole(null)
+      setProfile(null)
     } else {
-      setRole(data.role)
+      setProfile(data)
     }
   }
 
@@ -36,7 +42,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session)
       if (session?.user) {
-        loadRole(session.user.id).finally(() => setLoading(false))
+        loadProfile(session.user.id).finally(() => setLoading(false))
       } else {
         setLoading(false)
       }
@@ -45,9 +51,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       setSession(session)
       if (session?.user) {
-        loadRole(session.user.id)
+        loadProfile(session.user.id)
       } else {
-        setRole(null)
+        setProfile(null)
       }
     })
 
@@ -56,11 +62,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   async function signOut() {
     await supabase.auth.signOut()
-    setRole(null)
+    setProfile(null)
   }
 
   return (
-    <AuthContext.Provider value={{ session, user: session?.user ?? null, role, loading, signOut }}>
+    <AuthContext.Provider value={{ session, user: session?.user ?? null, role: profile?.role ?? null, profile, loading, signOut }}>
       {children}
     </AuthContext.Provider>
   )

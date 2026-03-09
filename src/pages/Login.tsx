@@ -1,4 +1,4 @@
-import { useState, type FormEvent } from 'react'
+import { useState, useEffect, type FormEvent } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../context/AuthContext'
@@ -12,10 +12,12 @@ export default function Login() {
   const [error, setError] = useState<string | null>(null)
   const [submitting, setSubmitting] = useState(false)
 
-  // Already logged in — redirect immediately
-  if (!loading && role) {
-    navigate(role === 'admin' ? '/admin' : '/app/feed', { replace: true })
-  }
+  // Redirect once role is known (handles both: already-logged-in and post-login)
+  useEffect(() => {
+    if (!loading && role) {
+      navigate(role === 'admin' ? '/admin' : '/app/feed', { replace: true })
+    }
+  }, [role, loading, navigate])
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault()
@@ -27,16 +29,9 @@ export default function Login() {
     if (error) {
       setError(error.message)
       setSubmitting(false)
-      return
     }
-
-    // onAuthStateChange in AuthContext will update the role,
-    // then the useEffect below redirects.
-  }
-
-  // After sign-in, role loads; redirect once known
-  if (!loading && role) {
-    navigate(role === 'admin' ? '/admin' : '/app/feed', { replace: true })
+    // On success: onAuthStateChange fires → profile loads → role sets → useEffect above redirects.
+    // Leave submitting=true so the button stays in loading state during that transition.
   }
 
   return (
@@ -96,8 +91,11 @@ export default function Login() {
             type="submit"
             disabled={submitting}
             className="w-full bg-brand hover:bg-brand-dark disabled:opacity-60 disabled:cursor-not-allowed
-                       text-white font-semibold rounded-lg py-3 text-sm transition-colors"
+                       text-white font-semibold rounded-lg py-3 text-sm transition-colors flex items-center justify-center gap-2"
           >
+            {submitting && (
+              <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+            )}
             {submitting ? 'Signing in…' : 'Sign in'}
           </button>
         </form>
