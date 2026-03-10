@@ -19,25 +19,29 @@ export function AppLayout() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-950 flex flex-col">
+    <div className="min-h-screen bg-near-black flex flex-col">
       {/* Top bar */}
-      <header className="bg-gray-900 border-b border-gray-800 px-4 py-3 flex items-center justify-between sticky top-0 z-10">
-        <div>
-          <span className="text-brand font-black text-lg">Red</span>
-          <span className="text-white font-black text-lg">Board</span>
+      <header className="bg-gray-900/80 backdrop-blur border-b border-gray-800/60 px-4 py-3
+                         flex items-center justify-between sticky top-0 z-10">
+        <div className="flex items-center gap-1.5">
+          <span className="font-ui font-black text-lg text-brand">Red</span>
+          <span className="font-ui font-black text-lg text-cream">Board</span>
+          <div className="w-px h-3.5 bg-gray-700 mx-1.5" />
+          <span className="font-ui text-xs text-gray-600 tracking-widest uppercase">WBB</span>
         </div>
         <div className="flex items-center gap-3">
           {role === 'admin' && (
             <NavLink
               to="/admin"
-              className="text-xs text-gray-400 hover:text-white px-2 py-1 rounded border border-gray-700 hover:border-gray-500 transition-colors"
+              className="font-ui text-xs text-gray-500 hover:text-cream px-2.5 py-1 rounded
+                         border border-gray-800 hover:border-gray-600 transition-colors"
             >
               Admin
             </NavLink>
           )}
           <button
             onClick={handleSignOut}
-            className="text-xs text-gray-400 hover:text-white transition-colors"
+            className="font-ui text-xs text-gray-600 hover:text-cream transition-colors"
           >
             Sign out
           </button>
@@ -49,19 +53,31 @@ export function AppLayout() {
         <Outlet />
       </main>
 
-      {/* Bottom nav (mobile-first) */}
-      <nav className="fixed bottom-0 inset-x-0 bg-gray-900 border-t border-gray-800 flex z-10">
+      {/* Bottom nav */}
+      <nav className="fixed bottom-0 inset-x-0 bg-gray-900/90 backdrop-blur border-t border-gray-800/60 flex z-10">
         {NAV.map(({ to, label, icon }) => (
           <NavLink
             key={to}
             to={to}
             className={({ isActive }) =>
-              `flex-1 flex flex-col items-center justify-center py-2 text-xs transition-colors
-               ${isActive ? 'text-brand' : 'text-gray-500 hover:text-gray-300'}`
+              `flex-1 flex flex-col items-center justify-center py-2 transition-colors
+               ${isActive
+                ? 'text-brand'
+                : 'text-gray-600 hover:text-gray-400'
+              }`
             }
           >
-            <span className="text-xl leading-none mb-0.5">{icon}</span>
-            {label}
+            {({ isActive }) => (
+              <>
+                <span className="text-xl leading-none mb-0.5">{icon}</span>
+                <span className={`font-ui text-xs ${isActive ? 'font-semibold' : ''}`}>
+                  {label}
+                </span>
+                {isActive && (
+                  <span className="absolute bottom-0 w-5 h-0.5 bg-brand rounded-t-full" />
+                )}
+              </>
+            )}
           </NavLink>
         ))}
       </nav>

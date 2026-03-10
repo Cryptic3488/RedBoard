@@ -7,12 +7,22 @@ export default {
   theme: {
     extend: {
       colors: {
-        // Denison University red
+        // Denison University athletics red
         brand: {
-          DEFAULT: '#C8102E',
-          dark: '#9B0020',
-          light: '#E8324A',
+          DEFAULT: '#E51636',
+          dark: '#B50F28',
+          light: '#FF3354',
         },
+        // Denison near-black (official — warm undertone)
+        'near-black': '#100F0D',
+        // Off-white cream
+        cream: '#F8F4F0',
+        // Tassel gold accent
+        gold: '#FFC72C',
+      },
+      fontFamily: {
+        display: ['Crimson Pro', 'Georgia', 'serif'],
+        ui: ['Inter', 'system-ui', 'sans-serif'],
       },
     },
   },

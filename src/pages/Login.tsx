@@ -14,14 +14,10 @@ export default function Login() {
 
   useEffect(() => {
     if (loading) return
-
-    // Redirect when role is confirmed
     if (role) {
       navigate(role === 'admin' ? '/admin' : '/app/feed', { replace: true })
       return
     }
-
-    // Authentication succeeded but the profiles row is missing
     if (profileError) {
       setError(profileError)
       setSubmitting(false)
@@ -32,30 +28,44 @@ export default function Login() {
     e.preventDefault()
     setError(null)
     setSubmitting(true)
-
     const { error } = await supabase.auth.signInWithPassword({ email, password })
-
     if (error) {
       setError(error.message)
       setSubmitting(false)
     }
-    // On success: onAuthStateChange → loadProfile → role set → useEffect redirects.
-    // If profile is missing: profileError is set → useEffect shows the error above.
   }
 
   return (
-    <div className="min-h-screen bg-gray-950 flex flex-col items-center justify-center px-4">
+    <div className="min-h-screen bg-near-black flex flex-col items-center justify-center px-4">
       <div className="w-full max-w-sm">
-        {/* Logo */}
-        <div className="mb-8 text-center">
-          <span className="text-brand text-4xl font-black tracking-tight">Red</span>
-          <span className="text-white text-4xl font-black tracking-tight">Board</span>
-          <p className="text-gray-400 text-sm mt-1">Denison Women's Basketball</p>
+
+        {/* Logo lockup */}
+        <div className="mb-10 text-center">
+          <div className="mb-4">
+            <span className="font-ui font-black text-4xl tracking-tight text-brand">Red</span>
+            <span className="font-ui font-black text-4xl tracking-tight text-cream">Board</span>
+          </div>
+          <div className="inline-flex items-center gap-2">
+            <div className="h-px w-8 bg-brand" />
+            <p className="font-ui text-xs tracking-widest uppercase text-gray-500">
+              Denison Women's Basketball
+            </p>
+            <div className="h-px w-8 bg-brand" />
+          </div>
         </div>
 
-        <form onSubmit={handleSubmit} className="bg-gray-900 rounded-2xl p-6 shadow-xl space-y-4">
+        {/* Heading */}
+        <div className="mb-8">
+          <h1 className="font-display text-4xl font-semibold text-cream leading-tight">
+            Sign in to<br />
+            <span className="italic text-brand">your account.</span>
+          </h1>
+        </div>
+
+        {/* Form */}
+        <form onSubmit={handleSubmit} className="space-y-5">
           <div>
-            <label htmlFor="email" className="block text-sm font-medium text-gray-300 mb-1">
+            <label htmlFor="email" className="block font-ui text-xs font-semibold tracking-widest uppercase text-gray-500 mb-2">
               Email
             </label>
             <input
@@ -65,15 +75,15 @@ export default function Login() {
               required
               value={email}
               onChange={e => setEmail(e.target.value)}
-              className="w-full bg-gray-800 text-white rounded-lg px-4 py-3 text-sm
-                         border border-gray-700 focus:outline-none focus:border-brand
-                         placeholder-gray-500"
+              className="w-full bg-gray-900/60 text-cream rounded-lg px-4 py-3 font-ui text-sm
+                         border border-gray-800 focus:outline-none focus:border-brand
+                         placeholder-gray-600 transition-colors"
               placeholder="you@denison.edu"
             />
           </div>
 
           <div>
-            <label htmlFor="password" className="block text-sm font-medium text-gray-300 mb-1">
+            <label htmlFor="password" className="block font-ui text-xs font-semibold tracking-widest uppercase text-gray-500 mb-2">
               Password
             </label>
             <input
@@ -83,15 +93,15 @@ export default function Login() {
               required
               value={password}
               onChange={e => setPassword(e.target.value)}
-              className="w-full bg-gray-800 text-white rounded-lg px-4 py-3 text-sm
-                         border border-gray-700 focus:outline-none focus:border-brand
-                         placeholder-gray-500"
+              className="w-full bg-gray-900/60 text-cream rounded-lg px-4 py-3 font-ui text-sm
+                         border border-gray-800 focus:outline-none focus:border-brand
+                         placeholder-gray-600 transition-colors"
               placeholder="••••••••"
             />
           </div>
 
           {error && (
-            <p className="text-red-400 text-sm bg-red-950/50 rounded-lg px-3 py-2">
+            <p className="font-ui text-red-400 text-sm bg-red-950/40 border border-red-900/50 rounded-lg px-4 py-3">
               {error}
             </p>
           )}
@@ -99,9 +109,9 @@ export default function Login() {
           <button
             type="submit"
             disabled={submitting}
-            className="w-full bg-brand hover:bg-brand-dark disabled:opacity-60 disabled:cursor-not-allowed
-                       text-white font-semibold rounded-lg py-3 text-sm transition-colors
-                       flex items-center justify-center gap-2"
+            className="w-full bg-brand hover:bg-brand-dark disabled:opacity-50 disabled:cursor-not-allowed
+                       text-white font-ui font-semibold rounded-lg py-3.5 text-sm tracking-wide
+                       transition-colors flex items-center justify-center gap-2 mt-2"
           >
             {submitting && (
               <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
@@ -109,6 +119,11 @@ export default function Login() {
             {submitting ? 'Signing in…' : 'Sign in'}
           </button>
         </form>
+
+        {/* Footer mark */}
+        <p className="font-ui text-gray-700 text-xs text-center mt-10 tracking-wide">
+          TWO FEET IN
+        </p>
       </div>
     </div>
   )

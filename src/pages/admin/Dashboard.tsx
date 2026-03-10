@@ -13,7 +13,6 @@ interface QuickAction {
   label: string
   description: string
   to: string
-  accent: string
 }
 
 const QUICK_ACTIONS: QuickAction[] = [
@@ -22,29 +21,32 @@ const QUICK_ACTIONS: QuickAction[] = [
     label: 'Share Film',
     description: 'Send a Hudl clip with notes to the team or individual players.',
     to: '/admin/film',
-    accent: 'border-blue-800 hover:border-blue-600',
   },
   {
     icon: '📊',
     label: 'Manage Stats',
     description: 'Upload a dataset and publish chart views for players.',
     to: '/admin/stats',
-    accent: 'border-emerald-800 hover:border-emerald-600',
   },
   {
     icon: '💪',
     label: 'Wellness',
     description: 'Create a daily check-in and review player responses.',
     to: '/admin/wellness',
-    accent: 'border-brand/50 hover:border-brand',
   },
   {
     icon: '📖',
     label: 'Playbook',
     description: 'Upload and organize playbook PDFs by category.',
     to: '/admin/playbook',
-    accent: 'border-amber-800 hover:border-amber-600',
   },
+]
+
+const STATUS_ITEMS = [
+  { label: 'Film posts', value: '—' },
+  { label: 'Stats views', value: '—' },
+  { label: 'Open wellness', value: '—' },
+  { label: 'Playbook items', value: '—' },
 ]
 
 export default function AdminDashboard() {
@@ -53,28 +55,44 @@ export default function AdminDashboard() {
 
   return (
     <div className="max-w-3xl">
-      {/* Header */}
-      <div className="mb-8">
-        <p className="text-gray-400 text-sm mb-1">{greeting()},</p>
-        <h1 className="text-white text-3xl font-bold">{firstName}</h1>
+
+      {/* Editorial greeting */}
+      <div className="mb-10">
+        <p className="font-ui text-xs tracking-widest uppercase text-gray-500 mb-2">
+          {greeting()}
+        </p>
+        <h1 className="font-display text-5xl font-bold text-cream leading-none">
+          {firstName}.
+        </h1>
+        <p className="font-display text-xl italic text-brand mt-1">
+          Let's build something great.
+        </p>
       </div>
 
       {/* Quick actions */}
-      <section>
-        <h2 className="text-gray-400 text-xs font-semibold uppercase tracking-widest mb-4">
-          Quick Actions
-        </h2>
+      <section className="mb-10">
+        <div className="flex items-center gap-3 mb-5">
+          <span className="font-ui text-xs font-semibold tracking-widest uppercase text-gray-600">
+            Quick Actions
+          </span>
+          <div className="flex-1 h-px bg-gray-800" />
+        </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          {QUICK_ACTIONS.map(({ icon, label, description, to, accent }) => (
+          {QUICK_ACTIONS.map(({ icon, label, description, to }) => (
             <Link
               key={to}
               to={to}
-              className={`group bg-gray-900 border ${accent} rounded-2xl p-5 flex gap-4 items-start transition-colors`}
+              className="group bg-gray-900/70 border border-gray-800 border-l-2 border-l-brand
+                         rounded-xl p-5 flex gap-4 items-start
+                         hover:border-gray-700 hover:border-l-brand-light transition-all"
             >
-              <span className="text-3xl leading-none mt-0.5">{icon}</span>
+              <span className="text-2xl leading-none mt-0.5 shrink-0">{icon}</span>
               <div>
-                <p className="text-white font-semibold text-sm mb-1">{label}</p>
-                <p className="text-gray-500 text-xs leading-relaxed">{description}</p>
+                <p className="font-ui font-semibold text-sm text-cream mb-1
+                               group-hover:text-white transition-colors">
+                  {label}
+                </p>
+                <p className="font-ui text-xs text-gray-500 leading-relaxed">{description}</p>
               </div>
             </Link>
           ))}
@@ -82,24 +100,22 @@ export default function AdminDashboard() {
       </section>
 
       {/* Status strip */}
-      <section className="mt-8">
-        <h2 className="text-gray-400 text-xs font-semibold uppercase tracking-widest mb-4">
-          Status
-        </h2>
+      <section>
+        <div className="flex items-center gap-3 mb-5">
+          <span className="font-ui text-xs font-semibold tracking-widest uppercase text-gray-600">
+            Status
+          </span>
+          <div className="flex-1 h-px bg-gray-800" />
+        </div>
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-          {[
-            { label: 'Film posts', value: '—' },
-            { label: 'Stats views', value: '—' },
-            { label: 'Open wellness', value: '—' },
-            { label: 'Playbook items', value: '—' },
-          ].map(({ label, value }) => (
-            <div key={label} className="bg-gray-900 border border-gray-800 rounded-xl p-4">
-              <p className="text-2xl font-bold text-white mb-1">{value}</p>
-              <p className="text-gray-500 text-xs">{label}</p>
+          {STATUS_ITEMS.map(({ label, value }) => (
+            <div key={label} className="bg-gray-900/70 border border-gray-800 rounded-xl p-4">
+              <p className="font-display text-3xl font-bold text-cream mb-1">{value}</p>
+              <p className="font-ui text-xs text-gray-600 uppercase tracking-wide">{label}</p>
             </div>
           ))}
         </div>
-        <p className="text-gray-600 text-xs mt-3">
+        <p className="font-ui text-gray-700 text-xs mt-3">
           Live counts will populate as features are activated.
         </p>
       </section>
