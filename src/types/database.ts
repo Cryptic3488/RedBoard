@@ -1,6 +1,7 @@
 export type Role = 'admin' | 'player'
 export type LinkType = 'hudl' | 'file'
 export type Visibility = 'team' | 'individual'
+export type SessionType = 'game' | 'practice'
 
 export interface Profile {
   id: string
@@ -37,6 +38,92 @@ export interface FilmPostWithCreator extends FilmPost {
   creator: Pick<Profile, 'name'> | null
 }
 
+// ─── Stats ────────────────────────────────────────────────────────────────────
+
+export interface StatUpload {
+  id: string
+  created_by: string
+  label: string
+  session_type: SessionType
+  session_date: string
+  created_at: string
+}
+
+export interface StatEntry {
+  id: string
+  upload_id: string
+  player_id: string
+  minutes: number | null
+  points: number | null
+  fg_made: number | null
+  fg_attempted: number | null
+  three_made: number | null
+  three_attempted: number | null
+  ft_made: number | null
+  ft_attempted: number | null
+  off_reb: number | null
+  def_reb: number | null
+  total_reb: number | null
+  assists: number | null
+  steals: number | null
+  blocks: number | null
+  turnovers: number | null
+  fouls: number | null
+  custom: Record<string, number | string | null>
+  created_at: string
+}
+
+export interface StatAnnotation {
+  id: string
+  upload_id: string
+  player_id: string
+  note: string
+  created_by: string
+  created_at: string
+}
+
+export interface StatGoal {
+  id: string
+  player_id: string
+  stat_key: string
+  target: number
+  created_by: string
+  created_at: string
+}
+
+// Enriched stat entry with upload metadata joined
+export interface StatEntryWithUpload extends StatEntry {
+  upload: Pick<StatUpload, 'session_date' | 'session_type' | 'label'>
+}
+
+// Weekly aggregate — computed client-side from StatEntryWithUpload[]
+export interface WeeklyStatSummary {
+  weekStart: string           // ISO date of Monday
+  label: string               // last upload label for that week
+  session_type: SessionType
+  points: number | null
+  total_reb: number | null
+  assists: number | null
+  steals: number | null
+  blocks: number | null
+  turnovers: number | null
+  minutes: number | null
+  fg_made: number | null
+  fg_attempted: number | null
+  three_made: number | null
+  three_attempted: number | null
+  ft_made: number | null
+  ft_attempted: number | null
+  off_reb: number | null
+  def_reb: number | null
+  fouls: number | null
+  custom: Record<string, number | null>
+  // Team context (populated separately)
+  teamAvg?: Record<string, number | null>
+  teamBest?: Record<string, number | null>
+  teamTotal?: Record<string, number | null>
+}
+
 export type Database = {
   public: {
     Views: Record<string, never>
@@ -64,6 +151,30 @@ export type Database = {
         Row: FilmPostView
         Insert: Omit<FilmPostView, 'viewed_at'>
         Update: Partial<FilmPostView>
+        Relationships: never[]
+      }
+      stat_uploads: {
+        Row: StatUpload
+        Insert: Omit<StatUpload, 'id' | 'created_at'>
+        Update: Partial<Omit<StatUpload, 'id' | 'created_at'>>
+        Relationships: never[]
+      }
+      stat_entries: {
+        Row: StatEntry
+        Insert: Omit<StatEntry, 'id' | 'created_at'>
+        Update: Partial<Omit<StatEntry, 'id' | 'created_at'>>
+        Relationships: never[]
+      }
+      stat_annotations: {
+        Row: StatAnnotation
+        Insert: Omit<StatAnnotation, 'id' | 'created_at'>
+        Update: Partial<Omit<StatAnnotation, 'id' | 'created_at'>>
+        Relationships: never[]
+      }
+      stat_goals: {
+        Row: StatGoal
+        Insert: Omit<StatGoal, 'id' | 'created_at'>
+        Update: Partial<Omit<StatGoal, 'id' | 'created_at'>>
         Relationships: never[]
       }
     }

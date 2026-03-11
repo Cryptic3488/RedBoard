@@ -61,7 +61,7 @@ export default function AdminDashboard() {
         <p className="font-ui text-xs tracking-widest uppercase text-gray-500 mb-2">
           {greeting()}
         </p>
-        <h1 className="font-display text-5xl font-bold text-cream leading-none">
+        <h1 className="font-display text-5xl font-bold text-near-black leading-none">
           {firstName}.
         </h1>
         <p className="font-display text-xl italic text-brand mt-1">
@@ -72,23 +72,23 @@ export default function AdminDashboard() {
       {/* Quick actions */}
       <section className="mb-10">
         <div className="flex items-center gap-3 mb-5">
-          <span className="font-ui text-xs font-semibold tracking-widest uppercase text-gray-600">
+          <span className="font-ui text-xs font-semibold tracking-widest uppercase text-gray-400">
             Quick Actions
           </span>
-          <div className="flex-1 h-px bg-gray-800" />
+          <div className="flex-1 h-px bg-gray-200" />
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           {QUICK_ACTIONS.map(({ icon, label, description, to }) => (
             <Link
               key={to}
               to={to}
-              className="group bg-gray-900/70 border border-gray-800 border-l-2 border-l-brand
+              className="group bg-white/80 border border-gray-200 border-l-2 border-l-brand
                          rounded-xl p-5 flex gap-4 items-start
-                         hover:border-gray-700 hover:border-l-brand-light transition-all"
+                         hover:border-gray-300 hover:border-l-brand-light transition-all"
             >
               <span className="text-2xl leading-none mt-0.5 shrink-0">{icon}</span>
               <div>
-                <p className="font-ui font-semibold text-sm text-cream mb-1
+                <p className="font-ui font-semibold text-sm text-near-black mb-1
                                group-hover:text-white transition-colors">
                   {label}
                 </p>
@@ -102,20 +102,20 @@ export default function AdminDashboard() {
       {/* Status strip */}
       <section>
         <div className="flex items-center gap-3 mb-5">
-          <span className="font-ui text-xs font-semibold tracking-widest uppercase text-gray-600">
+          <span className="font-ui text-xs font-semibold tracking-widest uppercase text-gray-400">
             Status
           </span>
-          <div className="flex-1 h-px bg-gray-800" />
+          <div className="flex-1 h-px bg-gray-200" />
         </div>
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
           {STATUS_ITEMS.map(({ label, value }) => (
-            <div key={label} className="bg-gray-900/70 border border-gray-800 rounded-xl p-4">
-              <p className="font-display text-3xl font-bold text-cream mb-1">{value}</p>
-              <p className="font-ui text-xs text-gray-600 uppercase tracking-wide">{label}</p>
+            <div key={label} className="bg-white/80 border border-gray-200 rounded-xl p-4">
+              <p className="font-display text-3xl font-bold text-near-black mb-1">{value}</p>
+              <p className="font-ui text-xs text-gray-400 uppercase tracking-wide">{label}</p>
             </div>
           ))}
         </div>
-        <p className="font-ui text-gray-700 text-xs mt-3">
+        <p className="font-ui text-gray-300 text-xs mt-3">
           Live counts will populate as features are activated.
         </p>
       </section>

@@ -22,6 +22,9 @@ supabase/.temp
 *.sln
 *.sw?
 
+# Claude Code local config
+.claude/
+
 # OS
 .DS_Store
 Thumbs.db

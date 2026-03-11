@@ -59,13 +59,13 @@ export function FilmCard({ post, isPersonal, showDelete, onDelete }: FilmCardPro
   const embedUrl = post.link_type === 'hudl' ? getHudlEmbedUrl(post.url) : null
 
   return (
-    <div className="bg-gray-900/70 border border-gray-800 border-l-2 border-l-brand rounded-xl overflow-hidden">
+    <div className="bg-white/80 border border-gray-200 border-l-2 border-l-brand rounded-xl overflow-hidden">
       {/* Header */}
       <div className="px-4 pt-4 pb-3">
         <div className="flex items-start justify-between gap-2">
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 flex-wrap mb-0.5">
-              <h3 className="font-display font-semibold text-cream text-base leading-snug">
+              <h3 className="font-display font-semibold text-near-black text-base leading-snug">
                 {post.title}
               </h3>
               {isPersonal && (
@@ -82,7 +82,7 @@ export function FilmCard({ post, isPersonal, showDelete, onDelete }: FilmCardPro
             <button
               onClick={handleDelete}
               disabled={deleting}
-              className="shrink-0 font-ui text-xs text-gray-600 hover:text-red-400 transition-colors px-2 py-1"
+              className="shrink-0 font-ui text-xs text-gray-400 hover:text-red-600 transition-colors px-2 py-1"
               aria-label="Delete post"
             >
               {deleting ? '…' : 'Delete'}
@@ -125,7 +125,7 @@ export function FilmCard({ post, isPersonal, showDelete, onDelete }: FilmCardPro
         )}
         {post.link_type === 'file' && !signedUrl && (
           <div className="px-4 pb-3">
-            <span className="font-ui text-xs text-gray-600">Loading video…</span>
+            <span className="font-ui text-xs text-gray-400">Loading video…</span>
           </div>
         )}
       </div>
@@ -133,7 +133,7 @@ export function FilmCard({ post, isPersonal, showDelete, onDelete }: FilmCardPro
       {/* Note */}
       {post.note && (
         <div className="px-4 pb-4 pt-2">
-          <p className="font-ui text-sm text-gray-400 leading-relaxed">{post.note}</p>
+          <p className="font-ui text-sm text-gray-600 leading-relaxed">{post.note}</p>
         </div>
       )}
     </div>

@@ -1,4 +1,4 @@
-# Working Agreements for Claude Code (CC)
+# Working Agreements
 
 ## Guardrails
 

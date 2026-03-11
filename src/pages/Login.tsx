@@ -36,14 +36,14 @@ export default function Login() {
   }
 
   return (
-    <div className="min-h-screen bg-near-black flex flex-col items-center justify-center px-4">
+    <div className="min-h-screen bg-cream flex flex-col items-center justify-center px-4">
       <div className="w-full max-w-sm">
 
         {/* Logo lockup */}
         <div className="mb-10 text-center">
           <div className="mb-4">
             <span className="font-ui font-black text-4xl tracking-tight text-brand">Red</span>
-            <span className="font-ui font-black text-4xl tracking-tight text-cream">Board</span>
+            <span className="font-ui font-black text-4xl tracking-tight text-near-black">Board</span>
           </div>
           <div className="inline-flex items-center gap-2">
             <div className="h-px w-8 bg-brand" />
@@ -56,7 +56,7 @@ export default function Login() {
 
         {/* Heading */}
         <div className="mb-8">
-          <h1 className="font-display text-4xl font-semibold text-cream leading-tight">
+          <h1 className="font-display text-4xl font-semibold text-near-black leading-tight">
             Sign in to<br />
             <span className="italic text-brand">your account.</span>
           </h1>
@@ -75,9 +75,9 @@ export default function Login() {
               required
               value={email}
               onChange={e => setEmail(e.target.value)}
-              className="w-full bg-gray-900/60 text-cream rounded-lg px-4 py-3 font-ui text-sm
-                         border border-gray-800 focus:outline-none focus:border-brand
-                         placeholder-gray-600 transition-colors"
+              className="w-full bg-gray-50 text-near-black rounded-lg px-4 py-3 font-ui text-sm
+                         border border-gray-200 focus:outline-none focus:border-brand
+                         placeholder-gray-400 transition-colors"
               placeholder="you@denison.edu"
             />
           </div>
@@ -93,15 +93,15 @@ export default function Login() {
               required
               value={password}
               onChange={e => setPassword(e.target.value)}
-              className="w-full bg-gray-900/60 text-cream rounded-lg px-4 py-3 font-ui text-sm
-                         border border-gray-800 focus:outline-none focus:border-brand
-                         placeholder-gray-600 transition-colors"
+              className="w-full bg-gray-50 text-near-black rounded-lg px-4 py-3 font-ui text-sm
+                         border border-gray-200 focus:outline-none focus:border-brand
+                         placeholder-gray-400 transition-colors"
               placeholder="••••••••"
             />
           </div>
 
           {error && (
-            <p className="font-ui text-red-400 text-sm bg-red-950/40 border border-red-900/50 rounded-lg px-4 py-3">
+            <p className="font-ui text-red-600 text-sm bg-red-50 border border-red-200 rounded-lg px-4 py-3">
               {error}
             </p>
           )}
@@ -121,7 +121,7 @@ export default function Login() {
         </form>
 
         {/* Footer mark */}
-        <p className="font-ui text-gray-700 text-xs text-center mt-10 tracking-wide">
+        <p className="font-ui text-gray-300 text-xs text-center mt-10 tracking-wide">
           TWO FEET IN
         </p>
       </div>

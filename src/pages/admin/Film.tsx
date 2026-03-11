@@ -152,11 +152,11 @@ export default function AdminFilm() {
 
   return (
     <div className="px-4 pt-6 pb-10 max-w-2xl mx-auto">
-      <h1 className="font-display text-2xl font-bold text-cream mb-1">Film</h1>
+      <h1 className="font-display text-2xl font-bold text-near-black mb-1">Film</h1>
       <p className="font-ui text-sm text-gray-500 mb-8">Post Hudl clips or upload video to share with players.</p>
 
       {/* ── Upload form ── */}
-      <section className="bg-gray-900/70 border border-gray-800 rounded-xl p-5 mb-10">
+      <section className="bg-white/80 border border-gray-200 rounded-xl p-5 mb-10">
         <h2 className="font-ui text-xs font-semibold tracking-widest uppercase text-gray-500 mb-5">
           New Post
         </h2>
@@ -164,8 +164,8 @@ export default function AdminFilm() {
         {banner && (
           <div className={`mb-4 px-4 py-3 rounded-lg font-ui text-sm ${
             banner.type === 'error'
-              ? 'bg-red-900/40 border border-red-800/60 text-red-300'
-              : 'bg-green-900/30 border border-green-800/40 text-green-300'
+              ? 'bg-red-50 border border-red-200 text-red-600'
+              : 'bg-green-50 border border-green-200 text-green-700'
           }`}>
             {banner.message}
           </div>
@@ -174,23 +174,23 @@ export default function AdminFilm() {
         <form onSubmit={handleSubmit} className="space-y-5">
           {/* Title */}
           <div>
-            <label className="font-ui text-xs text-gray-400 block mb-1.5">Title</label>
+            <label className="font-ui text-xs text-gray-600 block mb-1.5">Title</label>
             <input
               type="text"
               value={form.title}
               onChange={e => setForm(f => ({ ...f, title: e.target.value }))}
               maxLength={120}
               placeholder="e.g. Defensive rotations — vs. Notre Dame"
-              className="w-full bg-gray-800/60 border border-gray-700 rounded-lg px-3 py-2
-                         font-ui text-sm text-cream placeholder-gray-600
+              className="w-full bg-gray-100/60 border border-gray-300 rounded-lg px-3 py-2
+                         font-ui text-sm text-near-black placeholder-gray-400
                          focus:outline-none focus:border-brand/60 transition-colors"
             />
           </div>
 
           {/* Link type toggle */}
           <div>
-            <label className="font-ui text-xs text-gray-400 block mb-1.5">Type</label>
-            <div className="flex rounded-lg overflow-hidden border border-gray-700 w-fit">
+            <label className="font-ui text-xs text-gray-600 block mb-1.5">Type</label>
+            <div className="flex rounded-lg overflow-hidden border border-gray-300 w-fit">
               {(['hudl', 'file'] as LinkType[]).map(type => (
                 <button
                   key={type}
@@ -211,17 +211,17 @@ export default function AdminFilm() {
           {/* Hudl URL */}
           {form.linkType === 'hudl' && (
             <div>
-              <label className="font-ui text-xs text-gray-400 block mb-1.5">Hudl URL</label>
+              <label className="font-ui text-xs text-gray-600 block mb-1.5">Hudl URL</label>
               <input
                 type="url"
                 value={form.hudlUrl}
                 onChange={e => setForm(f => ({ ...f, hudlUrl: e.target.value }))}
                 placeholder="https://www.hudl.com/video/..."
-                className="w-full bg-gray-800/60 border border-gray-700 rounded-lg px-3 py-2
-                           font-ui text-sm text-cream placeholder-gray-600
+                className="w-full bg-gray-100/60 border border-gray-300 rounded-lg px-3 py-2
+                           font-ui text-sm text-near-black placeholder-gray-400
                            focus:outline-none focus:border-brand/60 transition-colors"
               />
-              <p className="font-ui text-[11px] text-gray-600 mt-1">
+              <p className="font-ui text-[11px] text-gray-400 mt-1">
                 Paste the share link from Hudl (hudl.com/video/…)
               </p>
             </div>
@@ -230,15 +230,15 @@ export default function AdminFilm() {
           {/* File upload */}
           {form.linkType === 'file' && (
             <div>
-              <label className="font-ui text-xs text-gray-400 block mb-1.5">File</label>
+              <label className="font-ui text-xs text-gray-600 block mb-1.5">File</label>
               <label className="flex flex-col items-center justify-center w-full h-28
-                                border-2 border-dashed border-gray-700 rounded-lg cursor-pointer
-                                hover:border-brand/40 transition-colors bg-gray-800/30">
+                                border-2 border-dashed border-gray-300 rounded-lg cursor-pointer
+                                hover:border-brand/40 transition-colors bg-gray-100/60">
                 <span className="font-ui text-sm text-gray-500">
                   {form.file ? form.file.name : 'Click to select video or audio'}
                 </span>
                 {form.file && (
-                  <span className="font-ui text-xs text-gray-600 mt-1">
+                  <span className="font-ui text-xs text-gray-400 mt-1">
                     {(form.file.size / 1024 / 1024).toFixed(1)} MB
                   </span>
                 )}
@@ -255,21 +255,21 @@ export default function AdminFilm() {
 
           {/* Note */}
           <div>
-            <label className="font-ui text-xs text-gray-400 block mb-1.5">Coaching note (optional)</label>
+            <label className="font-ui text-xs text-gray-600 block mb-1.5">Coaching note (optional)</label>
             <textarea
               value={form.note}
               onChange={e => setForm(f => ({ ...f, note: e.target.value }))}
               rows={3}
               placeholder="Key takeaways, focus areas…"
-              className="w-full bg-gray-800/60 border border-gray-700 rounded-lg px-3 py-2
-                         font-ui text-sm text-cream placeholder-gray-600 resize-none
+              className="w-full bg-gray-100/60 border border-gray-300 rounded-lg px-3 py-2
+                         font-ui text-sm text-near-black placeholder-gray-400 resize-none
                          focus:outline-none focus:border-brand/60 transition-colors"
             />
           </div>
 
           {/* Audience */}
           <div>
-            <label className="font-ui text-xs text-gray-400 block mb-2">Audience</label>
+            <label className="font-ui text-xs text-gray-600 block mb-2">Audience</label>
             <div className="flex gap-4">
               {(['team', 'individual'] as Visibility[]).map(v => (
                 <label key={v} className="flex items-center gap-2 cursor-pointer">
@@ -281,7 +281,7 @@ export default function AdminFilm() {
                     onChange={() => setForm(f => ({ ...f, visibility: v, recipientIds: [] }))}
                     className="accent-brand"
                   />
-                  <span className="font-ui text-sm text-gray-300 capitalize">
+                  <span className="font-ui text-sm text-gray-700 capitalize">
                     {v === 'team' ? 'Whole team' : 'Individual players'}
                   </span>
                 </label>
@@ -292,7 +292,7 @@ export default function AdminFilm() {
           {/* Player checkboxes */}
           {form.visibility === 'individual' && (
             <div>
-              <label className="font-ui text-xs text-gray-400 block mb-2">Select players</label>
+              <label className="font-ui text-xs text-gray-600 block mb-2">Select players</label>
               <div className="space-y-1.5 max-h-48 overflow-y-auto pr-1">
                 {players.map(p => (
                   <label key={p.id} className="flex items-center gap-2.5 cursor-pointer group">
@@ -302,13 +302,13 @@ export default function AdminFilm() {
                       onChange={() => toggleRecipient(p.id)}
                       className="accent-brand w-4 h-4 rounded"
                     />
-                    <span className="font-ui text-sm text-gray-300 group-hover:text-cream transition-colors">
+                    <span className="font-ui text-sm text-gray-700 group-hover:text-near-black transition-colors">
                       {p.name}
                     </span>
                   </label>
                 ))}
                 {players.length === 0 && (
-                  <p className="font-ui text-xs text-gray-600">No players found.</p>
+                  <p className="font-ui text-xs text-gray-400">No players found.</p>
                 )}
               </div>
             </div>
@@ -335,20 +335,20 @@ export default function AdminFilm() {
       {/* ── Published posts ── */}
       <section>
         <div className="flex items-center gap-3 mb-5">
-          <span className="font-ui text-xs font-semibold tracking-widest uppercase text-gray-600">
+          <span className="font-ui text-xs font-semibold tracking-widest uppercase text-gray-400">
             Published
           </span>
-          <div className="flex-1 h-px bg-gray-800" />
+          <div className="flex-1 h-px bg-gray-200" />
         </div>
 
         {postsLoading && (
           <div className="flex justify-center py-8">
-            <span className="w-5 h-5 border-2 border-gray-700 border-t-brand rounded-full animate-spin" />
+            <span className="w-5 h-5 border-2 border-gray-300 border-t-brand rounded-full animate-spin" />
           </div>
         )}
 
         {!postsLoading && posts.length === 0 && (
-          <p className="font-ui text-sm text-gray-600 text-center py-8">No posts yet.</p>
+          <p className="font-ui text-sm text-gray-400 text-center py-8">No posts yet.</p>
         )}
 
         <div className="space-y-4">

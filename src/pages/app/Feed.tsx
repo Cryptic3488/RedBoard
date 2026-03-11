@@ -13,10 +13,10 @@ function greeting() {
 function EmptyFeed() {
   return (
     <div className="flex flex-col items-center justify-center py-16 px-6 text-center">
-      <div className="w-16 h-16 rounded-full bg-gray-900/80 border border-gray-800 flex items-center justify-center mb-4">
+      <div className="w-16 h-16 rounded-full bg-white/80 border border-gray-200 flex items-center justify-center mb-4">
         <span className="text-2xl">📋</span>
       </div>
-      <h3 className="font-display text-lg font-semibold text-cream mb-2">Nothing here yet</h3>
+      <h3 className="font-display text-lg font-semibold text-near-black mb-2">Nothing here yet</h3>
       <p className="font-ui text-gray-500 text-sm leading-relaxed max-w-xs">
         Your coaches will share film clips, stats, wellness check-ins, and playbook updates here.
       </p>
@@ -67,7 +67,7 @@ export default function Feed() {
         <p className="font-ui text-xs tracking-widest uppercase text-gray-500 mb-2">
           {greeting()}
         </p>
-        <h1 className="font-display text-5xl font-bold text-cream leading-none">
+        <h1 className="font-display text-5xl font-bold text-near-black leading-none">
           {firstName}.
         </h1>
         <p className="font-display text-xl italic text-brand mt-1">
@@ -81,18 +81,18 @@ export default function Feed() {
           <Link
             key={to}
             to={to}
-            className="group bg-gray-900/70 border border-gray-800 border-l-2 border-l-brand
-                       rounded-xl p-4 hover:border-gray-700 hover:border-l-brand-light
+            className="group bg-white/80 border border-gray-200 border-l-2 border-l-brand
+                       rounded-xl p-4 hover:border-gray-300 hover:border-l-brand-light
                        transition-all"
           >
             <div className="flex items-center gap-2 mb-1.5">
               <span className="text-base leading-none">{icon}</span>
-              <span className="font-ui text-xs font-semibold tracking-widest uppercase text-gray-400
-                               group-hover:text-cream transition-colors">
+              <span className="font-ui text-xs font-semibold tracking-widest uppercase text-gray-600
+                               group-hover:text-near-black transition-colors">
                 {label}
               </span>
             </div>
-            <p className="font-ui text-xs text-gray-600">{description}</p>
+            <p className="font-ui text-xs text-gray-400">{description}</p>
           </Link>
         ))}
       </div>
@@ -100,15 +100,15 @@ export default function Feed() {
       {/* Latest section */}
       <div>
         <div className="flex items-center gap-3 mb-5">
-          <span className="font-ui text-xs font-semibold tracking-widest uppercase text-gray-600">
+          <span className="font-ui text-xs font-semibold tracking-widest uppercase text-gray-400">
             Latest
           </span>
-          <div className="flex-1 h-px bg-gray-800" />
+          <div className="flex-1 h-px bg-gray-200" />
         </div>
 
         {loading && (
           <div className="flex justify-center py-8">
-            <span className="w-5 h-5 border-2 border-gray-700 border-t-brand rounded-full animate-spin" />
+            <span className="w-5 h-5 border-2 border-gray-300 border-t-brand rounded-full animate-spin" />
           </div>
         )}
 
