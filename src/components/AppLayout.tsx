@@ -1,5 +1,6 @@
 import { NavLink, Outlet, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
+import { useUnreadCount } from '../hooks/useUnreadCount'
 
 const NAV = [
   { to: '/app/feed', label: 'Feed', icon: '📋' },
@@ -11,6 +12,7 @@ const NAV = [
 
 export function AppLayout() {
   const { signOut, role } = useAuth()
+  const { unreadCount } = useUnreadCount()
   const navigate = useNavigate()
 
   async function handleSignOut() {
@@ -69,7 +71,12 @@ export function AppLayout() {
           >
             {({ isActive }) => (
               <>
-                <span className="text-xl leading-none mb-0.5">{icon}</span>
+                <span className="relative inline-flex text-xl leading-none mb-0.5">
+                  {icon}
+                  {to === '/app/feed' && role === 'player' && unreadCount > 0 && (
+                    <span className="absolute -top-0.5 -right-0.5 w-2 h-2 rounded-full bg-brand ring-1 ring-near-black" />
+                  )}
+                </span>
                 <span className={`font-ui text-xs ${isActive ? 'font-semibold' : ''}`}>
                   {label}
                 </span>

@@ -1,5 +1,7 @@
 import { Link } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext'
+import { useFilmPosts } from '../../hooks/useFilmPosts'
+import { FilmCard } from '../../components/FilmCard'
 
 function greeting() {
   const h = new Date().getHours()
@@ -52,6 +54,10 @@ const SECTION_LINKS = [
 export default function Feed() {
   const { profile } = useAuth()
   const firstName = profile?.name?.split(' ')[0] ?? 'there'
+  const { posts, loading } = useFilmPosts()
+
+  const latestPosts = posts.slice(0, 3)
+  const hasMore = posts.length > 3
 
   return (
     <div className="px-4 pt-8 pb-6 max-w-lg mx-auto">
@@ -99,7 +105,35 @@ export default function Feed() {
           </span>
           <div className="flex-1 h-px bg-gray-800" />
         </div>
-        <EmptyFeed />
+
+        {loading && (
+          <div className="flex justify-center py-8">
+            <span className="w-5 h-5 border-2 border-gray-700 border-t-brand rounded-full animate-spin" />
+          </div>
+        )}
+
+        {!loading && latestPosts.length === 0 && <EmptyFeed />}
+
+        {!loading && latestPosts.length > 0 && (
+          <div className="space-y-4">
+            {latestPosts.map(post => (
+              <FilmCard
+                key={post.id}
+                post={post}
+                isPersonal={post.visibility === 'individual'}
+              />
+            ))}
+            {hasMore && (
+              <Link
+                to="/app/film"
+                className="block text-center font-ui text-sm text-brand hover:text-brand-light
+                           transition-colors py-2"
+              >
+                View all {posts.length} clips →
+              </Link>
+            )}
+          </div>
+        )}
       </div>
     </div>
   )
