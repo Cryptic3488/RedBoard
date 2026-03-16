@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext'
 import { useFilmPosts } from '../../hooks/useFilmPosts'
+import { useWellnessCheck } from '../../hooks/useWellnessCheck'
 import { FilmCard } from '../../components/FilmCard'
 
 function greeting() {
@@ -55,6 +56,7 @@ export default function Feed() {
   const { profile } = useAuth()
   const firstName = profile?.name?.split(' ')[0] ?? 'there'
   const { posts, loading } = useFilmPosts()
+  const { form: wellnessForm, todayResponse, loading: wellnessLoading } = useWellnessCheck()
 
   const latestPosts = posts.slice(0, 3)
   const hasMore = posts.length > 3
@@ -74,6 +76,21 @@ export default function Feed() {
           Ready to work.
         </p>
       </div>
+
+      {/* Wellness nudge — shown when active form exists and not yet submitted today */}
+      {!wellnessLoading && wellnessForm && !todayResponse && (
+        <Link
+          to="/app/wellness"
+          className="flex items-center gap-3 bg-white/80 border border-gold/50 border-l-2 border-l-gold rounded-xl px-4 py-3 mb-6 hover:border-gold transition-colors"
+        >
+          <span className="text-xl flex-shrink-0">💪</span>
+          <div className="flex-1 min-w-0">
+            <p className="text-sm font-semibold text-near-black">Today's check-in</p>
+            <p className="text-xs text-gray-400 truncate">{wellnessForm.title}</p>
+          </div>
+          <span className="text-gold text-sm flex-shrink-0">→</span>
+        </Link>
+      )}
 
       {/* Section cards — 2-col grid with left red accent border */}
       <div className="grid grid-cols-2 gap-3 mb-8">

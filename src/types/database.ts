@@ -124,6 +124,34 @@ export interface WeeklyStatSummary {
   teamTotal?: Record<string, number | null>
 }
 
+// ─── Wellness ─────────────────────────────────────────────────────────────────
+
+export type WellnessQuestionType = 'rating' | 'yesno' | 'text'
+
+export interface WellnessQuestion {
+  id: string
+  type: WellnessQuestionType
+  label: string
+}
+
+export interface WellnessForm {
+  id: string
+  title: string
+  questions: WellnessQuestion[]
+  is_active: boolean
+  created_by: string
+  created_at: string
+}
+
+export interface WellnessResponse {
+  id: string
+  form_id: string
+  player_id: string
+  date: string
+  answers: Record<string, number | string>
+  submitted_at: string
+}
+
 export type Database = {
   public: {
     Views: Record<string, never>
@@ -175,6 +203,18 @@ export type Database = {
         Row: StatGoal
         Insert: Omit<StatGoal, 'id' | 'created_at'>
         Update: Partial<Omit<StatGoal, 'id' | 'created_at'>>
+        Relationships: never[]
+      }
+      wellness_forms: {
+        Row: WellnessForm
+        Insert: Omit<WellnessForm, 'id' | 'created_at'>
+        Update: Partial<Omit<WellnessForm, 'id' | 'created_at'>>
+        Relationships: never[]
+      }
+      wellness_responses: {
+        Row: WellnessResponse
+        Insert: Omit<WellnessResponse, 'id' | 'submitted_at'>
+        Update: Partial<Omit<WellnessResponse, 'id' | 'submitted_at'>>
         Relationships: never[]
       }
     }
