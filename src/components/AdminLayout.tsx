@@ -1,4 +1,4 @@
-import { NavLink, Outlet, useNavigate } from 'react-router-dom'
+import { NavLink, Outlet, useNavigate, Link } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 
 const ADMIN_NAV = [
@@ -33,12 +33,21 @@ export function AdminLayout() {
             Admin
           </span>
         </div>
-        <button
-          onClick={handleSignOut}
-          className="font-ui text-xs text-gray-400 hover:text-near-black transition-colors"
-        >
-          Sign out
-        </button>
+        <div className="flex items-center gap-3">
+          <Link
+            to="/app/feed"
+            className="font-ui text-xs text-gray-500 hover:text-near-black px-2.5 py-1 rounded
+                       border border-gray-200 hover:border-gray-400 transition-colors"
+          >
+            Player view
+          </Link>
+          <button
+            onClick={handleSignOut}
+            className="font-ui text-xs text-gray-400 hover:text-near-black transition-colors"
+          >
+            Sign out
+          </button>
+        </div>
       </header>
 
       <div className="flex flex-1">

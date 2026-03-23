@@ -89,7 +89,7 @@ export default function AdminDashboard() {
               <span className="text-2xl leading-none mt-0.5 shrink-0">{icon}</span>
               <div>
                 <p className="font-ui font-semibold text-sm text-near-black mb-1
-                               group-hover:text-white transition-colors">
+                               group-hover:text-brand transition-colors">
                   {label}
                 </p>
                 <p className="font-ui text-xs text-gray-500 leading-relaxed">{description}</p>

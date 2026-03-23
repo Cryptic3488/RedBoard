@@ -18,6 +18,7 @@ export default function AdminStats() {
   const [sessionType, setSessionType] = useState<'practice' | 'game'>('practice')
   const [sessionDate, setSessionDate] = useState(() => new Date().toISOString().slice(0, 10))
   const [file, setFile] = useState<File | null>(null)
+  const [isDragging, setIsDragging] = useState(false)
   const [parseResult, setParseResult] = useState<ParseResult | null>(null)
   const [parseError, setParseError] = useState<string | null>(null)
   const [matches, setMatches] = useState<PlayerMatch[]>([])
@@ -26,6 +27,10 @@ export default function AdminStats() {
   const [formError, setFormError] = useState<string | null>(null)
   const [formSuccess, setFormSuccess] = useState<string | null>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
+
+  // ── Upload history expansion ─────────────────────────────────────────────────
+  const [expandedUploadId, setExpandedUploadId] = useState<string | null>(null)
+  const [uploadEntries, setUploadEntries] = useState<Map<string, Record<string, unknown>[]>>(new Map())
 
   // ── Annotation modal state ──────────────────────────────────────────────────
   const [annotModal, setAnnotModal] = useState<{ uploadId: string } | null>(null)
@@ -57,9 +62,7 @@ export default function AdminStats() {
   useEffect(() => { fetchGoals() }, [fetchGoals])
 
   // ── File parse ──────────────────────────────────────────────────────────────
-  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const f = e.target.files?.[0]
-    if (!f) return
+  const processFile = async (f: File) => {
     setFile(f)
     setParseError(null)
     setParseResult(null)
@@ -73,6 +76,24 @@ export default function AdminStats() {
     } catch (err) {
       setParseError(err instanceof Error ? err.message : 'Failed to parse file')
     }
+  }
+
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const f = e.target.files?.[0]
+    if (f) await processFile(f)
+  }
+
+  const handleDrop = async (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault()
+    setIsDragging(false)
+    const f = e.dataTransfer.files?.[0]
+    if (!f) return
+    const name = f.name.toLowerCase()
+    if (!name.endsWith('.csv') && !name.endsWith('.xlsx') && !name.endsWith('.xls')) {
+      setParseError('Please drop a CSV or XLSX file')
+      return
+    }
+    await processFile(f)
   }
 
   // ── Match override ──────────────────────────────────────────────────────────
@@ -124,6 +145,28 @@ export default function AdminStats() {
     if (!confirm('Delete this upload and all its stats?')) return
     await supabase.from('stat_uploads').delete().eq('id', id)
     refresh()
+  }
+
+  // ── Upload entry fetch ──────────────────────────────────────────────────────
+  const fetchUploadEntries = async (uploadId: string) => {
+    if (uploadEntries.has(uploadId)) return
+    const { data } = await supabase
+      .from('stat_entries')
+      .select('*')
+      .eq('upload_id', uploadId)
+      .order('created_at')
+    if (data) {
+      setUploadEntries(prev => new Map(prev).set(uploadId, data as Record<string, unknown>[]))
+    }
+  }
+
+  const toggleUploadExpand = async (uploadId: string) => {
+    if (expandedUploadId === uploadId) {
+      setExpandedUploadId(null)
+    } else {
+      setExpandedUploadId(uploadId)
+      await fetchUploadEntries(uploadId)
+    }
   }
 
   // ── Annotation submit ───────────────────────────────────────────────────────
@@ -218,17 +261,29 @@ export default function AdminStats() {
             </div>
           </div>
 
-          {/* File input */}
+          {/* File drop zone */}
           <div>
             <label className="block text-xs font-medium tracking-wide uppercase text-gray-600 mb-1.5">Stat File</label>
-            <label className="flex flex-col items-center justify-center border-2 border-dashed border-gray-200 rounded-xl p-6 cursor-pointer hover:border-brand/50 transition-colors">
-              <span className="text-2xl mb-2">📊</span>
+            <div
+              onClick={() => fileInputRef.current?.click()}
+              onDragOver={e => { e.preventDefault(); setIsDragging(true) }}
+              onDragEnter={e => { e.preventDefault(); setIsDragging(true) }}
+              onDragLeave={() => setIsDragging(false)}
+              onDrop={handleDrop}
+              className={`flex flex-col items-center justify-center border-2 border-dashed rounded-xl p-6 cursor-pointer transition-colors ${
+                isDragging
+                  ? 'border-brand bg-brand/5'
+                  : 'border-gray-200 hover:border-brand/50'
+              }`}
+            >
+              <span className="text-2xl mb-2">{isDragging ? '⬇️' : '📊'}</span>
               <span className="text-sm text-near-black font-medium">
-                {file ? file.name : 'Click to choose CSV or XLSX'}
+                {file ? file.name : isDragging ? 'Drop to upload' : 'Drop a file here, or click to browse'}
               </span>
-              {file && (
-                <span className="text-xs text-gray-400 mt-0.5">{(file.size / 1024).toFixed(1)} KB</span>
-              )}
+              {file
+                ? <span className="text-xs text-gray-400 mt-0.5">{(file.size / 1024).toFixed(1)} KB</span>
+                : <span className="text-xs text-gray-400 mt-1">CSV or XLSX</span>
+              }
               <input
                 ref={fileInputRef}
                 type="file"
@@ -236,7 +291,7 @@ export default function AdminStats() {
                 className="hidden"
                 onChange={handleFileChange}
               />
-            </label>
+            </div>
             {parseError && <p className="text-xs text-red-600 mt-1.5">{parseError}</p>}
           </div>
 
@@ -323,34 +378,114 @@ export default function AdminStats() {
           <p className="text-sm text-gray-400 text-center py-8">No uploads yet</p>
         ) : (
           <div className="space-y-3">
-            {uploads.map(upload => (
-              <div key={upload.id} className="bg-white/80 border border-gray-200 rounded-2xl px-5 py-4 flex items-center gap-3">
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium text-near-black truncate">{upload.label}</p>
-                  <p className="text-xs text-gray-400 mt-0.5">
-                    {upload.session_date}
-                    <span className="mx-1.5">·</span>
-                    <span className="capitalize">{upload.session_type}</span>
-                  </p>
+            {uploads.map(upload => {
+              const isExpanded = expandedUploadId === upload.id
+              const entries = uploadEntries.get(upload.id) ?? []
+
+              // Determine which standard columns have at least one non-null value
+              const visibleStdCols = STANDARD_STAT_KEYS.filter(k =>
+                entries.some(e => e[k] !== null && e[k] !== undefined)
+              )
+              // Union of all custom stat keys across entries
+              const customKeys = [...new Set(
+                entries.flatMap(e => Object.keys((e.custom as Record<string, unknown>) ?? {}))
+              )]
+
+              return (
+                <div key={upload.id} className="bg-white/80 border border-gray-200 rounded-2xl overflow-hidden">
+                  {/* Row header */}
+                  <div className="px-5 py-4 flex items-center gap-3">
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-medium text-near-black truncate">{upload.label}</p>
+                      <p className="text-xs text-gray-400 mt-0.5">
+                        {upload.session_date}
+                        <span className="mx-1.5">·</span>
+                        <span className="capitalize">{upload.session_type}</span>
+                      </p>
+                    </div>
+                    <button
+                      onClick={() => toggleUploadExpand(upload.id)}
+                      className="text-xs text-gray-500 hover:text-near-black font-medium transition-colors flex-shrink-0"
+                    >
+                      {isExpanded ? 'Hide ▲' : 'View ▼'}
+                    </button>
+                    <button
+                      onClick={() => {
+                        setAnnotModal({ uploadId: upload.id })
+                        setAnnotPlayerId('')
+                        setAnnotNote('')
+                      }}
+                      className="text-xs text-brand hover:text-brand/70 font-medium transition-colors flex-shrink-0"
+                    >
+                      Annotate
+                    </button>
+                    <button
+                      onClick={() => handleDeleteUpload(upload.id)}
+                      className="text-xs text-gray-400 hover:text-red-600 transition-colors flex-shrink-0"
+                    >
+                      Delete
+                    </button>
+                  </div>
+
+                  {/* Stat table */}
+                  {isExpanded && (
+                    <div className="border-t border-gray-100 overflow-x-auto">
+                      {entries.length === 0 ? (
+                        <p className="text-xs text-gray-400 text-center py-4">No entries found</p>
+                      ) : (
+                        <table className="w-full text-xs min-w-max">
+                          <thead>
+                            <tr className="bg-gray-50 text-left">
+                              <th className="px-4 py-2 font-semibold text-gray-500 uppercase tracking-wide sticky left-0 bg-gray-50 whitespace-nowrap">
+                                Player
+                              </th>
+                              {visibleStdCols.map(k => (
+                                <th key={k} className="px-3 py-2 font-semibold text-gray-500 uppercase tracking-wide text-right whitespace-nowrap">
+                                  {STAT_LABELS[k]}
+                                </th>
+                              ))}
+                              {customKeys.map(k => (
+                                <th key={k} className="px-3 py-2 font-semibold text-gray-400 uppercase tracking-wide text-right whitespace-nowrap">
+                                  {k}
+                                </th>
+                              ))}
+                            </tr>
+                          </thead>
+                          <tbody className="divide-y divide-gray-100">
+                            {entries.map((entry, i) => {
+                              const custom = (entry.custom as Record<string, unknown>) ?? {}
+                              return (
+                                <tr key={i} className="hover:bg-gray-50/50 transition-colors">
+                                  <td className="px-4 py-2 font-medium text-near-black sticky left-0 bg-white whitespace-nowrap">
+                                    {playerMap.get(entry.player_id as string) ?? '—'}
+                                  </td>
+                                  {visibleStdCols.map(k => (
+                                    <td key={k} className="px-3 py-2 text-right tabular-nums text-near-black">
+                                      {entry[k] !== null && entry[k] !== undefined
+                                        ? Number(entry[k]).toFixed(1)
+                                        : <span className="text-gray-300">—</span>
+                                      }
+                                    </td>
+                                  ))}
+                                  {customKeys.map(k => (
+                                    <td key={k} className="px-3 py-2 text-right tabular-nums text-gray-500">
+                                      {custom[k] !== undefined && custom[k] !== null
+                                        ? String(custom[k])
+                                        : <span className="text-gray-300">—</span>
+                                      }
+                                    </td>
+                                  ))}
+                                </tr>
+                              )
+                            })}
+                          </tbody>
+                        </table>
+                      )}
+                    </div>
+                  )}
                 </div>
-                <button
-                  onClick={() => {
-                    setAnnotModal({ uploadId: upload.id })
-                    setAnnotPlayerId('')
-                    setAnnotNote('')
-                  }}
-                  className="text-xs text-brand hover:text-brand/70 font-medium transition-colors"
-                >
-                  Annotate
-                </button>
-                <button
-                  onClick={() => handleDeleteUpload(upload.id)}
-                  className="text-xs text-gray-400 hover:text-red-600 transition-colors"
-                >
-                  Delete
-                </button>
-              </div>
-            ))}
+              )
+            })}
           </div>
         )}
       </section>

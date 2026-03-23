@@ -121,7 +121,7 @@ export default function Login() {
         </form>
 
         {/* Footer mark */}
-        <p className="font-ui text-gray-300 text-xs text-center mt-10 tracking-wide">
+        <p className="font-ui text-gray-600 text-xs text-center mt-10 tracking-wide">
           TWO FEET IN
         </p>
       </div>

@@ -95,3 +95,24 @@ CREATE TABLE public.stat_uploads (
   CONSTRAINT stat_uploads_pkey PRIMARY KEY (id),
   CONSTRAINT stat_uploads_created_by_fkey FOREIGN KEY (created_by) REFERENCES public.profiles(id)
 );
+CREATE TABLE public.wellness_forms (
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  title text NOT NULL CHECK (char_length(title) >= 1 AND char_length(title) <= 120),
+  questions jsonb NOT NULL DEFAULT '[]'::jsonb,
+  is_active boolean NOT NULL DEFAULT false,
+  created_by uuid NOT NULL,
+  created_at timestamp with time zone NOT NULL DEFAULT now(),
+  CONSTRAINT wellness_forms_pkey PRIMARY KEY (id),
+  CONSTRAINT wellness_forms_created_by_fkey FOREIGN KEY (created_by) REFERENCES public.profiles(id)
+);
+CREATE TABLE public.wellness_responses (
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  form_id uuid NOT NULL,
+  player_id uuid NOT NULL,
+  date date NOT NULL DEFAULT CURRENT_DATE,
+  answers jsonb NOT NULL DEFAULT '{}'::jsonb,
+  submitted_at timestamp with time zone NOT NULL DEFAULT now(),
+  CONSTRAINT wellness_responses_pkey PRIMARY KEY (id),
+  CONSTRAINT wellness_responses_form_id_fkey FOREIGN KEY (form_id) REFERENCES public.wellness_forms(id),
+  CONSTRAINT wellness_responses_player_id_fkey FOREIGN KEY (player_id) REFERENCES public.profiles(id)
+);

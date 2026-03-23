@@ -28,6 +28,7 @@ export default function AdminWellness() {
 
   // ── Form builder state ────────────────────────────────────────────────────
   const [mode, setMode] = useState<'list' | 'build'>('list')
+  const [editingForm, setEditingForm] = useState<WellnessForm | null>(null)
   const [formTitle, setFormTitle] = useState('')
   const [questions, setQuestions] = useState<WellnessQuestion[]>([newQuestion()])
   const [saving, setSaving] = useState(false)
@@ -60,6 +61,22 @@ export default function AdminWellness() {
   }, [activeForm?.id, fetchDashboard])
 
   // ── Form builder actions ──────────────────────────────────────────────────
+  const handleEdit = (form: WellnessForm) => {
+    setEditingForm(form)
+    setFormTitle(form.title)
+    setQuestions(form.questions.length > 0 ? form.questions : [newQuestion()])
+    setBuildError(null)
+    setMode('build')
+  }
+
+  const handleCancelBuild = () => {
+    setMode('list')
+    setEditingForm(null)
+    setFormTitle('')
+    setQuestions([newQuestion()])
+    setBuildError(null)
+  }
+
   const addQuestion = () => setQuestions(q => [...q, newQuestion()])
 
   const removeQuestion = (id: string) =>
@@ -76,13 +93,25 @@ export default function AdminWellness() {
     if (filled.length === 0) { setBuildError('Add at least one question'); return }
     setSaving(true); setBuildError(null)
 
-    const { error } = (await (supabase as any)
-      .from('wellness_forms')
-      .insert({ title: formTitle.trim(), questions: filled, is_active: false, created_by: user.id })
-    ) as { error: { message: string } | null }
+    let saveError: { message: string } | null = null
 
-    if (error) { setBuildError(error.message); setSaving(false); return }
-    setFormTitle(''); setQuestions([newQuestion()]); setMode('list'); refresh()
+    if (editingForm) {
+      const { error } = (await (supabase as any)
+        .from('wellness_forms')
+        .update({ title: formTitle.trim(), questions: filled })
+        .eq('id', editingForm.id)
+      ) as { error: { message: string } | null }
+      saveError = error
+    } else {
+      const { error } = (await (supabase as any)
+        .from('wellness_forms')
+        .insert({ title: formTitle.trim(), questions: filled, is_active: false, created_by: user.id })
+      ) as { error: { message: string } | null }
+      saveError = error
+    }
+
+    if (saveError) { setBuildError(saveError.message); setSaving(false); return }
+    setEditingForm(null); setFormTitle(''); setQuestions([newQuestion()]); setMode('list'); refresh()
     setSaving(false)
   }
 
@@ -120,7 +149,7 @@ export default function AdminWellness() {
       {/* ── Form Builder ────────────────────────────────────────────────── */}
       {mode === 'build' && (
         <section className="bg-white/80 border border-gray-200 rounded-2xl p-6">
-          <h2 className="text-near-black font-semibold text-base mb-5">New Form</h2>
+          <h2 className="text-near-black font-semibold text-base mb-5">{editingForm ? 'Edit Form' : 'New Form'}</h2>
           <form onSubmit={handleSave} className="space-y-5">
             <div>
               <label className="block text-xs font-medium uppercase tracking-wide text-gray-600 mb-1.5">
@@ -190,7 +219,7 @@ export default function AdminWellness() {
             <div className="flex gap-3">
               <button
                 type="button"
-                onClick={() => { setMode('list'); setBuildError(null) }}
+                onClick={handleCancelBuild}
                 className="flex-1 py-2.5 rounded-xl text-sm font-medium border border-gray-200 text-gray-600 hover:bg-gray-50 transition-colors"
               >
                 Cancel
@@ -200,7 +229,7 @@ export default function AdminWellness() {
                 disabled={saving}
                 className="flex-1 bg-brand text-white py-2.5 rounded-xl text-sm font-semibold disabled:opacity-50 hover:bg-brand/90 transition-colors"
               >
-                {saving ? 'Saving…' : 'Save Form'}
+                {saving ? 'Saving…' : editingForm ? 'Save Changes' : 'Save Form'}
               </button>
             </div>
           </form>
@@ -246,6 +275,12 @@ export default function AdminWellness() {
                         Set active
                       </button>
                     )}
+                    <button
+                      onClick={() => handleEdit(form)}
+                      className="text-xs text-gray-500 hover:text-near-black font-medium transition-colors flex-shrink-0"
+                    >
+                      Edit
+                    </button>
                     <button
                       onClick={() => handleDelete(form.id)}
                       className="text-xs text-gray-400 hover:text-red-600 transition-colors flex-shrink-0"
