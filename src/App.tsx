@@ -10,6 +10,7 @@ import Stats from './pages/app/Stats'
 import Film from './pages/app/Film'
 import Wellness from './pages/app/Wellness'
 import Playbook from './pages/app/Playbook'
+import Profile from './pages/app/Profile'
 import AdminDashboard from './pages/admin/Dashboard'
 import AdminFilm from './pages/admin/Film'
 import AdminStats from './pages/admin/Stats'
@@ -32,6 +33,7 @@ export default function App() {
               <Route path="/app/film" element={<Film />} />
               <Route path="/app/wellness" element={<Wellness />} />
               <Route path="/app/playbook" element={<Playbook />} />
+              <Route path="/app/profile" element={<Profile />} />
             </Route>
 
             {/* Admin-only routes */}

@@ -6,6 +6,10 @@ import type { Role } from '../types/database'
 interface Profile {
   role: Role
   name: string
+  avatar_url: string | null
+  jersey_number: number | null
+  position: 'Guard' | 'Forward' | 'Center' | null
+  class_year: 'Fr' | 'So' | 'Jr' | 'Sr' | null
 }
 
 interface AuthContextValue {
@@ -34,7 +38,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     const { data, error } = await supabase
       .from('profiles')
-      .select('role, name')
+      .select('role, name, avatar_url, jersey_number, position, class_year')
       .eq('id', userId)
       .single<Profile>()
 

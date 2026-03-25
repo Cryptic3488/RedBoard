@@ -7,6 +7,10 @@ export interface Profile {
   id: string
   role: Role
   name: string
+  avatar_url: string | null
+  jersey_number: number | null
+  position: 'Guard' | 'Forward' | 'Center' | null
+  class_year: 'Fr' | 'So' | 'Jr' | 'Sr' | null
   created_at: string
 }
 

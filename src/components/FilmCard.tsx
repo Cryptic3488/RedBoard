@@ -59,13 +59,13 @@ export function FilmCard({ post, isPersonal, showDelete, onDelete }: FilmCardPro
   const embedUrl = post.link_type === 'hudl' ? getHudlEmbedUrl(post.url) : null
 
   return (
-    <div className="bg-white/80 border border-gray-200 border-l-2 border-l-brand rounded-xl overflow-hidden">
+    <div className="bg-white/80 dark:bg-[#2C2C2E] border border-gray-200 dark:border-gray-700/50 border-l-2 border-l-brand rounded-xl overflow-hidden">
       {/* Header */}
       <div className="px-4 pt-4 pb-3">
         <div className="flex items-start justify-between gap-2">
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 flex-wrap mb-0.5">
-              <h3 className="font-display font-semibold text-near-black text-base leading-snug">
+              <h3 className="font-display font-semibold text-near-black dark:text-gray-100 text-base leading-snug">
                 {post.title}
               </h3>
               {isPersonal && (
@@ -133,7 +133,7 @@ export function FilmCard({ post, isPersonal, showDelete, onDelete }: FilmCardPro
       {/* Note */}
       {post.note && (
         <div className="px-4 pb-4 pt-2">
-          <p className="font-ui text-sm text-gray-600 leading-relaxed">{post.note}</p>
+          <p className="font-ui text-sm text-gray-600 dark:text-gray-400 leading-relaxed">{post.note}</p>
         </div>
       )}
     </div>

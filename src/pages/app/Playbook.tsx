@@ -131,7 +131,7 @@ export default function Playbook() {
                 <button
                   key={folder.id}
                   onClick={() => openFolder(folder)}
-                  className="w-full flex items-center gap-3 bg-white/80 border border-gray-200
+                  className="w-full flex items-center gap-3 bg-white/80 dark:bg-[#2C2C2E] border border-gray-200 dark:border-gray-700/50
                              border-l-2 border-l-brand rounded-xl px-4 py-3.5
                              hover:border-gray-300 hover:border-l-brand-light transition-all text-left"
                 >
@@ -174,8 +174,8 @@ export default function Playbook() {
                       if (isPdf) window.open(url, '_blank')
                       else setLightboxIdx(imageIdx)
                     }}
-                    className="group relative bg-gray-100 rounded-xl overflow-hidden aspect-square
-                               border border-gray-200 hover:border-brand/40 transition-all
+                    className="group relative bg-gray-100 dark:bg-[#3A3A3C] rounded-xl overflow-hidden aspect-square
+                               border border-gray-200 dark:border-gray-700/50 hover:border-brand/40 transition-all
                                focus:outline-none"
                   >
                     {isPdf ? (

@@ -33,10 +33,10 @@ export default function Film() {
 
       {!loading && !error && posts.length === 0 && (
         <div className="flex flex-col items-center justify-center py-16 px-6 text-center">
-          <div className="w-16 h-16 rounded-full bg-white/80 border border-gray-200 flex items-center justify-center mb-4">
+          <div className="w-16 h-16 rounded-full bg-white/80 dark:bg-[#2C2C2E] border border-gray-200 dark:border-gray-700/50 flex items-center justify-center mb-4">
             <span className="text-2xl">🎬</span>
           </div>
-          <h3 className="font-display text-lg font-semibold text-near-black mb-2">No clips yet</h3>
+          <h3 className="font-display text-lg font-semibold text-near-black dark:text-gray-100 mb-2">No clips yet</h3>
           <p className="font-ui text-gray-500 text-sm leading-relaxed max-w-xs">
             Your coaches will share Hudl clips and film here.
           </p>
