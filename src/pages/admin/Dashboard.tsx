@@ -1,5 +1,7 @@
+import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext'
+import { supabase } from '../../lib/supabase'
 
 function greeting() {
   const h = new Date().getHours()
@@ -42,16 +44,39 @@ const QUICK_ACTIONS: QuickAction[] = [
   },
 ]
 
-const STATUS_ITEMS = [
-  { label: 'Film posts', value: '—' },
-  { label: 'Stats views', value: '—' },
-  { label: 'Open wellness', value: '—' },
-  { label: 'Playbook items', value: '—' },
-]
+interface StatusCounts {
+  filmPosts: number | null
+  statUploads: number | null
+  openWellness: number | null
+  playbookItems: number | null
+}
 
 export default function AdminDashboard() {
   const { profile } = useAuth()
   const firstName = profile?.name?.split(' ')[0] ?? 'Coach'
+
+  const [counts, setCounts] = useState<StatusCounts>({
+    filmPosts: null,
+    statUploads: null,
+    openWellness: null,
+    playbookItems: null,
+  })
+
+  useEffect(() => {
+    Promise.all([
+      supabase.from('film_posts').select('id', { count: 'exact', head: true }),
+      supabase.from('stat_uploads').select('id', { count: 'exact', head: true }),
+      supabase.from('wellness_forms').select('id', { count: 'exact', head: true }).eq('is_active', true),
+      supabase.from('playbook_files').select('id', { count: 'exact', head: true }),
+    ]).then(([film, stats, wellness, playbook]) => {
+      setCounts({
+        filmPosts:     film.count ?? 0,
+        statUploads:   stats.count ?? 0,
+        openWellness:  wellness.count ?? 0,
+        playbookItems: playbook.count ?? 0,
+      })
+    })
+  }, [])
 
   return (
     <div className="max-w-3xl">
@@ -108,16 +133,20 @@ export default function AdminDashboard() {
           <div className="flex-1 h-px bg-gray-200" />
         </div>
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-          {STATUS_ITEMS.map(({ label, value }) => (
+          {([
+            { label: 'Film posts',     value: counts.filmPosts },
+            { label: 'Stat uploads',   value: counts.statUploads },
+            { label: 'Open wellness',  value: counts.openWellness },
+            { label: 'Playbook items', value: counts.playbookItems },
+          ] as const).map(({ label, value }) => (
             <div key={label} className="bg-white/80 border border-gray-200 rounded-xl p-4">
-              <p className="font-display text-3xl font-bold text-near-black mb-1">{value}</p>
+              <p className="font-display text-3xl font-bold text-near-black mb-1">
+                {value === null ? <span className="text-gray-300 text-2xl">—</span> : value}
+              </p>
               <p className="font-ui text-xs text-gray-400 uppercase tracking-wide">{label}</p>
             </div>
           ))}
         </div>
-        <p className="font-ui text-gray-300 text-xs mt-3">
-          Live counts will populate as features are activated.
-        </p>
       </section>
     </div>
   )
