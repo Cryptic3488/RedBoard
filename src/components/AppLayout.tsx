@@ -1,7 +1,6 @@
 import { NavLink, Outlet, Link } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { useUnreadCount } from '../hooks/useUnreadCount'
-import { useDimMode } from '../hooks/useDimMode'
 
 const NAV = [
   { to: '/app/feed',     label: 'Feed',     icon: '📋' },
@@ -13,8 +12,7 @@ const NAV = [
 
 export function AppLayout() {
   const { role, profile } = useAuth()
-  const { unreadCount } = useUnreadCount()
-  useDimMode() // initialise dark class from localStorage on mount
+  const { unreadCount } = useUnreadCount() // initialise dark class from localStorage on mount
 
   const avatarUrl  = profile?.avatar_url ?? null
   const initial    = (profile?.name ?? '?').charAt(0).toUpperCase()
@@ -23,7 +21,7 @@ export function AppLayout() {
     <div className="min-h-screen bg-cream dark:bg-[#1C1C1E] flex flex-col transition-colors">
       {/* Top bar */}
       <header className="bg-white/90 dark:bg-[#1A1A1A]/95 backdrop-blur
-                         border-b border-gray-200/60 dark:border-gray-700/50
+                         border-b border-gray-200/60
                          px-4 py-3 flex items-center justify-between sticky top-0 z-10">
         <div className="flex items-center gap-1.5">
           <span className="font-ui font-black text-lg text-brand">Red</span>
@@ -36,7 +34,7 @@ export function AppLayout() {
             <NavLink
               to="/admin"
               className="font-ui text-xs text-gray-500 dark:text-gray-400 hover:text-near-black dark:hover:text-gray-100
-                         px-2.5 py-1 rounded border border-gray-200 dark:border-gray-600
+                         px-2.5 py-1 rounded border border-gray-200
                          hover:border-gray-600 transition-colors"
             >
               Admin
@@ -68,7 +66,7 @@ export function AppLayout() {
 
       {/* Bottom nav */}
       <nav className="fixed bottom-0 inset-x-0 bg-white dark:bg-[#1A1A1A]
-                      border-t border-gray-200/60 dark:border-gray-700/50 flex z-10">
+                      border-t border-gray-200/60 flex z-10">
         {NAV.map(({ to, label, icon }) => (
           <NavLink
             key={to}

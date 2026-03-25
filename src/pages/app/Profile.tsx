@@ -17,15 +17,14 @@ function SectionLabel({ children }: { children: React.ReactNode }) {
       <span className="font-ui text-[10px] font-semibold uppercase tracking-widest text-gray-400">
         {children}
       </span>
-      <div className="flex-1 h-px bg-gray-200 dark:bg-gray-700" />
+      <div className="flex-1 h-px bg-gray-200" />
     </div>
   )
 }
 
 function Card({ children }: { children: React.ReactNode }) {
   return (
-    <div className="bg-white/80 dark:bg-[#2C2C2E] border border-gray-200 dark:border-gray-700/50
-                    rounded-2xl overflow-hidden">
+    <div className="bg-white/80 dark:bg-[#2C2C2E] border border-gray-200 rounded-2xl overflow-hidden">
       {children}
     </div>
   )
@@ -33,8 +32,7 @@ function Card({ children }: { children: React.ReactNode }) {
 
 function Row({ children }: { children: React.ReactNode }) {
   return (
-    <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100
-                    dark:border-gray-700/50 last:border-0">
+    <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100 last:border-0">
       {children}
     </div>
   )

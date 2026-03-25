@@ -18,7 +18,7 @@ function greeting() {
 function EmptyFeed() {
   return (
     <div className="flex flex-col items-center justify-center py-16 px-6 text-center">
-      <div className="w-16 h-16 rounded-full bg-white/80 dark:bg-[#2C2C2E] border border-gray-200 dark:border-gray-700/50 flex items-center justify-center mb-4">
+      <div className="w-16 h-16 rounded-full bg-white/80 dark:bg-[#2C2C2E] border border-gray-200 flex items-center justify-center mb-4">
         <span className="text-2xl">📋</span>
       </div>
       <h3 className="font-display text-lg font-semibold text-near-black dark:text-gray-100 mb-2">Nothing here yet</h3>
@@ -71,7 +71,7 @@ function PracticeCard({ latest, prev }: { latest: EnrichedWeek; prev: EnrichedWe
   return (
     <Link
       to="/app/stats"
-      className="block bg-white/80 dark:bg-[#2C2C2E] border border-gray-200 dark:border-gray-700/50 border-l-2 border-l-brand
+      className="block bg-white/80 dark:bg-[#2C2C2E] border border-gray-200 border-l-2 border-l-brand
                  rounded-xl p-4 hover:border-gray-300 hover:border-l-brand-light transition-all"
     >
       <div className="flex items-center justify-between mb-3">
@@ -101,7 +101,7 @@ function GameCard({ game }: { game: EnrichedGame }) {
   return (
     <Link
       to="/app/stats"
-      className="block bg-white/80 dark:bg-[#2C2C2E] border border-gray-200 dark:border-gray-700/50 border-l-2 border-l-brand
+      className="block bg-white/80 dark:bg-[#2C2C2E] border border-gray-200 border-l-2 border-l-brand
                  rounded-xl p-4 hover:border-gray-300 hover:border-l-brand-light transition-all"
     >
       <div className="flex items-center justify-between mb-3">
@@ -173,7 +173,7 @@ function PlaybookCard() {
   return (
     <Link
       to="/app/playbook"
-      className="flex items-center gap-3 bg-white/80 dark:bg-[#2C2C2E] border border-gray-200 dark:border-gray-700/50 border-l-2 border-l-brand
+      className="flex items-center gap-3 bg-white/80 dark:bg-[#2C2C2E] border border-gray-200 border-l-2 border-l-brand
                  rounded-xl px-4 py-3.5 mb-6 hover:border-gray-300 hover:border-l-brand-light transition-all"
     >
       <span className="text-xl flex-shrink-0">📖</span>
@@ -261,7 +261,7 @@ export default function Feed() {
           <Link
             key={to}
             to={to}
-            className="group bg-white/80 dark:bg-[#2C2C2E] border border-gray-200 dark:border-gray-700/50 border-l-2 border-l-brand
+            className="group bg-white/80 dark:bg-[#2C2C2E] border border-gray-200 border-l-2 border-l-brand
                        rounded-xl p-4 hover:border-gray-300 hover:border-l-brand-light
                        transition-all"
           >
