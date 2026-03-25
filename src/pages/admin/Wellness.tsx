@@ -1,10 +1,29 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { supabase } from '../../lib/supabase'
 import { useAuth } from '../../context/AuthContext'
 import { useWellnessForms } from '../../hooks/useWellnessForms'
 import type { Profile, WellnessForm, WellnessQuestion, WellnessResponse } from '../../types/database'
 
-// ── Helpers ───────────────────────────────────────────────────────────────────
+// ── Calendar helpers ───────────────────────────────────────────────────────────
+
+const DOW = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa']
+const MONTHS = ['January','February','March','April','May','June',
+                'July','August','September','October','November','December']
+
+function calCells(year: number, month: number): (number | null)[] {
+  const firstDow = new Date(year, month, 1).getDay()
+  const daysInMonth = new Date(year, month + 1, 0).getDate()
+  const cells: (number | null)[] = Array(firstDow).fill(null)
+  for (let d = 1; d <= daysInMonth; d++) cells.push(d)
+  while (cells.length % 7 !== 0) cells.push(null)
+  return cells
+}
+
+function toDateStr(year: number, month: number, day: number): string {
+  return `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`
+}
+
+// ── Misc helpers ───────────────────────────────────────────────────────────────
 
 function newQuestion(): WellnessQuestion {
   return { id: crypto.randomUUID(), type: 'rating', label: '' }
@@ -20,7 +39,7 @@ function answerDisplay(q: WellnessQuestion, val: number | string | undefined): s
   return String(val)
 }
 
-// ── Main component ────────────────────────────────────────────────────────────
+// ── Main component ─────────────────────────────────────────────────────────────
 
 export default function AdminWellness() {
   const { user } = useAuth()
@@ -39,6 +58,13 @@ export default function AdminWellness() {
   const [todayResponses, setTodayResponses] = useState<WellnessResponse[]>([])
   const [expandedId, setExpandedId] = useState<string | null>(null)
   const [dashLoading, setDashLoading] = useState(false)
+
+  // ── Schedule state ────────────────────────────────────────────────────────
+  const [calMonth, setCalMonth] = useState(() => { const d = new Date(); d.setDate(1); return d })
+  const [scheduleMap, setScheduleMap] = useState<Map<string, { id: string; formId: string }>>(new Map())
+  const [pickingDate, setPickingDate] = useState<string | null>(null)
+  const [pickFormId, setPickFormId] = useState('')
+  const autoActivatedRef = useRef(false)
 
   const activeForm = forms.find(f => f.is_active) ?? null
   const today = new Date().toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })
@@ -59,6 +85,45 @@ export default function AdminWellness() {
   useEffect(() => {
     if (activeForm) fetchDashboard(activeForm)
   }, [activeForm?.id, fetchDashboard])
+
+  // ── Fetch schedule for visible month window ───────────────────────────────
+  const fetchSchedule = useCallback(async () => {
+    const y = calMonth.getFullYear()
+    const m = calMonth.getMonth()
+    const rangeStart = new Date(y, m - 1, 1).toISOString().slice(0, 10)
+    const rangeEnd   = new Date(y, m + 2, 0).toISOString().slice(0, 10)
+    const { data } = await supabase
+      .from('wellness_schedule')
+      .select('id, form_id, scheduled_date')
+      .gte('scheduled_date', rangeStart)
+      .lte('scheduled_date', rangeEnd)
+    const map = new Map<string, { id: string; formId: string }>()
+    for (const row of (data ?? []) as { id: string; form_id: string; scheduled_date: string }[]) {
+      map.set(row.scheduled_date, { id: row.id, formId: row.form_id })
+    }
+    setScheduleMap(map)
+  }, [calMonth])
+
+  useEffect(() => { fetchSchedule() }, [fetchSchedule])
+
+  // ── Auto-activate today's scheduled form on first load ────────────────────
+  useEffect(() => {
+    if (forms.length === 0 || autoActivatedRef.current) return
+    autoActivatedRef.current = true
+    supabase
+      .from('wellness_schedule')
+      .select('form_id')
+      .eq('scheduled_date', todayISO)
+      .maybeSingle()
+      .then(({ data }) => {
+        if (!data) return
+        const scheduledId = (data as { form_id: string }).form_id
+        if (forms.some(f => f.is_active && f.id === scheduledId)) return
+        ;(supabase as any).from('wellness_forms').update({ is_active: false }).eq('is_active', true)
+          .then(() => (supabase as any).from('wellness_forms').update({ is_active: true }).eq('id', scheduledId))
+          .then(() => refresh())
+      })
+  }, [forms])
 
   // ── Form builder actions ──────────────────────────────────────────────────
   const handleEdit = (form: WellnessForm) => {
@@ -134,7 +199,45 @@ export default function AdminWellness() {
     refresh()
   }
 
+  // ── Schedule actions ──────────────────────────────────────────────────────
+  const handleScheduleSave = async () => {
+    if (!pickingDate || !pickFormId || !user) return
+    const existing = scheduleMap.get(pickingDate)
+    if (existing) {
+      await (supabase as any).from('wellness_schedule').update({ form_id: pickFormId }).eq('id', existing.id)
+    } else {
+      await (supabase as any).from('wellness_schedule').insert({
+        form_id: pickFormId,
+        scheduled_date: pickingDate,
+        created_by: user.id,
+      })
+    }
+    setPickingDate(null); setPickFormId(''); fetchSchedule()
+  }
+
+  const handleScheduleRemove = async () => {
+    if (!pickingDate) return
+    const existing = scheduleMap.get(pickingDate)
+    if (existing) await supabase.from('wellness_schedule').delete().eq('id', existing.id)
+    setPickingDate(null); setPickFormId(''); fetchSchedule()
+  }
+
+  const openPicker = (dateStr: string) => {
+    if (pickingDate === dateStr) { setPickingDate(null); setPickFormId(''); return }
+    const existing = scheduleMap.get(dateStr)
+    setPickingDate(dateStr)
+    setPickFormId(existing?.formId ?? (forms[0]?.id ?? ''))
+  }
+
   const responseMap = new Map(todayResponses.map(r => [r.player_id, r]))
+
+  // ── Calendar render helpers ───────────────────────────────────────────────
+  const calYear  = calMonth.getFullYear()
+  const calMonthIdx = calMonth.getMonth()
+  const cells = calCells(calYear, calMonthIdx)
+
+  const prevMonth = () => setCalMonth(d => new Date(d.getFullYear(), d.getMonth() - 1, 1))
+  const nextMonth = () => setCalMonth(d => new Date(d.getFullYear(), d.getMonth() + 1, 1))
 
   // ── Render ────────────────────────────────────────────────────────────────
   return (
@@ -170,7 +273,6 @@ export default function AdminWellness() {
               />
             </div>
 
-            {/* Questions */}
             <div>
               <label className="block text-xs font-medium uppercase tracking-wide text-gray-600 mb-3">
                 Questions
@@ -241,9 +343,9 @@ export default function AdminWellness() {
         </section>
       )}
 
-      {/* ── Forms Library ────────────────────────────────────────────────── */}
       {mode === 'list' && (
         <>
+          {/* ── Forms Library ──────────────────────────────────────────── */}
           <section>
             <div className="flex items-center gap-3 mb-4">
               <span className="text-[10px] font-semibold uppercase tracking-widest text-gray-400">Forms</span>
@@ -305,7 +407,135 @@ export default function AdminWellness() {
             )}
           </section>
 
-          {/* ── Today's Dashboard ─────────────────────────────────────────── */}
+          {/* ── Schedule Calendar ───────────────────────────────────────── */}
+          {forms.length > 0 && (
+            <section>
+              <div className="flex items-center gap-3 mb-4">
+                <span className="text-[10px] font-semibold uppercase tracking-widest text-gray-400">Schedule</span>
+                <div className="flex-1 h-px bg-gray-200" />
+              </div>
+
+              <div className="bg-white/80 border border-gray-200 rounded-2xl p-4">
+                {/* Month navigation */}
+                <div className="flex items-center justify-between mb-4">
+                  <button
+                    onClick={prevMonth}
+                    className="text-gray-400 hover:text-near-black transition-colors px-2 py-1 rounded-lg hover:bg-gray-100"
+                  >
+                    ‹
+                  </button>
+                  <span className="font-ui text-sm font-semibold text-near-black">
+                    {MONTHS[calMonthIdx]} {calYear}
+                  </span>
+                  <button
+                    onClick={nextMonth}
+                    className="text-gray-400 hover:text-near-black transition-colors px-2 py-1 rounded-lg hover:bg-gray-100"
+                  >
+                    ›
+                  </button>
+                </div>
+
+                {/* Day-of-week header */}
+                <div className="grid grid-cols-7 mb-1">
+                  {DOW.map(d => (
+                    <div key={d} className="text-center font-ui text-[10px] uppercase tracking-wide text-gray-400 py-1">
+                      {d}
+                    </div>
+                  ))}
+                </div>
+
+                {/* Day grid */}
+                <div className="grid grid-cols-7 gap-y-1">
+                  {cells.map((day, i) => {
+                    if (!day) return <div key={`empty-${i}`} />
+                    const dateStr  = toDateStr(calYear, calMonthIdx, day)
+                    const isToday  = dateStr === todayISO
+                    const isPast   = dateStr < todayISO
+                    const scheduled = scheduleMap.get(dateStr)
+                    const formName = scheduled
+                      ? (forms.find(f => f.id === scheduled.formId)?.title ?? '…')
+                      : null
+                    const isPicking = pickingDate === dateStr
+
+                    return (
+                      <button
+                        key={dateStr}
+                        onClick={() => openPicker(dateStr)}
+                        className={`relative flex flex-col items-center rounded-lg py-1 px-0.5 transition-all
+                          ${isPicking
+                            ? 'bg-brand/10 ring-1 ring-brand'
+                            : 'hover:bg-gray-100'}
+                          ${isPast ? 'opacity-40' : ''}`}
+                      >
+                        <span className={`font-ui text-xs font-medium leading-none mb-0.5
+                          ${isToday ? 'text-brand font-bold' : 'text-near-black'}`}>
+                          {day}
+                          {isToday && <span className="absolute top-0.5 right-0.5 w-1 h-1 rounded-full bg-brand" />}
+                        </span>
+                        {formName && (
+                          <span className="w-full text-center font-ui text-[8px] leading-tight
+                                          bg-brand/10 text-brand rounded px-0.5 truncate">
+                            {formName}
+                          </span>
+                        )}
+                      </button>
+                    )
+                  })}
+                </div>
+
+                {/* Inline date picker */}
+                {pickingDate && (
+                  <div className="mt-4 pt-4 border-t border-gray-100">
+                    <p className="font-ui text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">
+                      {new Date(pickingDate + 'T12:00:00').toLocaleDateString('en-US', {
+                        weekday: 'long', month: 'long', day: 'numeric'
+                      })}
+                    </p>
+                    <div className="flex gap-2 items-center flex-wrap">
+                      <select
+                        value={pickFormId}
+                        onChange={e => setPickFormId(e.target.value)}
+                        className="flex-1 min-w-0 bg-gray-50 border border-gray-200 rounded-lg px-3 py-2
+                                   text-sm text-near-black focus:outline-none focus:border-brand"
+                      >
+                        {forms.map(f => (
+                          <option key={f.id} value={f.id}>{f.title}</option>
+                        ))}
+                      </select>
+                      <button
+                        onClick={handleScheduleSave}
+                        disabled={!pickFormId}
+                        className="bg-brand text-white px-4 py-2 rounded-lg text-sm font-semibold
+                                   hover:bg-brand/90 disabled:opacity-50 transition-colors flex-shrink-0"
+                      >
+                        {scheduleMap.has(pickingDate) ? 'Update' : 'Schedule'}
+                      </button>
+                      {scheduleMap.has(pickingDate) && (
+                        <button
+                          onClick={handleScheduleRemove}
+                          className="text-sm text-gray-400 hover:text-red-600 font-medium transition-colors flex-shrink-0"
+                        >
+                          Remove
+                        </button>
+                      )}
+                      <button
+                        onClick={() => { setPickingDate(null); setPickFormId('') }}
+                        className="text-sm text-gray-400 hover:text-gray-600 transition-colors flex-shrink-0"
+                      >
+                        Cancel
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              <p className="font-ui text-gray-300 text-xs mt-2">
+                Click any day to schedule a form. The active form auto-updates at midnight when a scheduled day begins.
+              </p>
+            </section>
+          )}
+
+          {/* ── Today's Dashboard ───────────────────────────────────────── */}
           {activeForm && (
             <section>
               <div className="flex items-center gap-3 mb-4">
@@ -349,7 +579,6 @@ export default function AdminWellness() {
                           )}
                         </button>
 
-                        {/* Expanded response detail */}
                         {isExpanded && resp && (
                           <div className="px-5 pb-4 pt-1 border-t border-gray-100 space-y-2">
                             {activeForm.questions.map(q => (
