@@ -152,11 +152,11 @@ export default function AdminFilm() {
 
   return (
     <div className="px-4 pt-6 pb-10 max-w-2xl mx-auto">
-      <h1 className="font-display text-2xl font-bold text-near-black mb-1">Film</h1>
+      <h1 className="font-display text-2xl font-bold text-near-black dark:text-gray-100 mb-1">Film</h1>
       <p className="font-ui text-sm text-gray-500 mb-8">Post Hudl clips or upload video to share with players.</p>
 
       {/* ── Upload form ── */}
-      <section className="bg-white/80 border border-gray-200 rounded-xl p-5 mb-10">
+      <section className="bg-white/80 dark:bg-[#2C2C2E] border border-gray-200 rounded-xl p-5 mb-10">
         <h2 className="font-ui text-xs font-semibold tracking-widest uppercase text-gray-500 mb-5">
           New Post
         </h2>
@@ -174,22 +174,22 @@ export default function AdminFilm() {
         <form onSubmit={handleSubmit} className="space-y-5">
           {/* Title */}
           <div>
-            <label className="font-ui text-xs text-gray-600 block mb-1.5">Title</label>
+            <label className="font-ui text-xs text-gray-600 dark:text-gray-400 block mb-1.5">Title</label>
             <input
               type="text"
               value={form.title}
               onChange={e => setForm(f => ({ ...f, title: e.target.value }))}
               maxLength={120}
               placeholder="e.g. Defensive rotations — vs. Notre Dame"
-              className="w-full bg-gray-100/60 border border-gray-300 rounded-lg px-3 py-2
-                         font-ui text-sm text-near-black placeholder-gray-400
+              className="w-full bg-gray-100/60 dark:bg-[#3A3A3C] border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2
+                         font-ui text-sm text-near-black dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500
                          focus:outline-none focus:border-brand/60 transition-colors"
             />
           </div>
 
           {/* Link type toggle */}
           <div>
-            <label className="font-ui text-xs text-gray-600 block mb-1.5">Type</label>
+            <label className="font-ui text-xs text-gray-600 dark:text-gray-400 block mb-1.5">Type</label>
             <div className="flex rounded-lg overflow-hidden border border-gray-300 w-fit">
               {(['hudl', 'file'] as LinkType[]).map(type => (
                 <button
@@ -211,13 +211,13 @@ export default function AdminFilm() {
           {/* Hudl URL */}
           {form.linkType === 'hudl' && (
             <div>
-              <label className="font-ui text-xs text-gray-600 block mb-1.5">Hudl URL</label>
+              <label className="font-ui text-xs text-gray-600 dark:text-gray-400 block mb-1.5">Hudl URL</label>
               <input
                 type="url"
                 value={form.hudlUrl}
                 onChange={e => setForm(f => ({ ...f, hudlUrl: e.target.value }))}
                 placeholder="https://www.hudl.com/video/..."
-                className="w-full bg-gray-100/60 border border-gray-300 rounded-lg px-3 py-2
+                className="w-full bg-gray-100/60 dark:bg-[#3A3A3C] border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2
                            font-ui text-sm text-near-black placeholder-gray-400
                            focus:outline-none focus:border-brand/60 transition-colors"
               />
@@ -230,10 +230,10 @@ export default function AdminFilm() {
           {/* File upload */}
           {form.linkType === 'file' && (
             <div>
-              <label className="font-ui text-xs text-gray-600 block mb-1.5">File</label>
+              <label className="font-ui text-xs text-gray-600 dark:text-gray-400 block mb-1.5">File</label>
               <label className="flex flex-col items-center justify-center w-full h-28
                                 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer
-                                hover:border-brand/40 transition-colors bg-gray-100/60">
+                                hover:border-brand/40 transition-colors bg-gray-100/60 dark:bg-[#3A3A3C]">
                 <span className="font-ui text-sm text-gray-500">
                   {form.file ? form.file.name : 'Click to select video or audio'}
                 </span>
@@ -255,13 +255,13 @@ export default function AdminFilm() {
 
           {/* Note */}
           <div>
-            <label className="font-ui text-xs text-gray-600 block mb-1.5">Coaching note (optional)</label>
+            <label className="font-ui text-xs text-gray-600 dark:text-gray-400 block mb-1.5">Coaching note (optional)</label>
             <textarea
               value={form.note}
               onChange={e => setForm(f => ({ ...f, note: e.target.value }))}
               rows={3}
               placeholder="Key takeaways, focus areas…"
-              className="w-full bg-gray-100/60 border border-gray-300 rounded-lg px-3 py-2
+              className="w-full bg-gray-100/60 dark:bg-[#3A3A3C] border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2
                          font-ui text-sm text-near-black placeholder-gray-400 resize-none
                          focus:outline-none focus:border-brand/60 transition-colors"
             />
@@ -281,7 +281,7 @@ export default function AdminFilm() {
                     onChange={() => setForm(f => ({ ...f, visibility: v, recipientIds: [] }))}
                     className="accent-brand"
                   />
-                  <span className="font-ui text-sm text-gray-700 capitalize">
+                  <span className="font-ui text-sm text-gray-700 dark:text-gray-300 capitalize">
                     {v === 'team' ? 'Whole team' : 'Individual players'}
                   </span>
                 </label>
@@ -302,7 +302,7 @@ export default function AdminFilm() {
                       onChange={() => toggleRecipient(p.id)}
                       className="accent-brand w-4 h-4 rounded"
                     />
-                    <span className="font-ui text-sm text-gray-700 group-hover:text-near-black transition-colors">
+                    <span className="font-ui text-sm text-gray-700 dark:text-gray-300 group-hover:text-near-black dark:group-hover:text-gray-100 transition-colors">
                       {p.name}
                     </span>
                   </label>

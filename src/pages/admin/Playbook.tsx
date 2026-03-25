@@ -183,7 +183,7 @@ export default function AdminPlaybook() {
   // ── Render ────────────────────────────────────────────────────────────────────
   return (
     <div className="space-y-8 pb-12">
-      <h1 className="text-near-black text-xl font-bold">Playbook</h1>
+      <h1 className="text-near-black dark:text-gray-100 text-xl font-bold">Playbook</h1>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-start">
 
@@ -201,8 +201,8 @@ export default function AdminPlaybook() {
               onChange={e => setNewFolderName(e.target.value)}
               placeholder="New folder name…"
               maxLength={80}
-              className="flex-1 bg-gray-50 border border-gray-200 rounded-lg px-3 py-2 text-sm
-                         text-near-black placeholder-gray-400 focus:outline-none focus:border-brand"
+              className="flex-1 bg-gray-50 dark:bg-[#3A3A3C] border border-gray-200 dark:border-gray-600 rounded-lg px-3 py-2 text-sm
+                         text-near-black dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:border-brand"
             />
             <button
               type="submit"
@@ -231,7 +231,7 @@ export default function AdminPlaybook() {
                               border transition-all ${
                     selectedFolder?.id === folder.id
                       ? 'bg-brand/5 border-brand/30 border-l-2 border-l-brand'
-                      : 'bg-white/80 border-gray-200 hover:border-gray-300'
+                      : 'bg-white/80 dark:bg-[#2C2C2E] border-gray-200 hover:border-gray-300'
                   }`}
                 >
                   <span className="text-base flex-shrink-0">📁</span>
@@ -247,10 +247,10 @@ export default function AdminPlaybook() {
                         if (e.key === 'Escape') { setRenamingId(null); setRenameValue('') }
                       }}
                       onClick={e => e.stopPropagation()}
-                      className="flex-1 text-sm bg-transparent border-b border-brand outline-none text-near-black"
+                      className="flex-1 text-sm bg-transparent border-b border-brand outline-none text-near-black dark:text-gray-100"
                     />
                   ) : (
-                    <span className="flex-1 text-sm font-medium text-near-black truncate">
+                    <span className="flex-1 text-sm font-medium text-near-black dark:text-gray-100 truncate">
                       {folder.name}
                     </span>
                   )}
@@ -346,7 +346,7 @@ export default function AdminPlaybook() {
                     return (
                       <div
                         key={file.id}
-                        className="group relative bg-gray-100 rounded-xl overflow-hidden aspect-square
+                        className="group relative bg-gray-100 dark:bg-[#3A3A3C] rounded-xl overflow-hidden aspect-square
                                    border border-gray-200 hover:border-brand/40 transition-all"
                       >
                         {file.mime_type === 'application/pdf' ? (
@@ -356,7 +356,7 @@ export default function AdminPlaybook() {
                             onClick={() => url && window.open(url, '_blank')}
                           >
                             <span className="text-3xl">📄</span>
-                            <p className="text-[10px] font-medium text-gray-600 px-2 truncate w-full text-center">
+                            <p className="text-[10px] font-medium text-gray-600 dark:text-gray-400 px-2 truncate w-full text-center">
                               {file.name}
                             </p>
                           </button>

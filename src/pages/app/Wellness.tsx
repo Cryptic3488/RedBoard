@@ -15,7 +15,7 @@ function RatingInput({ value, onChange }: { value: number | undefined; onChange:
           className={`w-11 h-11 rounded-full text-sm font-bold transition-colors ${
             value === n
               ? 'bg-brand text-white'
-              : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+              : 'bg-gray-100 dark:bg-[#3A3A3C] text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-[#4A4A4E]'
           }`}
         >
           {n}
@@ -36,7 +36,7 @@ function YesNoInput({ value, onChange }: { value: string | undefined; onChange: 
           className={`px-8 py-2.5 rounded-xl text-sm font-semibold transition-colors ${
             value === opt
               ? 'bg-brand text-white'
-              : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+              : 'bg-gray-100 dark:bg-[#3A3A3C] text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-[#4A4A4E]'
           }`}
         >
           {opt}
@@ -55,8 +55,8 @@ function QuestionCard({
   onChange: (id: string, v: number | string) => void
 }) {
   return (
-    <div className="bg-white border border-gray-200 rounded-2xl px-5 py-4 space-y-3">
-      <p className="text-sm font-medium text-near-black">
+    <div className="bg-white dark:bg-[#2C2C2E] border border-gray-200 rounded-2xl px-5 py-4 space-y-3">
+      <p className="text-sm font-medium text-near-black dark:text-gray-100">
         <span className="text-gray-400 mr-1.5">{index + 1}.</span>
         {q.label}
       </p>
@@ -72,7 +72,7 @@ function QuestionCard({
           onChange={e => onChange(q.id, e.target.value)}
           rows={2}
           placeholder="Type your response…"
-          className="w-full bg-gray-50 border border-gray-200 rounded-lg px-3 py-2 text-sm text-near-black placeholder-gray-400 focus:outline-none focus:border-brand resize-none"
+          className="w-full bg-gray-50 dark:bg-[#3A3A3C] border border-gray-200 dark:border-gray-600 rounded-lg px-3 py-2 text-sm text-near-black dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:border-brand resize-none"
         />
       )}
     </div>
@@ -87,16 +87,16 @@ function SubmittedCard({ form, answers }: {
 }) {
   return (
     <div className="space-y-4">
-      <div className="bg-white border-2 border-gold rounded-2xl px-5 py-5 text-center">
+      <div className="bg-white dark:bg-[#2C2C2E] border-2 border-gold rounded-2xl px-5 py-5 text-center">
         <span className="text-3xl">✓</span>
-        <p className="text-near-black font-semibold mt-2">All done for today</p>
+        <p className="text-near-black dark:text-gray-100 font-semibold mt-2">All done for today</p>
         <p className="text-sm text-gray-400 mt-1">{form.title}</p>
       </div>
       <div className="space-y-2">
         {form.questions.map(q => (
-          <div key={q.id} className="bg-white border border-gray-200 rounded-xl px-4 py-3 flex justify-between text-sm">
+          <div key={q.id} className="bg-white dark:bg-[#2C2C2E] border border-gray-200 rounded-xl px-4 py-3 flex justify-between text-sm">
             <span className="text-gray-600">{q.label}</span>
-            <span className="font-medium text-near-black">
+            <span className="font-medium text-near-black dark:text-gray-100">
               {answers[q.id] !== undefined
                 ? q.type === 'rating' ? `${answers[q.id]}/5` : String(answers[q.id])
                 : '—'}
@@ -159,7 +159,7 @@ export default function Wellness() {
         <p className="text-[10px] font-semibold uppercase tracking-widest text-gray-400 mb-1">
           {new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}
         </p>
-        <h1 className="text-near-black text-xl font-bold">{form.title}</h1>
+        <h1 className="text-near-black dark:text-gray-100 text-xl font-bold">{form.title}</h1>
       </div>
 
       {todayResponse ? (

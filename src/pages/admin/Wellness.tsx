@@ -243,7 +243,7 @@ export default function AdminWellness() {
   return (
     <div className="space-y-8 pb-12">
       <div className="flex items-center justify-between">
-        <h1 className="text-near-black text-xl font-bold">Wellness</h1>
+        <h1 className="text-near-black dark:text-gray-100 text-xl font-bold">Wellness</h1>
         {mode === 'list' && (
           <button
             onClick={() => setMode('build')}
@@ -256,8 +256,8 @@ export default function AdminWellness() {
 
       {/* ── Form Builder ────────────────────────────────────────────────── */}
       {mode === 'build' && (
-        <section className="bg-white/80 border border-gray-200 rounded-2xl p-6">
-          <h2 className="text-near-black font-semibold text-base mb-5">{editingForm ? 'Edit Form' : 'New Form'}</h2>
+        <section className="bg-white/80 dark:bg-[#2C2C2E] border border-gray-200 rounded-2xl p-6">
+          <h2 className="text-near-black dark:text-gray-100 font-semibold text-base mb-5">{editingForm ? 'Edit Form' : 'New Form'}</h2>
           <form onSubmit={handleSave} className="space-y-5">
             <div>
               <label className="block text-xs font-medium uppercase tracking-wide text-gray-600 mb-1.5">
@@ -269,7 +269,7 @@ export default function AdminWellness() {
                 onChange={e => setFormTitle(e.target.value)}
                 placeholder="e.g. Daily Wellness Check"
                 maxLength={120}
-                className="w-full bg-gray-50 border border-gray-200 rounded-lg px-3 py-2 text-sm text-near-black placeholder-gray-400 focus:outline-none focus:border-brand"
+                className="w-full bg-gray-50 dark:bg-[#3A3A3C] border border-gray-200 dark:border-gray-600 rounded-lg px-3 py-2 text-sm text-near-black dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:border-brand"
               />
             </div>
 
@@ -284,7 +284,7 @@ export default function AdminWellness() {
                     <select
                       value={q.type}
                       onChange={e => updateQuestion(q.id, { type: e.target.value as WellnessQuestion['type'] })}
-                      className="bg-gray-50 border border-gray-200 rounded-lg px-2 py-2 text-xs text-near-black focus:outline-none focus:border-brand flex-shrink-0"
+                      className="bg-gray-50 dark:bg-[#3A3A3C] border border-gray-200 dark:border-gray-600 rounded-lg px-2 py-2 text-xs text-near-black dark:text-gray-100 focus:outline-none focus:border-brand flex-shrink-0"
                     >
                       <option value="rating">Rating 1–5</option>
                       <option value="yesno">Yes / No</option>
@@ -360,10 +360,10 @@ export default function AdminWellness() {
             ) : (
               <div className="space-y-3">
                 {forms.map(form => (
-                  <div key={form.id} className="bg-white/80 border border-gray-200 rounded-2xl px-5 py-4 flex items-center gap-3">
+                  <div key={form.id} className="bg-white/80 dark:bg-[#2C2C2E] border border-gray-200 rounded-2xl px-5 py-4 flex items-center gap-3">
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2">
-                        <p className="text-sm font-medium text-near-black truncate">{form.title}</p>
+                        <p className="text-sm font-medium text-near-black dark:text-gray-100 truncate">{form.title}</p>
                         {form.is_active && (
                           <span className="px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide bg-green-50 text-green-700 border border-green-200 rounded-full flex-shrink-0">
                             Active
@@ -415,21 +415,21 @@ export default function AdminWellness() {
                 <div className="flex-1 h-px bg-gray-200" />
               </div>
 
-              <div className="bg-white/80 border border-gray-200 rounded-2xl p-4">
+              <div className="bg-white/80 dark:bg-[#2C2C2E] border border-gray-200 rounded-2xl p-4">
                 {/* Month navigation */}
                 <div className="flex items-center justify-between mb-4">
                   <button
                     onClick={prevMonth}
-                    className="text-gray-400 hover:text-near-black transition-colors px-2 py-1 rounded-lg hover:bg-gray-100"
+                    className="text-gray-400 hover:text-near-black dark:hover:text-gray-100 transition-colors px-2 py-1 rounded-lg hover:bg-gray-100 dark:hover:bg-white/10"
                   >
                     ‹
                   </button>
-                  <span className="font-ui text-sm font-semibold text-near-black">
+                  <span className="font-ui text-sm font-semibold text-near-black dark:text-gray-100">
                     {MONTHS[calMonthIdx]} {calYear}
                   </span>
                   <button
                     onClick={nextMonth}
-                    className="text-gray-400 hover:text-near-black transition-colors px-2 py-1 rounded-lg hover:bg-gray-100"
+                    className="text-gray-400 hover:text-near-black dark:hover:text-gray-100 transition-colors px-2 py-1 rounded-lg hover:bg-gray-100 dark:hover:bg-white/10"
                   >
                     ›
                   </button>
@@ -464,11 +464,11 @@ export default function AdminWellness() {
                         className={`relative flex flex-col items-center rounded-lg py-1 px-0.5 transition-all
                           ${isPicking
                             ? 'bg-brand/10 ring-1 ring-brand'
-                            : 'hover:bg-gray-100'}
+                            : 'hover:bg-gray-100 dark:hover:bg-white/10'}
                           ${isPast ? 'opacity-40' : ''}`}
                       >
                         <span className={`font-ui text-xs font-medium leading-none mb-0.5
-                          ${isToday ? 'text-brand font-bold' : 'text-near-black'}`}>
+                          ${isToday ? 'text-brand font-bold' : 'text-near-black dark:text-gray-100'}`}>
                           {day}
                           {isToday && <span className="absolute top-0.5 right-0.5 w-1 h-1 rounded-full bg-brand" />}
                         </span>
@@ -495,8 +495,8 @@ export default function AdminWellness() {
                       <select
                         value={pickFormId}
                         onChange={e => setPickFormId(e.target.value)}
-                        className="flex-1 min-w-0 bg-gray-50 border border-gray-200 rounded-lg px-3 py-2
-                                   text-sm text-near-black focus:outline-none focus:border-brand"
+                        className="flex-1 min-w-0 bg-gray-50 dark:bg-[#3A3A3C] border border-gray-200 dark:border-gray-600 rounded-lg px-3 py-2
+                                   text-sm text-near-black dark:text-gray-100 focus:outline-none focus:border-brand"
                       >
                         {forms.map(f => (
                           <option key={f.id} value={f.id}>{f.title}</option>
@@ -561,14 +561,14 @@ export default function AdminWellness() {
                     const isExpanded = expandedId === player.id
 
                     return (
-                      <div key={player.id} className="bg-white/80 border border-gray-200 rounded-2xl overflow-hidden">
+                      <div key={player.id} className="bg-white/80 dark:bg-[#2C2C2E] border border-gray-200 rounded-2xl overflow-hidden">
                         <button
                           className="w-full flex items-center gap-3 px-5 py-3.5 text-left"
                           onClick={() => resp && setExpandedId(isExpanded ? null : player.id)}
                           disabled={!resp}
                         >
                           <span className={`w-2 h-2 rounded-full flex-shrink-0 ${resp ? 'bg-green-500' : 'bg-gray-300'}`} />
-                          <span className="text-sm font-medium text-near-black flex-1">{player.name}</span>
+                          <span className="text-sm font-medium text-near-black dark:text-gray-100 flex-1">{player.name}</span>
                           {resp ? (
                             <span className="text-xs text-gray-400">{formatTime(resp.submitted_at)}</span>
                           ) : (
@@ -584,7 +584,7 @@ export default function AdminWellness() {
                             {activeForm.questions.map(q => (
                               <div key={q.id} className="flex justify-between text-sm">
                                 <span className="text-gray-600">{q.label}</span>
-                                <span className="font-medium text-near-black">
+                                <span className="font-medium text-near-black dark:text-gray-100">
                                   {answerDisplay(q, resp.answers[q.id])}
                                 </span>
                               </div>

@@ -86,7 +86,7 @@ export default function AdminDashboard() {
         <p className="font-ui text-xs tracking-widest uppercase text-gray-500 mb-2">
           {greeting()}
         </p>
-        <h1 className="font-display text-5xl font-bold text-near-black leading-none">
+        <h1 className="font-display text-5xl font-bold text-near-black dark:text-gray-100 leading-none">
           {firstName}.
         </h1>
         <p className="font-display text-xl italic text-brand mt-1">
@@ -107,13 +107,13 @@ export default function AdminDashboard() {
             <Link
               key={to}
               to={to}
-              className="group bg-white/80 border border-gray-200 border-l-2 border-l-brand
+              className="group bg-white/80 dark:bg-[#2C2C2E] border border-gray-200 border-l-2 border-l-brand
                          rounded-xl p-5 flex gap-4 items-start
                          hover:border-gray-300 hover:border-l-brand-light transition-all"
             >
               <span className="text-2xl leading-none mt-0.5 shrink-0">{icon}</span>
               <div>
-                <p className="font-ui font-semibold text-sm text-near-black mb-1
+                <p className="font-ui font-semibold text-sm text-near-black dark:text-gray-100 mb-1
                                group-hover:text-brand transition-colors">
                   {label}
                 </p>
@@ -139,8 +139,8 @@ export default function AdminDashboard() {
             { label: 'Active wellness', value: counts.openWellness },
             { label: 'Playbook items', value: counts.playbookItems },
           ] as const).map(({ label, value }) => (
-            <div key={label} className="bg-white/80 border border-gray-200 rounded-xl p-4">
-              <p className="font-display text-3xl font-bold text-near-black mb-1">
+            <div key={label} className="bg-white/80 dark:bg-[#2C2C2E] border border-gray-200 rounded-xl p-4">
+              <p className="font-display text-3xl font-bold text-near-black dark:text-gray-100 mb-1">
                 {value === null ? <span className="text-gray-300 text-2xl">—</span> : value}
               </p>
               <p className="font-ui text-xs text-gray-400 uppercase tracking-wide">{label}</p>

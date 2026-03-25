@@ -210,11 +210,11 @@ export default function AdminStats() {
 
   return (
     <div className="space-y-8 pb-12">
-      <h1 className="text-near-black text-xl font-bold">Stats</h1>
+      <h1 className="text-near-black dark:text-gray-100 text-xl font-bold">Stats</h1>
 
       {/* ── Upload Form ──────────────────────────────────────────────────────── */}
-      <section className="bg-white/80 border border-gray-200 rounded-2xl p-6">
-        <h2 className="text-near-black font-semibold text-base mb-5">Upload Session Stats</h2>
+      <section className="bg-white/80 dark:bg-[#2C2C2E] border border-gray-200 rounded-2xl p-6">
+        <h2 className="text-near-black dark:text-gray-100 font-semibold text-base mb-5">Upload Session Stats</h2>
         <form onSubmit={handleSubmit} className="space-y-5">
           {/* Session label */}
           <div>
@@ -226,7 +226,7 @@ export default function AdminStats() {
               value={label}
               onChange={e => setLabel(e.target.value)}
               placeholder="e.g. Pre-season practice 1"
-              className="w-full bg-gray-50 border border-gray-200 rounded-lg px-3 py-2 text-sm text-near-black placeholder-gray-400 focus:outline-none focus:border-brand"
+              className="w-full bg-gray-50 dark:bg-[#3A3A3C] border border-gray-200 dark:border-gray-600 rounded-lg px-3 py-2 text-sm text-near-black dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:border-brand"
               maxLength={120}
             />
           </div>
@@ -256,7 +256,7 @@ export default function AdminStats() {
                 type="date"
                 value={sessionDate}
                 onChange={e => setSessionDate(e.target.value)}
-                className="bg-gray-50 border border-gray-200 rounded-lg px-3 py-2 text-sm text-near-black focus:outline-none focus:border-brand"
+                className="bg-gray-50 dark:bg-[#3A3A3C] border border-gray-200 dark:border-gray-600 rounded-lg px-3 py-2 text-sm text-near-black dark:text-gray-100 focus:outline-none focus:border-brand"
               />
             </div>
           </div>
@@ -297,7 +297,7 @@ export default function AdminStats() {
 
           {/* Parse preview */}
           {parseResult && (
-            <div className="border border-gray-200 rounded-xl p-4 space-y-4 bg-gray-50">
+            <div className="border border-gray-200 rounded-xl p-4 space-y-4 bg-gray-50 dark:bg-[#3A3A3C]">
               <div>
                 <p className="text-xs text-gray-600 mb-2">
                   <span className="font-medium text-near-black">Player column:</span>{' '}
@@ -333,7 +333,7 @@ export default function AdminStats() {
                       <select
                         value={m.profileId}
                         onChange={e => handleMatchOverride(i, e.target.value)}
-                        className="flex-1 bg-white border border-gray-200 rounded-md px-2 py-1 text-xs text-near-black focus:outline-none focus:border-brand"
+                        className="flex-1 bg-white dark:bg-[#2C2C2E] border border-gray-200 dark:border-gray-600 rounded-md px-2 py-1 text-xs text-near-black dark:text-gray-100 focus:outline-none focus:border-brand"
                       >
                         <option value="">— Skip —</option>
                         {players.map(p => (
@@ -392,11 +392,11 @@ export default function AdminStats() {
               )]
 
               return (
-                <div key={upload.id} className="bg-white/80 border border-gray-200 rounded-2xl overflow-hidden">
+                <div key={upload.id} className="bg-white/80 dark:bg-[#2C2C2E] border border-gray-200 rounded-2xl overflow-hidden">
                   {/* Row header */}
                   <div className="px-5 py-4 flex items-center gap-3">
                     <div className="flex-1 min-w-0">
-                      <p className="text-sm font-medium text-near-black truncate">{upload.label}</p>
+                      <p className="text-sm font-medium text-near-black dark:text-gray-100 truncate">{upload.label}</p>
                       <p className="text-xs text-gray-400 mt-0.5">
                         {upload.session_date}
                         <span className="mx-1.5">·</span>
@@ -435,8 +435,8 @@ export default function AdminStats() {
                       ) : (
                         <table className="w-full text-xs min-w-max">
                           <thead>
-                            <tr className="bg-gray-50 text-left">
-                              <th className="px-4 py-2 font-semibold text-gray-500 uppercase tracking-wide sticky left-0 bg-gray-50 whitespace-nowrap">
+                            <tr className="bg-gray-50 dark:bg-[#3A3A3C] text-left">
+                              <th className="px-4 py-2 font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide sticky left-0 bg-gray-50 dark:bg-[#3A3A3C] whitespace-nowrap">
                                 Player
                               </th>
                               {visibleStdCols.map(k => (
@@ -455,12 +455,12 @@ export default function AdminStats() {
                             {entries.map((entry, i) => {
                               const custom = (entry.custom as Record<string, unknown>) ?? {}
                               return (
-                                <tr key={i} className="hover:bg-gray-50/50 transition-colors">
-                                  <td className="px-4 py-2 font-medium text-near-black sticky left-0 bg-white whitespace-nowrap">
+                                <tr key={i} className="hover:bg-gray-50/50 dark:hover:bg-white/5 transition-colors">
+                                  <td className="px-4 py-2 font-medium text-near-black dark:text-gray-100 sticky left-0 bg-white dark:bg-[#2C2C2E] whitespace-nowrap">
                                     {playerMap.get(entry.player_id as string) ?? '—'}
                                   </td>
                                   {visibleStdCols.map(k => (
-                                    <td key={k} className="px-3 py-2 text-right tabular-nums text-near-black">
+                                    <td key={k} className="px-3 py-2 text-right tabular-nums text-near-black dark:text-gray-100">
                                       {entry[k] !== null && entry[k] !== undefined
                                         ? Number(entry[k]).toFixed(1)
                                         : <span className="text-gray-300">—</span>
@@ -496,14 +496,14 @@ export default function AdminStats() {
           <span className="text-[10px] font-semibold uppercase tracking-widest text-gray-400">Player Goals</span>
           <div className="flex-1 h-px bg-gray-200" />
         </div>
-        <div className="bg-white/80 border border-gray-200 rounded-2xl p-5 space-y-5">
+        <div className="bg-white/80 dark:bg-[#2C2C2E] border border-gray-200 rounded-2xl p-5 space-y-5">
           <form onSubmit={handleGoalSubmit} className="flex flex-wrap gap-3 items-end">
             <div>
               <label className="block text-xs font-medium text-gray-600 mb-1">Player</label>
               <select
                 value={goalPlayerId}
                 onChange={e => setGoalPlayerId(e.target.value)}
-                className="bg-gray-50 border border-gray-200 rounded-lg px-3 py-2 text-sm text-near-black focus:outline-none focus:border-brand"
+                className="bg-gray-50 dark:bg-[#3A3A3C] border border-gray-200 dark:border-gray-600 rounded-lg px-3 py-2 text-sm text-near-black dark:text-gray-100 focus:outline-none focus:border-brand"
               >
                 <option value="">Select player</option>
                 {players.map(p => <option key={p.id} value={p.id}>{p.name}</option>)}
@@ -514,7 +514,7 @@ export default function AdminStats() {
               <select
                 value={goalStatKey}
                 onChange={e => setGoalStatKey(e.target.value)}
-                className="bg-gray-50 border border-gray-200 rounded-lg px-3 py-2 text-sm text-near-black focus:outline-none focus:border-brand"
+                className="bg-gray-50 dark:bg-[#3A3A3C] border border-gray-200 dark:border-gray-600 rounded-lg px-3 py-2 text-sm text-near-black dark:text-gray-100 focus:outline-none focus:border-brand"
               >
                 {STANDARD_STAT_KEYS.map(k => (
                   <option key={k} value={k}>{STAT_LABELS[k]}</option>
@@ -546,7 +546,7 @@ export default function AdminStats() {
             <div className="space-y-2 pt-2 border-t border-gray-100">
               {goals.map(g => (
                 <div key={g.id} className="flex items-center gap-2 text-sm">
-                  <span className="text-near-black font-medium w-36 truncate">
+                  <span className="text-near-black dark:text-gray-100 font-medium w-36 truncate">
                     {playerMap.get(g.player_id) ?? '—'}
                   </span>
                   <span className="text-gray-400 text-xs">·</span>
@@ -570,8 +570,8 @@ export default function AdminStats() {
       {/* ── Annotation Modal ─────────────────────────────────────────────────── */}
       {annotModal && (
         <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 px-4">
-          <div className="bg-white rounded-2xl p-6 w-full max-w-md shadow-xl">
-            <h3 className="text-near-black font-semibold mb-4">Add Coaching Annotation</h3>
+          <div className="bg-white dark:bg-[#2C2C2E] rounded-2xl p-6 w-full max-w-md shadow-xl">
+            <h3 className="text-near-black dark:text-gray-100 font-semibold mb-4">Add Coaching Annotation</h3>
             <form onSubmit={handleAnnotSubmit} className="space-y-4">
               <div>
                 <label className="block text-xs font-medium text-gray-600 mb-1.5">Player</label>

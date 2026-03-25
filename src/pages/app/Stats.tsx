@@ -20,7 +20,7 @@ function SectionHeader({ title }: { title: string }) {
 
 function WeeklyWrapped({ week }: { week: EnrichedWeek }) {
   return (
-    <div className="bg-white border-2 border-gold rounded-2xl p-5">
+    <div className="bg-white dark:bg-[#2C2C2E] border-2 border-gold rounded-2xl p-5">
       <div className="flex items-center gap-2 mb-4">
         <span className="text-[10px] font-semibold uppercase tracking-widest text-gold">This Week</span>
         <span className="text-xs text-gray-400 truncate flex-1">{week.label}</span>
@@ -32,7 +32,7 @@ function WeeklyWrapped({ week }: { week: EnrichedWeek }) {
       <div className="grid grid-cols-4 gap-2">
         {HERO_STATS.map(stat => (
           <div key={stat} className="text-center">
-            <p className="text-2xl font-bold text-near-black font-display">
+            <p className="text-2xl font-bold text-near-black dark:text-gray-100 font-display">
               {week.stats[stat] !== null ? week.stats[stat]!.toFixed(1) : '—'}
             </p>
             <p className="text-[10px] text-gray-400 uppercase tracking-wide mt-0.5">
@@ -64,10 +64,10 @@ function WeeklyWrapped({ week }: { week: EnrichedWeek }) {
 
 function GameCard({ game }: { game: EnrichedGame }) {
   return (
-    <div className="bg-white border border-gray-200 border-l-2 border-l-brand rounded-2xl p-4">
+    <div className="bg-white dark:bg-[#2C2C2E] border border-gray-200 border-l-2 border-l-brand rounded-2xl p-4">
       <div className="flex items-center justify-between mb-3">
         <div className="min-w-0">
-          <p className="text-sm font-semibold text-near-black truncate">{game.label}</p>
+          <p className="text-sm font-semibold text-near-black dark:text-gray-100 truncate">{game.label}</p>
           <p className="text-xs text-gray-400 mt-0.5">{game.sessionDate}</p>
         </div>
         <span className="px-2 py-0.5 rounded-full text-[10px] font-medium uppercase tracking-wide flex-shrink-0 ml-3 bg-brand/10 text-brand">
@@ -94,7 +94,7 @@ function GameCard({ game }: { game: EnrichedGame }) {
 
           return (
             <div key={stat} className="text-center">
-              <p className="font-display text-2xl font-bold text-near-black leading-none">
+              <p className="font-display text-2xl font-bold text-near-black dark:text-gray-100 leading-none">
                 {val !== null ? val.toFixed(1) : '—'}
               </p>
               <p className="font-ui text-[10px] text-gray-400 uppercase tracking-wide mt-0.5">
@@ -137,10 +137,10 @@ function StatTrendCard({
   const avgKey = `${stat}_avg`
 
   return (
-    <div className="bg-white border border-gray-200 rounded-2xl p-3">
+    <div className="bg-white dark:bg-[#2C2C2E] border border-gray-200 rounded-2xl p-3">
       <div className="flex justify-between items-baseline mb-1">
-        <p className="text-[11px] font-medium text-gray-600">{STAT_LABELS[stat]}</p>
-        <p className="text-lg font-bold text-near-black font-display">
+        <p className="text-[11px] font-medium text-gray-600 dark:text-gray-400">{STAT_LABELS[stat]}</p>
+        <p className="text-lg font-bold text-near-black dark:text-gray-100 font-display">
           {latest !== null && latest !== undefined ? Number(latest).toFixed(1) : '—'}
         </p>
       </div>
@@ -190,7 +190,7 @@ export default function Stats() {
     return (
       <div className="px-4 py-20 text-center">
         <p className="text-4xl mb-3">📊</p>
-        <p className="text-near-black font-semibold">No stats yet</p>
+        <p className="text-near-black dark:text-gray-100 font-semibold">No stats yet</p>
         <p className="text-sm text-gray-400 mt-1">Your coach will upload session stats here.</p>
       </div>
     )
@@ -294,8 +294,8 @@ export default function Stats() {
             {customKeys.map(k => {
               const v = latestPractice!.custom[k]
               return (
-                <div key={k} className="bg-white border border-gray-200 rounded-2xl p-3 text-center">
-                  <p className="text-2xl font-bold text-near-black font-display">
+                <div key={k} className="bg-white dark:bg-[#2C2C2E] border border-gray-200 rounded-2xl p-3 text-center">
+                  <p className="text-2xl font-bold text-near-black dark:text-gray-100 font-display">
                     {v !== null && typeof v === 'number' ? v.toFixed(1) : '—'}
                   </p>
                   <p className="text-[10px] text-gray-400 uppercase tracking-wide mt-1 truncate">{k}</p>
@@ -315,16 +315,16 @@ export default function Stats() {
               const current = latestPractice.stats[g.stat_key as StandardStatKey] ?? null
               const pct = current !== null ? Math.min((current / g.target) * 100, 100) : 0
               return (
-                <div key={g.id} className="bg-white border border-gray-200 rounded-2xl px-4 py-3">
+                <div key={g.id} className="bg-white dark:bg-[#2C2C2E] border border-gray-200 rounded-2xl px-4 py-3">
                   <div className="flex justify-between text-sm mb-2">
-                    <span className="font-medium text-near-black">
+                    <span className="font-medium text-near-black dark:text-gray-100">
                       {STAT_LABELS[g.stat_key as keyof typeof STAT_LABELS] ?? g.stat_key}
                     </span>
                     <span className="text-gray-400 tabular-nums">
                       {current !== null ? current.toFixed(1) : '—'} / {g.target}
                     </span>
                   </div>
-                  <div className="w-full bg-gray-100 rounded-full h-1.5">
+                  <div className="w-full bg-gray-100 dark:bg-gray-700 rounded-full h-1.5">
                     <div
                       className="bg-brand h-1.5 rounded-full transition-all duration-500"
                       style={{ width: `${pct}%` }}
@@ -343,15 +343,15 @@ export default function Stats() {
           <SectionHeader title="Coach Notes" />
           <div className="space-y-3">
             {annotatedWeeks.map(w => (
-              <div key={w.weekStart} className="bg-white border border-gray-200 border-l-4 border-l-brand rounded-2xl px-4 py-3">
+              <div key={w.weekStart} className="bg-white dark:bg-[#2C2C2E] border border-gray-200 border-l-4 border-l-brand rounded-2xl px-4 py-3">
                 <p className="text-[10px] text-gray-400 uppercase tracking-wide mb-1">{w.label} · Practice</p>
-                <p className="text-sm text-near-black">{w.annotation!.note}</p>
+                <p className="text-sm text-near-black dark:text-gray-100">{w.annotation!.note}</p>
               </div>
             ))}
             {annotatedGames.map(g => (
-              <div key={g.uploadId} className="bg-white border border-gray-200 border-l-4 border-l-brand rounded-2xl px-4 py-3">
+              <div key={g.uploadId} className="bg-white dark:bg-[#2C2C2E] border border-gray-200 border-l-4 border-l-brand rounded-2xl px-4 py-3">
                 <p className="text-[10px] text-gray-400 uppercase tracking-wide mb-1">{g.label} · Game</p>
-                <p className="text-sm text-near-black">{g.annotation!.note}</p>
+                <p className="text-sm text-near-black dark:text-gray-100">{g.annotation!.note}</p>
               </div>
             ))}
           </div>
