@@ -136,7 +136,7 @@ export default function AdminDashboard() {
           {([
             { label: 'Film posts',     value: counts.filmPosts },
             { label: 'Stat uploads',   value: counts.statUploads },
-            { label: 'Open wellness',  value: counts.openWellness },
+            { label: 'Active wellness', value: counts.openWellness },
             { label: 'Playbook items', value: counts.playbookItems },
           ] as const).map(({ label, value }) => (
             <div key={label} className="bg-white/80 border border-gray-200 rounded-xl p-4">

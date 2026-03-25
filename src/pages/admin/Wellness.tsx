@@ -115,10 +115,15 @@ export default function AdminWellness() {
     setSaving(false)
   }
 
-  // ── Activate form ─────────────────────────────────────────────────────────
+  // ── Activate / deactivate form ────────────────────────────────────────────
   const handleSetActive = async (formId: string) => {
     await (supabase as any).from('wellness_forms').update({ is_active: false }).eq('is_active', true)
     await (supabase as any).from('wellness_forms').update({ is_active: true }).eq('id', formId)
+    refresh()
+  }
+
+  const handleDeactivate = async (formId: string) => {
+    await (supabase as any).from('wellness_forms').update({ is_active: false }).eq('id', formId)
     refresh()
   }
 
@@ -267,7 +272,14 @@ export default function AdminWellness() {
                         {form.questions.length} question{form.questions.length !== 1 ? 's' : ''}
                       </p>
                     </div>
-                    {!form.is_active && (
+                    {form.is_active ? (
+                      <button
+                        onClick={() => handleDeactivate(form.id)}
+                        className="text-xs text-gray-400 hover:text-near-black font-medium transition-colors flex-shrink-0"
+                      >
+                        Deactivate
+                      </button>
+                    ) : (
                       <button
                         onClick={() => handleSetActive(form.id)}
                         className="text-xs text-brand hover:text-brand/70 font-medium transition-colors flex-shrink-0"
