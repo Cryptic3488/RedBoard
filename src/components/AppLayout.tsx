@@ -1,6 +1,7 @@
 import { NavLink, Outlet, Link } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { useUnreadCount } from '../hooks/useUnreadCount'
+import { useTheme } from '../context/ThemeContext'
 
 const NAV = [
   { to: '/app/feed',     label: 'Feed',     icon: '📋' },
@@ -12,7 +13,8 @@ const NAV = [
 
 export function AppLayout() {
   const { role, profile } = useAuth()
-  const { unreadCount } = useUnreadCount() // initialise dark class from localStorage on mount
+  const { unreadCount } = useUnreadCount()
+  const { dim, setDim } = useTheme()
 
   const avatarUrl  = profile?.avatar_url ?? null
   const initial    = (profile?.name ?? '?').charAt(0).toUpperCase()
@@ -40,6 +42,14 @@ export function AppLayout() {
               Admin
             </NavLink>
           )}
+          <button
+            type="button"
+            onClick={() => setDim(!dim)}
+            aria-label="Toggle dim mode"
+            className="font-ui text-xs text-gray-400 dark:text-gray-500 hover:text-near-black dark:hover:text-gray-100 transition-colors px-2 py-1"
+          >
+            {dim ? '☀' : '◗'}
+          </button>
           {/* Avatar — links to Profile page */}
           <Link to="/app/profile" aria-label="Profile">
             {avatarUrl ? (
