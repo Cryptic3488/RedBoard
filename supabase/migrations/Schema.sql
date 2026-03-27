@@ -28,6 +28,28 @@ CREATE TABLE public.film_posts (
   CONSTRAINT film_posts_pkey PRIMARY KEY (id),
   CONSTRAINT film_posts_created_by_fkey FOREIGN KEY (created_by) REFERENCES public.profiles(id)
 );
+CREATE TABLE public.playbook_files (
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  folder_id uuid NOT NULL,
+  name text NOT NULL CHECK (char_length(name) >= 1 AND char_length(name) <= 120),
+  storage_path text NOT NULL,
+  mime_type text NOT NULL DEFAULT 'image/jpeg'::text,
+  sort_order integer NOT NULL DEFAULT 0,
+  created_by uuid NOT NULL,
+  created_at timestamp with time zone NOT NULL DEFAULT now(),
+  CONSTRAINT playbook_files_pkey PRIMARY KEY (id),
+  CONSTRAINT playbook_files_folder_id_fkey FOREIGN KEY (folder_id) REFERENCES public.playbook_folders(id),
+  CONSTRAINT playbook_files_created_by_fkey FOREIGN KEY (created_by) REFERENCES public.profiles(id)
+);
+CREATE TABLE public.playbook_folders (
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  name text NOT NULL CHECK (char_length(name) >= 1 AND char_length(name) <= 80),
+  sort_order integer NOT NULL DEFAULT 0,
+  created_by uuid NOT NULL,
+  created_at timestamp with time zone NOT NULL DEFAULT now(),
+  CONSTRAINT playbook_folders_pkey PRIMARY KEY (id),
+  CONSTRAINT playbook_folders_created_by_fkey FOREIGN KEY (created_by) REFERENCES public.profiles(id)
+);
 CREATE TABLE public.profiles (
   id uuid NOT NULL,
   role text NOT NULL DEFAULT 'player'::text CHECK (role = ANY (ARRAY['admin'::text, 'player'::text])),

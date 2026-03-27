@@ -50,6 +50,7 @@ export interface StatUpload {
   label: string
   session_type: SessionType
   session_date: string
+  is_published: boolean
   created_at: string
 }
 

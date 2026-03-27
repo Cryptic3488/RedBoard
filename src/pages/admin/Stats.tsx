@@ -147,6 +147,14 @@ export default function AdminStats() {
     refresh()
   }
 
+  const handleTogglePublish = async (id: string, currentlyPublished: boolean) => {
+    await (supabase as any)
+      .from('stat_uploads')
+      .update({ is_published: !currentlyPublished })
+      .eq('id', id)
+    refresh()
+  }
+
   // ── Upload entry fetch ──────────────────────────────────────────────────────
   const fetchUploadEntries = async (uploadId: string) => {
     if (uploadEntries.has(uploadId)) return
@@ -367,7 +375,7 @@ export default function AdminStats() {
       {/* ── Upload History ───────────────────────────────────────────────────── */}
       <section>
         <div className="flex items-center gap-3 mb-4">
-          <span className="text-[10px] font-semibold uppercase tracking-widest text-gray-400">Published Uploads</span>
+          <span className="text-[10px] font-semibold uppercase tracking-widest text-gray-400">Uploads</span>
           <div className="flex-1 h-px bg-gray-200" />
         </div>
         {uploadsLoading ? (
@@ -396,13 +404,35 @@ export default function AdminStats() {
                   {/* Row header */}
                   <div className="px-5 py-4 flex items-center gap-3">
                     <div className="flex-1 min-w-0">
-                      <p className="text-sm font-medium text-near-black dark:text-gray-100 truncate">{upload.label}</p>
+                      <div className="flex items-center gap-2">
+                        <p className="text-sm font-medium text-near-black dark:text-gray-100 truncate">{upload.label}</p>
+                        {upload.is_published ? (
+                          <span className="px-1.5 py-0.5 rounded-full text-[10px] font-semibold uppercase tracking-wide flex-shrink-0
+                                           bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-400 border border-green-200 dark:border-green-800">
+                            Published
+                          </span>
+                        ) : (
+                          <span className="px-1.5 py-0.5 rounded-full text-[10px] font-semibold uppercase tracking-wide flex-shrink-0
+                                           bg-gray-100 dark:bg-[#3A3A3C] text-gray-400 dark:text-gray-500 border border-gray-200 dark:border-gray-600">
+                            Draft
+                          </span>
+                        )}
+                      </div>
                       <p className="text-xs text-gray-400 mt-0.5">
                         {upload.session_date}
                         <span className="mx-1.5">·</span>
                         <span className="capitalize">{upload.session_type}</span>
                       </p>
                     </div>
+                    <button
+                      onClick={() => handleTogglePublish(upload.id, upload.is_published)}
+                      className={`text-xs font-semibold transition-colors flex-shrink-0
+                        ${upload.is_published
+                          ? 'text-gray-400 dark:text-gray-500 hover:text-red-600 dark:hover:text-red-400'
+                          : 'text-brand hover:text-brand/70'}`}
+                    >
+                      {upload.is_published ? 'Unpublish' : 'Publish'}
+                    </button>
                     <button
                       onClick={() => toggleUploadExpand(upload.id)}
                       className="text-xs text-gray-500 dark:text-gray-400 hover:text-near-black dark:hover:text-gray-100 font-medium transition-colors flex-shrink-0"

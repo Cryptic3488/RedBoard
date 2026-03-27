@@ -39,6 +39,107 @@ function answerDisplay(q: WellnessQuestion, val: number | string | undefined): s
   return String(val)
 }
 
+// ── Wellness summary aggregation ───────────────────────────────────────────────
+
+interface QuestionAgg {
+  q: WellnessQuestion
+  responseCount: number
+  avg: number | null      // rating questions only
+  yesCount: number | null // yesno questions only
+}
+
+function computeAggregates(
+  questions: WellnessQuestion[],
+  responses: WellnessResponse[],
+): QuestionAgg[] {
+  return questions.map(q => {
+    const vals = responses
+      .map(r => r.answers[q.id])
+      .filter(v => v !== undefined && v !== '')
+
+    let avg: number | null = null
+    let yesCount: number | null = null
+
+    if (q.type === 'rating') {
+      const nums = vals.map(v => Number(v)).filter(n => !isNaN(n))
+      avg = nums.length > 0 ? nums.reduce((a, b) => a + b, 0) / nums.length : null
+    } else if (q.type === 'yesno') {
+      yesCount = vals.filter(v => v === 'Yes').length
+    }
+
+    return { q, responseCount: vals.length, avg, yesCount }
+  })
+}
+
+function WellnessSummaryCard({
+  questions,
+  responses,
+  totalCount,
+}: {
+  questions: WellnessQuestion[]
+  responses: WellnessResponse[]
+  totalCount: number
+}) {
+  if (responses.length === 0) return null
+  const aggs = computeAggregates(questions, responses)
+  const submitted = responses.length
+
+  return (
+    <div className="bg-white/80 dark:bg-[#2C2C2E] border border-gray-200 rounded-2xl px-5 py-4 mb-4">
+      <div className="flex items-center justify-between mb-4">
+        <span className="text-xs font-semibold uppercase tracking-widest text-gray-400 dark:text-gray-500">
+          Team Summary
+        </span>
+        <span className="text-xs text-gray-400 dark:text-gray-500">
+          {submitted} of {totalCount} submitted
+        </span>
+      </div>
+
+      <div className="space-y-3">
+        {aggs.map(({ q, responseCount, avg, yesCount }) => (
+          <div key={q.id}>
+            <div className="flex items-center justify-between mb-1">
+              <span className="text-xs text-gray-500 dark:text-gray-400 truncate pr-4">{q.label}</span>
+              {q.type === 'rating' && avg !== null && (
+                <span className="text-xs font-semibold text-near-black dark:text-gray-100 flex-shrink-0">
+                  {avg.toFixed(1)} / 5
+                </span>
+              )}
+              {q.type === 'yesno' && yesCount !== null && (
+                <span className="text-xs font-semibold text-near-black dark:text-gray-100 flex-shrink-0">
+                  {yesCount} of {responseCount} yes
+                </span>
+              )}
+              {q.type === 'text' && (
+                <span className="text-xs text-gray-400 dark:text-gray-500 flex-shrink-0">
+                  {responseCount} response{responseCount !== 1 ? 's' : ''}
+                </span>
+              )}
+            </div>
+
+            {q.type === 'rating' && avg !== null && (
+              <div className="h-1.5 w-full rounded-full bg-gray-100 dark:bg-[#3A3A3C] overflow-hidden">
+                <div
+                  className="h-full rounded-full bg-brand transition-all"
+                  style={{ width: `${(avg / 5) * 100}%` }}
+                />
+              </div>
+            )}
+            {q.type === 'yesno' && yesCount !== null && responseCount > 0 && (
+              <div className="h-1.5 w-full rounded-full bg-gray-100 dark:bg-[#3A3A3C] overflow-hidden">
+                <div
+                  className="h-full rounded-full bg-brand transition-all"
+                  style={{ width: `${(yesCount / responseCount) * 100}%` }}
+                />
+              </div>
+            )}
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+}
+
 // ── Main component ─────────────────────────────────────────────────────────────
 
 export default function AdminWellness() {
@@ -555,6 +656,12 @@ export default function AdminWellness() {
               ) : players.length === 0 ? (
                 <p className="text-sm text-gray-400 text-center py-8">No players on roster yet</p>
               ) : (
+                <>
+                  <WellnessSummaryCard
+                    questions={activeForm.questions}
+                    responses={todayResponses}
+                    totalCount={players.length}
+                  />
                 <div className="space-y-2">
                   {players.map(player => {
                     const resp = responseMap.get(player.id)
@@ -595,6 +702,7 @@ export default function AdminWellness() {
                     )
                   })}
                 </div>
+                </>
               )}
             </section>
           )}
