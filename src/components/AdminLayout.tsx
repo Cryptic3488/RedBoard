@@ -26,10 +26,10 @@ export function AdminLayout() {
       <header className="bg-white/90 dark:bg-[#1A1A1A]/95 backdrop-blur border-b border-gray-200/60 px-4 py-3
                          flex items-center justify-between sticky top-0 z-10">
         <div className="flex items-center gap-3">
-          <div className="flex items-center gap-1.5">
+          <Link to="/admin" className="flex items-center gap-1.5">
             <span className="font-ui font-black text-lg text-brand">Red</span>
             <span className="font-ui font-black text-lg text-near-black dark:text-gray-100">Board</span>
-          </div>
+          </Link>
           <div className="w-px h-3.5 bg-gray-300" />
           <span className="font-ui text-xs tracking-widest uppercase text-brand font-semibold">
             Admin
