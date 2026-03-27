@@ -153,11 +153,11 @@ export default function AdminFilm() {
   return (
     <div className="px-4 pt-6 pb-10 max-w-2xl mx-auto">
       <h1 className="font-display text-2xl font-bold text-near-black dark:text-gray-100 mb-1">Film</h1>
-      <p className="font-ui text-sm text-gray-500 mb-8">Post Hudl clips or upload video to share with players.</p>
+      <p className="font-ui text-sm text-gray-500 dark:text-gray-400 mb-8">Post Hudl clips or upload video to share with players.</p>
 
       {/* ── Upload form ── */}
       <section className="bg-white/80 dark:bg-[#2C2C2E] border border-gray-200 rounded-xl p-5 mb-10">
-        <h2 className="font-ui text-xs font-semibold tracking-widest uppercase text-gray-500 mb-5">
+        <h2 className="font-ui text-xs font-semibold tracking-widest uppercase text-gray-500 dark:text-gray-400 mb-5">
           New Post
         </h2>
 
@@ -234,7 +234,7 @@ export default function AdminFilm() {
               <label className="flex flex-col items-center justify-center w-full h-28
                                 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer
                                 hover:border-brand/40 transition-colors bg-gray-100/60 dark:bg-[#3A3A3C]">
-                <span className="font-ui text-sm text-gray-500">
+                <span className="font-ui text-sm text-gray-500 dark:text-gray-400">
                   {form.file ? form.file.name : 'Click to select video or audio'}
                 </span>
                 {form.file && (
@@ -269,7 +269,7 @@ export default function AdminFilm() {
 
           {/* Audience */}
           <div>
-            <label className="font-ui text-xs text-gray-600 block mb-2">Audience</label>
+            <label className="font-ui text-xs text-gray-600 dark:text-gray-400 block mb-2">Audience</label>
             <div className="flex gap-4">
               {(['team', 'individual'] as Visibility[]).map(v => (
                 <label key={v} className="flex items-center gap-2 cursor-pointer">
@@ -292,7 +292,7 @@ export default function AdminFilm() {
           {/* Player checkboxes */}
           {form.visibility === 'individual' && (
             <div>
-              <label className="font-ui text-xs text-gray-600 block mb-2">Select players</label>
+              <label className="font-ui text-xs text-gray-600 dark:text-gray-400 block mb-2">Select players</label>
               <div className="space-y-1.5 max-h-48 overflow-y-auto pr-1">
                 {players.map(p => (
                   <label key={p.id} className="flex items-center gap-2.5 cursor-pointer group">

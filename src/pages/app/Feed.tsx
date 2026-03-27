@@ -178,7 +178,7 @@ function PlaybookCard() {
     >
       <span className="text-xl flex-shrink-0">📖</span>
       <div className="flex-1 min-w-0">
-        <p className="font-ui text-sm font-semibold text-near-black">Playbook updated</p>
+        <p className="font-ui text-sm font-semibold text-near-black dark:text-gray-100">Playbook updated</p>
         <p className="font-ui text-xs text-gray-400 truncate">
           {update.fileCount} {update.fileCount === 1 ? 'play' : 'plays'} in {update.folderName}
         </p>
@@ -244,7 +244,7 @@ export default function Feed() {
       {!wellnessLoading && wellnessForm && !todayResponse && (
         <Link
           to="/app/wellness"
-          className="flex items-center gap-3 bg-white/80 border border-gold/50 border-l-2 border-l-gold rounded-xl px-4 py-3 mb-6 hover:border-gold transition-colors"
+          className="flex items-center gap-3 bg-white/80 dark:bg-[#2C2C2E] border border-gold/50 border-l-2 border-l-gold rounded-xl px-4 py-3 mb-6 hover:border-gold transition-colors"
         >
           <span className="text-xl flex-shrink-0">💪</span>
           <div className="flex-1 min-w-0">

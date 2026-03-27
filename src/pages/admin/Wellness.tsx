@@ -260,7 +260,7 @@ export default function AdminWellness() {
           <h2 className="text-near-black dark:text-gray-100 font-semibold text-base mb-5">{editingForm ? 'Edit Form' : 'New Form'}</h2>
           <form onSubmit={handleSave} className="space-y-5">
             <div>
-              <label className="block text-xs font-medium uppercase tracking-wide text-gray-600 mb-1.5">
+              <label className="block text-xs font-medium uppercase tracking-wide text-gray-600 dark:text-gray-400 mb-1.5">
                 Form Title
               </label>
               <input
@@ -274,7 +274,7 @@ export default function AdminWellness() {
             </div>
 
             <div>
-              <label className="block text-xs font-medium uppercase tracking-wide text-gray-600 mb-3">
+              <label className="block text-xs font-medium uppercase tracking-wide text-gray-600 dark:text-gray-400 mb-3">
                 Questions
               </label>
               <div className="space-y-3">
@@ -327,7 +327,7 @@ export default function AdminWellness() {
               <button
                 type="button"
                 onClick={handleCancelBuild}
-                className="flex-1 py-2.5 rounded-xl text-sm font-medium border border-gray-200 text-gray-600 hover:bg-gray-50 transition-colors"
+                className="flex-1 py-2.5 rounded-xl text-sm font-medium border border-gray-200 dark:border-gray-600 text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-white/5 transition-colors"
               >
                 Cancel
               </button>
@@ -391,7 +391,7 @@ export default function AdminWellness() {
                     )}
                     <button
                       onClick={() => handleEdit(form)}
-                      className="text-xs text-gray-500 hover:text-near-black font-medium transition-colors flex-shrink-0"
+                      className="text-xs text-gray-500 dark:text-gray-400 hover:text-near-black dark:hover:text-gray-100 font-medium transition-colors flex-shrink-0"
                     >
                       Edit
                     </button>
@@ -486,7 +486,7 @@ export default function AdminWellness() {
                 {/* Inline date picker */}
                 {pickingDate && (
                   <div className="mt-4 pt-4 border-t border-gray-100">
-                    <p className="font-ui text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">
+                    <p className="font-ui text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-3">
                       {new Date(pickingDate + 'T12:00:00').toLocaleDateString('en-US', {
                         weekday: 'long', month: 'long', day: 'numeric'
                       })}
@@ -583,7 +583,7 @@ export default function AdminWellness() {
                           <div className="px-5 pb-4 pt-1 border-t border-gray-100 space-y-2">
                             {activeForm.questions.map(q => (
                               <div key={q.id} className="flex justify-between text-sm">
-                                <span className="text-gray-600">{q.label}</span>
+                                <span className="text-gray-600 dark:text-gray-400">{q.label}</span>
                                 <span className="font-medium text-near-black dark:text-gray-100">
                                   {answerDisplay(q, resp.answers[q.id])}
                                 </span>

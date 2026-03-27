@@ -43,11 +43,11 @@ export default function Login() {
         <div className="mb-10 text-center">
           <div className="mb-4">
             <span className="font-ui font-black text-4xl tracking-tight text-brand">Red</span>
-            <span className="font-ui font-black text-4xl tracking-tight text-near-black">Board</span>
+            <span className="font-ui font-black text-4xl tracking-tight text-near-black dark:text-gray-100">Board</span>
           </div>
           <div className="inline-flex items-center gap-2">
             <div className="h-px w-8 bg-brand" />
-            <p className="font-ui text-xs tracking-widest uppercase text-gray-500">
+            <p className="font-ui text-xs tracking-widest uppercase text-gray-500 dark:text-gray-400">
               Denison Women's Basketball
             </p>
             <div className="h-px w-8 bg-brand" />

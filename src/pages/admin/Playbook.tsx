@@ -312,7 +312,7 @@ export default function AdminPlaybook() {
                 }`}
               >
                 <span className="text-lg">{uploading ? '⏳' : isDragging ? '⬇️' : '📎'}</span>
-                <span className="text-sm text-gray-500">
+                <span className="text-sm text-gray-500 dark:text-gray-400">
                   {uploading
                     ? 'Uploading…'
                     : isDragging

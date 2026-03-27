@@ -218,7 +218,7 @@ export default function AdminStats() {
         <form onSubmit={handleSubmit} className="space-y-5">
           {/* Session label */}
           <div>
-            <label className="block text-xs font-medium tracking-wide uppercase text-gray-600 mb-1.5">
+            <label className="block text-xs font-medium tracking-wide uppercase text-gray-600 dark:text-gray-400 mb-1.5">
               Session Label
             </label>
             <input
@@ -234,7 +234,7 @@ export default function AdminStats() {
           {/* Session type + date */}
           <div className="flex gap-4 flex-wrap">
             <div>
-              <label className="block text-xs font-medium tracking-wide uppercase text-gray-600 mb-1.5">Type</label>
+              <label className="block text-xs font-medium tracking-wide uppercase text-gray-600 dark:text-gray-400 mb-1.5">Type</label>
               <div className="flex gap-1 border border-gray-200 rounded-lg p-0.5 w-fit">
                 {(['practice', 'game'] as const).map(t => (
                   <button
@@ -242,7 +242,7 @@ export default function AdminStats() {
                     type="button"
                     onClick={() => setSessionType(t)}
                     className={`px-4 py-1.5 rounded-md text-xs font-medium capitalize transition-colors ${
-                      sessionType === t ? 'bg-brand text-white' : 'text-gray-600 hover:text-near-black'
+                      sessionType === t ? 'bg-brand text-white' : 'text-gray-600 dark:text-gray-400 hover:text-near-black dark:hover:text-gray-100'
                     }`}
                   >
                     {t}
@@ -251,7 +251,7 @@ export default function AdminStats() {
               </div>
             </div>
             <div>
-              <label className="block text-xs font-medium tracking-wide uppercase text-gray-600 mb-1.5">Date</label>
+              <label className="block text-xs font-medium tracking-wide uppercase text-gray-600 dark:text-gray-400 mb-1.5">Date</label>
               <input
                 type="date"
                 value={sessionDate}
@@ -263,7 +263,7 @@ export default function AdminStats() {
 
           {/* File drop zone */}
           <div>
-            <label className="block text-xs font-medium tracking-wide uppercase text-gray-600 mb-1.5">Stat File</label>
+            <label className="block text-xs font-medium tracking-wide uppercase text-gray-600 dark:text-gray-400 mb-1.5">Stat File</label>
             <div
               onClick={() => fileInputRef.current?.click()}
               onDragOver={e => { e.preventDefault(); setIsDragging(true) }}
@@ -299,7 +299,7 @@ export default function AdminStats() {
           {parseResult && (
             <div className="border border-gray-200 rounded-xl p-4 space-y-4 bg-gray-50 dark:bg-[#3A3A3C]">
               <div>
-                <p className="text-xs text-gray-600 mb-2">
+                <p className="text-xs text-gray-600 dark:text-gray-400 mb-2">
                   <span className="font-medium text-near-black">Player column:</span>{' '}
                   {parseResult.detectedPlayerColumn}
                   <span className="mx-2">·</span>
@@ -312,7 +312,7 @@ export default function AdminStats() {
                     </span>
                   ))}
                   {parseResult.customColumns.map(c => (
-                    <span key={c} className="px-2 py-0.5 text-xs rounded-full bg-gray-100 text-gray-600 border border-gray-200">
+                    <span key={c} className="px-2 py-0.5 text-xs rounded-full bg-gray-100 dark:bg-[#3A3A3C] text-gray-600 dark:text-gray-400 border border-gray-200 dark:border-gray-600">
                       {c} (custom)
                     </span>
                   ))}
@@ -321,7 +321,7 @@ export default function AdminStats() {
 
               {/* Player match list */}
               <div>
-                <p className="text-xs font-medium text-gray-600 mb-2 uppercase tracking-wide">
+                <p className="text-xs font-medium text-gray-600 dark:text-gray-400 mb-2 uppercase tracking-wide">
                   Player Matching — {matchedCount}/{matches.length} matched
                 </p>
                 <div className="space-y-1.5 max-h-60 overflow-y-auto pr-1">
@@ -405,7 +405,7 @@ export default function AdminStats() {
                     </div>
                     <button
                       onClick={() => toggleUploadExpand(upload.id)}
-                      className="text-xs text-gray-500 hover:text-near-black font-medium transition-colors flex-shrink-0"
+                      className="text-xs text-gray-500 dark:text-gray-400 hover:text-near-black dark:hover:text-gray-100 font-medium transition-colors flex-shrink-0"
                     >
                       {isExpanded ? 'Hide ▲' : 'View ▼'}
                     </button>
@@ -440,7 +440,7 @@ export default function AdminStats() {
                                 Player
                               </th>
                               {visibleStdCols.map(k => (
-                                <th key={k} className="px-3 py-2 font-semibold text-gray-500 uppercase tracking-wide text-right whitespace-nowrap">
+                                <th key={k} className="px-3 py-2 font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide text-right whitespace-nowrap">
                                   {STAT_LABELS[k]}
                                 </th>
                               ))}
@@ -468,7 +468,7 @@ export default function AdminStats() {
                                     </td>
                                   ))}
                                   {customKeys.map(k => (
-                                    <td key={k} className="px-3 py-2 text-right tabular-nums text-gray-500">
+                                    <td key={k} className="px-3 py-2 text-right tabular-nums text-gray-500 dark:text-gray-400">
                                       {custom[k] !== undefined && custom[k] !== null
                                         ? String(custom[k])
                                         : <span className="text-gray-300">—</span>
@@ -499,7 +499,7 @@ export default function AdminStats() {
         <div className="bg-white/80 dark:bg-[#2C2C2E] border border-gray-200 rounded-2xl p-5 space-y-5">
           <form onSubmit={handleGoalSubmit} className="flex flex-wrap gap-3 items-end">
             <div>
-              <label className="block text-xs font-medium text-gray-600 mb-1">Player</label>
+              <label className="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">Player</label>
               <select
                 value={goalPlayerId}
                 onChange={e => setGoalPlayerId(e.target.value)}
@@ -510,7 +510,7 @@ export default function AdminStats() {
               </select>
             </div>
             <div>
-              <label className="block text-xs font-medium text-gray-600 mb-1">Stat</label>
+              <label className="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">Stat</label>
               <select
                 value={goalStatKey}
                 onChange={e => setGoalStatKey(e.target.value)}
@@ -522,7 +522,7 @@ export default function AdminStats() {
               </select>
             </div>
             <div>
-              <label className="block text-xs font-medium text-gray-600 mb-1">Target</label>
+              <label className="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">Target</label>
               <input
                 type="number"
                 value={goalTarget}
@@ -550,7 +550,7 @@ export default function AdminStats() {
                     {playerMap.get(g.player_id) ?? '—'}
                   </span>
                   <span className="text-gray-400 text-xs">·</span>
-                  <span className="text-gray-600 text-xs flex-1">
+                  <span className="text-gray-600 dark:text-gray-400 text-xs flex-1">
                     {STAT_LABELS[g.stat_key as keyof typeof STAT_LABELS] ?? g.stat_key}
                   </span>
                   <span className="text-brand font-semibold text-sm">{g.target}</span>
@@ -574,7 +574,7 @@ export default function AdminStats() {
             <h3 className="text-near-black dark:text-gray-100 font-semibold mb-4">Add Coaching Annotation</h3>
             <form onSubmit={handleAnnotSubmit} className="space-y-4">
               <div>
-                <label className="block text-xs font-medium text-gray-600 mb-1.5">Player</label>
+                <label className="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1.5">Player</label>
                 <select
                   value={annotPlayerId}
                   onChange={e => setAnnotPlayerId(e.target.value)}
@@ -585,7 +585,7 @@ export default function AdminStats() {
                 </select>
               </div>
               <div>
-                <label className="block text-xs font-medium text-gray-600 mb-1.5">Note</label>
+                <label className="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1.5">Note</label>
                 <textarea
                   value={annotNote}
                   onChange={e => setAnnotNote(e.target.value)}
@@ -601,7 +601,7 @@ export default function AdminStats() {
                 <button
                   type="button"
                   onClick={() => setAnnotModal(null)}
-                  className="flex-1 py-2.5 rounded-xl text-sm font-medium border border-gray-200 text-gray-600 hover:bg-gray-50 transition-colors"
+                  className="flex-1 py-2.5 rounded-xl text-sm font-medium border border-gray-200 dark:border-gray-600 text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-white/5 transition-colors"
                 >
                   Cancel
                 </button>

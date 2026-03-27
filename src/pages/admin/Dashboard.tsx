@@ -83,7 +83,7 @@ export default function AdminDashboard() {
 
       {/* Editorial greeting */}
       <div className="mb-10">
-        <p className="font-ui text-xs tracking-widest uppercase text-gray-500 mb-2">
+        <p className="font-ui text-xs tracking-widest uppercase text-gray-500 dark:text-gray-400 mb-2">
           {greeting()}
         </p>
         <h1 className="font-display text-5xl font-bold text-near-black dark:text-gray-100 leading-none">
@@ -117,7 +117,7 @@ export default function AdminDashboard() {
                                group-hover:text-brand transition-colors">
                   {label}
                 </p>
-                <p className="font-ui text-xs text-gray-500 leading-relaxed">{description}</p>
+                <p className="font-ui text-xs text-gray-500 dark:text-gray-400 leading-relaxed">{description}</p>
               </div>
             </Link>
           ))}

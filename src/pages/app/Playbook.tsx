@@ -100,14 +100,14 @@ export default function Playbook() {
               ← Back
             </button>
             <div className="w-px h-4 bg-gray-300" />
-            <h1 className="font-display text-2xl font-bold text-near-black truncate">
+            <h1 className="font-display text-2xl font-bold text-near-black dark:text-gray-100 truncate">
               {selectedFolder.name}
             </h1>
           </div>
         ) : (
           <>
             <p className="font-ui text-xs tracking-widest uppercase text-gray-500 mb-1">Browse</p>
-            <h1 className="font-display text-4xl font-bold text-near-black leading-none">Playbook.</h1>
+            <h1 className="font-display text-4xl font-bold text-near-black dark:text-gray-100 leading-none">Playbook.</h1>
           </>
         )}
       </div>
@@ -122,7 +122,7 @@ export default function Playbook() {
           ) : folders.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-16 text-center">
               <span className="text-4xl mb-3">📖</span>
-              <p className="font-semibold text-near-black">Nothing here yet</p>
+              <p className="font-semibold text-near-black dark:text-gray-100">Nothing here yet</p>
               <p className="text-sm text-gray-400 mt-1">Your coaches will add playbook content here.</p>
             </div>
           ) : (
@@ -136,7 +136,7 @@ export default function Playbook() {
                              hover:border-gray-300 hover:border-l-brand-light transition-all text-left"
                 >
                   <span className="text-xl flex-shrink-0">📁</span>
-                  <span className="font-ui font-medium text-sm text-near-black flex-1">
+                  <span className="font-ui font-medium text-sm text-near-black dark:text-gray-100 flex-1">
                     {folder.name}
                   </span>
                   <span className="text-gray-400 text-sm">→</span>
@@ -157,7 +157,7 @@ export default function Playbook() {
           ) : files.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-16 text-center">
               <span className="text-4xl mb-3">📄</span>
-              <p className="text-near-black font-semibold">No plays yet</p>
+              <p className="text-near-black dark:text-gray-100 font-semibold">No plays yet</p>
               <p className="text-sm text-gray-400 mt-1">Your coaches haven't added files to this folder.</p>
             </div>
           ) : (
@@ -181,7 +181,7 @@ export default function Playbook() {
                     {isPdf ? (
                       <div className="w-full h-full flex flex-col items-center justify-center gap-2">
                         <span className="text-4xl">📄</span>
-                        <p className="font-ui text-[10px] font-medium text-gray-600 px-2 truncate w-full text-center">
+                        <p className="font-ui text-[10px] font-medium text-gray-600 dark:text-gray-300 px-2 truncate w-full text-center">
                           {file.name}
                         </p>
                       </div>
