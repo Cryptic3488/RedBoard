@@ -11,7 +11,7 @@ import type { Profile, StatGoal } from '../../types/database'
 
 export default function AdminStats() {
   const { user } = useAuth()
-  const { uploads, loading: uploadsLoading, refresh } = useStatUploads()
+  const { uploads, loading: uploadsLoading, refresh, togglePublish } = useStatUploads()
 
   // ── Form state ──────────────────────────────────────────────────────────────
   const [label, setLabel] = useState('')
@@ -144,14 +144,6 @@ export default function AdminStats() {
   const handleDeleteUpload = async (id: string) => {
     if (!confirm('Delete this upload and all its stats?')) return
     await supabase.from('stat_uploads').delete().eq('id', id)
-    refresh()
-  }
-
-  const handleTogglePublish = async (id: string, currentlyPublished: boolean) => {
-    await (supabase as any)
-      .from('stat_uploads')
-      .update({ is_published: !currentlyPublished })
-      .eq('id', id)
     refresh()
   }
 
@@ -425,7 +417,7 @@ export default function AdminStats() {
                       </p>
                     </div>
                     <button
-                      onClick={() => handleTogglePublish(upload.id, upload.is_published)}
+                      onClick={() => togglePublish(upload.id, upload.is_published)}
                       className={`text-xs font-semibold transition-colors flex-shrink-0
                         ${upload.is_published
                           ? 'text-gray-400 dark:text-gray-500 hover:text-red-600 dark:hover:text-red-400'

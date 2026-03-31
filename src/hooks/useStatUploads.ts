@@ -7,6 +7,7 @@ interface UseStatUploadsResult {
   loading: boolean
   error: string | null
   refresh: () => void
+  togglePublish: (id: string, currentValue: boolean) => Promise<void>
 }
 
 export function useStatUploads(): UseStatUploadsResult {
@@ -29,5 +30,22 @@ export function useStatUploads(): UseStatUploadsResult {
 
   useEffect(() => { fetchUploads() }, [fetchUploads])
 
-  return { uploads, loading, error, refresh: fetchUploads }
+  const togglePublish = useCallback(async (id: string, currentValue: boolean) => {
+    const newValue = !currentValue
+
+    // Optimistic update — no closure mutation, values are captured as constants
+    setUploads(prev => prev.map(u => u.id === id ? { ...u, is_published: newValue } : u))
+
+    const { error: err } = await (supabase as any)
+      .from('stat_uploads')
+      .update({ is_published: newValue })
+      .eq('id', id) as { error: { message: string } | null }
+
+    if (err) {
+      // Revert on DB error
+      setUploads(prev => prev.map(u => u.id === id ? { ...u, is_published: currentValue } : u))
+    }
+  }, [])
+
+  return { uploads, loading, error, refresh: fetchUploads, togglePublish }
 }
