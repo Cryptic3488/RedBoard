@@ -18,7 +18,7 @@ export default function Film() {
         <span className="font-ui text-xs font-semibold tracking-widest uppercase text-gray-400">
           Film
         </span>
-        <div className="flex-1 h-px bg-gray-200" />
+        <div className="flex-1 h-px bg-gray-200 dark:bg-gray-700" />
       </div>
 
       {loading && (
@@ -37,7 +37,7 @@ export default function Film() {
             <span className="text-2xl">🎬</span>
           </div>
           <h3 className="font-display text-lg font-semibold text-near-black dark:text-gray-100 mb-2">No clips yet</h3>
-          <p className="font-ui text-gray-500 text-sm leading-relaxed max-w-xs">
+          <p className="font-ui text-gray-500 dark:text-gray-400 text-sm leading-relaxed max-w-xs">
             Your coaches will share Hudl clips and film here.
           </p>
         </div>

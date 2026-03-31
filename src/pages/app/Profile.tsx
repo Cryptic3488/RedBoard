@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { supabase } from '../../lib/supabase'
 import { useAuth } from '../../context/AuthContext'
-import { useDimMode } from '../../hooks/useDimMode'
+import { useTheme } from '../../context/ThemeContext'
 
 // ── Types ──────────────────────────────────────────────────────────────────────
 
@@ -17,7 +17,7 @@ function SectionLabel({ children }: { children: React.ReactNode }) {
       <span className="font-ui text-[10px] font-semibold uppercase tracking-widest text-gray-400">
         {children}
       </span>
-      <div className="flex-1 h-px bg-gray-200" />
+      <div className="flex-1 h-px bg-gray-200 dark:bg-gray-700" />
     </div>
   )
 }
@@ -32,7 +32,7 @@ function Card({ children }: { children: React.ReactNode }) {
 
 function Row({ children }: { children: React.ReactNode }) {
   return (
-    <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100 last:border-0">
+    <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100 dark:border-gray-700 last:border-0">
       {children}
     </div>
   )
@@ -90,7 +90,7 @@ function Toggle({ checked, onChange }: { checked: boolean; onChange: (v: boolean
 export default function PlayerProfile() {
   const { user, profile, signOut } = useAuth()
   const navigate = useNavigate()
-  const { dim, setDim } = useDimMode()
+  const { dim, setDim } = useTheme()
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   const [avatarUrl, setAvatarUrl]       = useState<string | null>(null)

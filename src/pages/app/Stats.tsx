@@ -83,13 +83,13 @@ function GameCard({ game }: { game: EnrichedGame }) {
 
           let trendEl: React.ReactNode
           if (delta === null) {
-            trendEl = <span className="text-gray-300">—</span>
+            trendEl = <span className="text-gray-300 dark:text-gray-600">—</span>
           } else if (delta > 0.05) {
             trendEl = <span className="text-brand">↑ +{delta.toFixed(1)}</span>
           } else if (delta < -0.05) {
-            trendEl = <span className="text-gray-400">↓ {delta.toFixed(1)}</span>
+            trendEl = <span className="text-gray-400 dark:text-gray-500">↓ {delta.toFixed(1)}</span>
           } else {
-            trendEl = <span className="text-gray-300">—</span>
+            trendEl = <span className="text-gray-300 dark:text-gray-600">—</span>
           }
 
           return (
@@ -107,7 +107,7 @@ function GameCard({ game }: { game: EnrichedGame }) {
       </div>
 
       {HERO_STATS.some(s => game.careerAvg[s] !== null) && (
-        <div className="mt-3 pt-3 border-t border-gray-100 grid grid-cols-4 gap-2">
+        <div className="mt-3 pt-3 border-t border-gray-100 dark:border-gray-700 grid grid-cols-4 gap-2">
           {HERO_STATS.map(stat => (
             <div key={stat} className="text-center">
               <p className="text-[10px] text-gray-400">

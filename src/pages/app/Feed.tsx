@@ -4,14 +4,8 @@ import { useWellnessCheck } from '../../hooks/useWellnessCheck'
 import { usePlayerStats, type EnrichedWeek, type EnrichedGame } from '../../hooks/usePlayerStats'
 import { useFeedItems, type FeedItem } from '../../hooks/useFeedItems'
 import { STAT_LABELS, type StandardStatKey } from '../../lib/statParser'
+import { greeting } from '../../lib/greeting'
 import { FilmCard } from '../../components/FilmCard'
-
-function greeting() {
-  const h = new Date().getHours()
-  if (h < 12) return 'Good morning'
-  if (h < 17) return 'Good afternoon'
-  return 'Good evening'
-}
 
 function EmptyFeed() {
   return (

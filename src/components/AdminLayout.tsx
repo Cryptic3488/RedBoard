@@ -30,7 +30,7 @@ export function AdminLayout() {
             <span className="font-ui font-black text-lg text-brand">Red</span>
             <span className="font-ui font-black text-lg text-near-black dark:text-gray-100">Board</span>
           </Link>
-          <div className="w-px h-3.5 bg-gray-300" />
+          <div className="w-px h-3.5 bg-gray-300 dark:bg-gray-600" />
           <span className="font-ui text-xs tracking-widest uppercase text-brand font-semibold">
             Admin
           </span>

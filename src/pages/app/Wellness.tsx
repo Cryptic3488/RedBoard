@@ -147,7 +147,7 @@ export default function Wellness() {
     return (
       <div className="px-4 py-20 text-center">
         <p className="text-4xl mb-3">💪</p>
-        <p className="text-near-black font-semibold">No check-in today</p>
+        <p className="text-near-black dark:text-gray-100 font-semibold">No check-in today</p>
         <p className="text-sm text-gray-400 mt-1">Your coach hasn't posted one yet.</p>
       </div>
     )

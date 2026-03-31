@@ -54,6 +54,10 @@ CREATE TABLE public.profiles (
   id uuid NOT NULL,
   role text NOT NULL DEFAULT 'player'::text CHECK (role = ANY (ARRAY['admin'::text, 'player'::text])),
   name text NOT NULL DEFAULT ''::text,
+  avatar_url text,
+  jersey_number integer,
+  position text CHECK (position = ANY (ARRAY['Guard'::text, 'Forward'::text, 'Center'::text])),
+  class_year text CHECK (class_year = ANY (ARRAY['Fr'::text, 'So'::text, 'Jr'::text, 'Sr'::text])),
   created_at timestamp with time zone NOT NULL DEFAULT now(),
   CONSTRAINT profiles_pkey PRIMARY KEY (id),
   CONSTRAINT profiles_id_fkey FOREIGN KEY (id) REFERENCES auth.users(id)
@@ -113,6 +117,7 @@ CREATE TABLE public.stat_uploads (
   label text NOT NULL CHECK (char_length(label) >= 1 AND char_length(label) <= 120),
   session_type text NOT NULL CHECK (session_type = ANY (ARRAY['game'::text, 'practice'::text])),
   session_date date NOT NULL,
+  is_published boolean NOT NULL DEFAULT false,
   created_at timestamp with time zone NOT NULL DEFAULT now(),
   CONSTRAINT stat_uploads_pkey PRIMARY KEY (id),
   CONSTRAINT stat_uploads_created_by_fkey FOREIGN KEY (created_by) REFERENCES public.profiles(id)
