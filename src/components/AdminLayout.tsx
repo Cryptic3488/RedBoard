@@ -4,6 +4,7 @@ import { useTheme } from '../context/ThemeContext'
 
 const ADMIN_NAV = [
   { to: '/admin', label: 'Dashboard', end: true },
+  { to: '/admin/roster', label: 'Roster' },
   { to: '/admin/film', label: 'Film' },
   { to: '/admin/stats', label: 'Stats' },
   { to: '/admin/wellness', label: 'Wellness' },
@@ -88,7 +89,7 @@ export function AdminLayout() {
 
       {/* Mobile bottom nav */}
       <nav className="fixed bottom-0 inset-x-0 bg-white dark:bg-[#1A1A1A] backdrop-blur border-t border-gray-200/60 dark:border-gray-700/50
-                      flex md:hidden z-10">
+                      flex md:hidden z-10 pb-safe">
         {ADMIN_NAV.map(({ to, label, end }) => (
           <NavLink
             key={to}

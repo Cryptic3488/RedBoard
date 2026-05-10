@@ -1,5 +1,7 @@
 import { useCallback, useEffect, useState } from 'react'
 import { supabase } from '../../lib/supabase'
+// Note: activePdfUrl replaces window.open for Capacitor WKWebView compatibility.
+// In Phase 6, swap the iframe for @capacitor/browser if needed.
 
 interface PlaybookFolder {
   id: string
@@ -24,8 +26,9 @@ export default function Playbook() {
   const [signedUrls, setSignedUrls] = useState<Record<string, string>>({})
   const [filesLoading, setFilesLoading] = useState(false)
 
-  // Lightbox state
+  // Lightbox state (images) and PDF viewer
   const [lightboxIdx, setLightboxIdx] = useState<number | null>(null)
+  const [activePdfUrl, setActivePdfUrl] = useState<string | null>(null)
 
   // ── Fetch folders ─────────────────────────────────────────────────────────────
   useEffect(() => {
@@ -171,7 +174,7 @@ export default function Playbook() {
                     key={file.id}
                     onClick={() => {
                       if (!url) return
-                      if (isPdf) window.open(url, '_blank')
+                      if (isPdf) setActivePdfUrl(url)
                       else setLightboxIdx(imageIdx)
                     }}
                     className="group relative bg-gray-100 dark:bg-[#3A3A3C] rounded-xl overflow-hidden aspect-square
@@ -209,6 +212,29 @@ export default function Playbook() {
             </div>
           )}
         </>
+      )}
+
+      {/* ── PDF viewer ────────────────────────────────────────────────────────── */}
+      {activePdfUrl && (
+        <div
+          className="fixed inset-0 bg-black/90 z-50 flex flex-col pb-safe"
+          onClick={() => setActivePdfUrl(null)}
+        >
+          <div className="flex items-center justify-end px-4 py-3 flex-shrink-0">
+            <button
+              onClick={() => setActivePdfUrl(null)}
+              className="text-white/70 hover:text-white text-3xl leading-none transition-colors"
+            >
+              ×
+            </button>
+          </div>
+          <iframe
+            src={activePdfUrl}
+            className="flex-1 w-full border-0"
+            onClick={e => e.stopPropagation()}
+            title="PDF viewer"
+          />
+        </div>
       )}
 
       {/* ── Lightbox ──────────────────────────────────────────────────────────── */}

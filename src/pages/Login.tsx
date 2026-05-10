@@ -1,5 +1,5 @@
 import { useState, useEffect, type FormEvent } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, Link } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../context/AuthContext'
 
@@ -83,9 +83,17 @@ export default function Login() {
           </div>
 
           <div>
-            <label htmlFor="password" className="block font-ui text-xs font-semibold tracking-widest uppercase text-gray-500 mb-2">
-              Password
-            </label>
+            <div className="flex items-center justify-between mb-2">
+              <label htmlFor="password" className="font-ui text-xs font-semibold tracking-widest uppercase text-gray-500">
+                Password
+              </label>
+              <Link
+                to="/forgot-password"
+                className="font-ui text-xs text-brand hover:text-brand/80 transition-colors"
+              >
+                Forgot password?
+              </Link>
+            </div>
             <input
               id="password"
               type="password"

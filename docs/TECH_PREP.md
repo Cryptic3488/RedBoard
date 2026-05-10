@@ -211,7 +211,7 @@ Two tables: `playbook_folders` (name, sort_order) and `playbook_files` (folder_i
 
 ### "How does a coach upload files?"
 
-The admin Playbook page (`src/pages/admin/Playbook.tsx`) accepts drag-and-drop or file picker uploads. Selected files go to `supabase.storage.from('playbook-files').upload(path, file)`. On success, a `playbook_files` row is inserted with the returned storage path and detected `mime_type`. The admin can drag items within a folder to reorder them — sort_order values are updated on drop.
+The admin Playbook page (`src/pages/admin/Playbook.tsx`) accepts drag-and-drop or file picker uploads. Selected files go to `supabase.storage.from('playbook').upload(path, file)`. On success, a `playbook_files` row is inserted with the returned storage path and detected `mime_type`. The admin can drag items within a folder to reorder them — sort_order values are updated on drop.
 
 ### "How does the player lightbox work?"
 
@@ -284,7 +284,7 @@ Supabase Storage, backed by S3-compatible object storage. Three buckets:
 |---|---|---|
 | `avatars` | Player profile photos | Public read (URL is saved to `profiles.avatar_url`) |
 | `film-clips` | Video uploads from coaches | Private — access via signed URLs |
-| `playbook-files` | Playbook images and PDFs | Read-only for authenticated users |
+| `playbook` | Playbook images and PDFs | Read-only for authenticated users |
 
 ### "Why signed URLs for film clips?"
 

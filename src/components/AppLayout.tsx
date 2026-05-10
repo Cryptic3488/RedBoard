@@ -70,13 +70,13 @@ export function AppLayout() {
       </header>
 
       {/* Page content */}
-      <main className="flex-1 overflow-y-auto pb-20">
+      <main className="flex-1 overflow-y-auto pb-nav-safe">
         <Outlet />
       </main>
 
       {/* Bottom nav */}
       <nav className="fixed bottom-0 inset-x-0 bg-white dark:bg-[#1A1A1A]
-                      border-t border-gray-200/60 flex z-10">
+                      border-t border-gray-200/60 flex z-10 pb-safe">
         {NAV.map(({ to, label, icon }) => (
           <NavLink
             key={to}

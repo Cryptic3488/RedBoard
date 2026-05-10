@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { supabase } from '../../lib/supabase'
 import { useAuth } from '../../context/AuthContext'
 import { useStatUploads } from '../../hooks/useStatUploads'
+import { ConfirmModal } from '../../components/ConfirmModal'
 import {
   parseCSV, parseXLSX, matchPlayers, buildStatEntries,
   STANDARD_STAT_KEYS, STAT_LABELS,
@@ -27,6 +28,9 @@ export default function AdminStats() {
   const [formError, setFormError] = useState<string | null>(null)
   const [formSuccess, setFormSuccess] = useState<string | null>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
+
+  // ── Confirm modal ────────────────────────────────────────────────────────────
+  const [confirmModal, setConfirmModal] = useState<{ title: string; message: string; onConfirm: () => void } | null>(null)
 
   // ── Upload history expansion ─────────────────────────────────────────────────
   const [expandedUploadId, setExpandedUploadId] = useState<string | null>(null)
@@ -141,10 +145,16 @@ export default function AdminStats() {
   }
 
   // ── Delete upload ───────────────────────────────────────────────────────────
-  const handleDeleteUpload = async (id: string) => {
-    if (!confirm('Delete this upload and all its stats?')) return
-    await supabase.from('stat_uploads').delete().eq('id', id)
-    refresh()
+  const handleDeleteUpload = (id: string) => {
+    setConfirmModal({
+      title: 'Delete upload',
+      message: 'This will permanently delete all stats for this session. This cannot be undone.',
+      onConfirm: async () => {
+        setConfirmModal(null)
+        await supabase.from('stat_uploads').delete().eq('id', id)
+        refresh()
+      },
+    })
   }
 
   // ── Upload entry fetch ──────────────────────────────────────────────────────
@@ -588,6 +598,18 @@ export default function AdminStats() {
           )}
         </div>
       </section>
+
+      {/* ── Confirm Modal ────────────────────────────────────────────────────── */}
+      {confirmModal && (
+        <ConfirmModal
+          title={confirmModal.title}
+          message={confirmModal.message}
+          confirmLabel="Delete"
+          destructive
+          onConfirm={confirmModal.onConfirm}
+          onCancel={() => setConfirmModal(null)}
+        />
+      )}
 
       {/* ── Annotation Modal ─────────────────────────────────────────────────── */}
       {annotModal && (

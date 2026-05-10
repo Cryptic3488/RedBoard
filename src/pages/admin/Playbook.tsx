@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { supabase } from '../../lib/supabase'
 import { useAuth } from '../../context/AuthContext'
+import { ConfirmModal } from '../../components/ConfirmModal'
 
 interface PlaybookFolder {
   id: string
@@ -40,8 +41,12 @@ export default function AdminPlaybook() {
   const [isDragging, setIsDragging] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
 
-  // ── Lightbox ──────────────────────────────────────────────────────────────────
+  // ── Confirm modal ─────────────────────────────────────────────────────────────
+  const [confirmModal, setConfirmModal] = useState<{ title: string; message: string; onConfirm: () => void } | null>(null)
+
+  // ── Lightbox / PDF viewer ──────────────────────────────────────────────────────
   const [lightboxUrl, setLightboxUrl] = useState<string | null>(null)
+  const [activePdfUrl, setActivePdfUrl] = useState<string | null>(null)
   const [signedUrls, setSignedUrls] = useState<Record<string, string>>({})
 
   // ── Fetch folders ─────────────────────────────────────────────────────────────
@@ -114,20 +119,26 @@ export default function AdminPlaybook() {
   }
 
   // ── Delete folder (also cleans up storage objects) ────────────────────────────
-  const handleDeleteFolder = async (folder: PlaybookFolder) => {
-    if (!confirm(`Delete "${folder.name}" and all its files?`)) return
-    const { data: folderFiles } = await supabase
-      .from('playbook_files')
-      .select('storage_path')
-      .eq('folder_id', folder.id)
-    if (folderFiles && folderFiles.length > 0) {
-      await supabase.storage
-        .from('playbook')
-        .remove((folderFiles as { storage_path: string }[]).map(f => f.storage_path))
-    }
-    await supabase.from('playbook_folders').delete().eq('id', folder.id)
-    if (selectedFolder?.id === folder.id) setSelectedFolder(null)
-    fetchFolders()
+  const handleDeleteFolder = (folder: PlaybookFolder) => {
+    setConfirmModal({
+      title: `Delete "${folder.name}"`,
+      message: 'This will permanently remove the folder and all its files. This cannot be undone.',
+      onConfirm: async () => {
+        setConfirmModal(null)
+        const { data: folderFiles } = await supabase
+          .from('playbook_files')
+          .select('storage_path')
+          .eq('folder_id', folder.id)
+        if (folderFiles && folderFiles.length > 0) {
+          await supabase.storage
+            .from('playbook')
+            .remove((folderFiles as { storage_path: string }[]).map(f => f.storage_path))
+        }
+        await supabase.from('playbook_folders').delete().eq('id', folder.id)
+        if (selectedFolder?.id === folder.id) setSelectedFolder(null)
+        fetchFolders()
+      },
+    })
   }
 
   // ── Upload files ──────────────────────────────────────────────────────────────
@@ -173,11 +184,17 @@ export default function AdminPlaybook() {
   }
 
   // ── Delete file ───────────────────────────────────────────────────────────────
-  const handleDeleteFile = async (file: PlaybookFile) => {
-    if (!confirm(`Remove "${file.name}"?`)) return
-    await supabase.storage.from('playbook').remove([file.storage_path])
-    await supabase.from('playbook_files').delete().eq('id', file.id)
-    if (selectedFolder) fetchFiles(selectedFolder.id)
+  const handleDeleteFile = (file: PlaybookFile) => {
+    setConfirmModal({
+      title: `Remove "${file.name}"`,
+      message: 'This file will be permanently deleted from the playbook.',
+      onConfirm: async () => {
+        setConfirmModal(null)
+        await supabase.storage.from('playbook').remove([file.storage_path])
+        await supabase.from('playbook_files').delete().eq('id', file.id)
+        if (selectedFolder) fetchFiles(selectedFolder.id)
+      },
+    })
   }
 
   // ── Render ────────────────────────────────────────────────────────────────────
@@ -353,7 +370,7 @@ export default function AdminPlaybook() {
                           /* PDF tile */
                           <button
                             className="w-full h-full flex flex-col items-center justify-center gap-1.5 cursor-pointer"
-                            onClick={() => url && window.open(url, '_blank')}
+                            onClick={() => url && setActivePdfUrl(url)}
                           >
                             <span className="text-3xl">📄</span>
                             <p className="text-[10px] font-medium text-gray-600 dark:text-gray-400 px-2 truncate w-full text-center">
@@ -414,6 +431,41 @@ export default function AdminPlaybook() {
             ×
           </button>
         </div>
+      )}
+
+      {/* ── PDF viewer ────────────────────────────────────────────────────────── */}
+      {activePdfUrl && (
+        <div
+          className="fixed inset-0 bg-black/90 z-50 flex flex-col"
+          onClick={() => setActivePdfUrl(null)}
+        >
+          <div className="flex items-center justify-end px-4 py-3 flex-shrink-0">
+            <button
+              onClick={() => setActivePdfUrl(null)}
+              className="text-white/70 hover:text-white text-3xl leading-none transition-colors"
+            >
+              ×
+            </button>
+          </div>
+          <iframe
+            src={activePdfUrl}
+            className="flex-1 w-full border-0"
+            onClick={e => e.stopPropagation()}
+            title="PDF viewer"
+          />
+        </div>
+      )}
+
+      {/* ── Confirm Modal ─────────────────────────────────────────────────────── */}
+      {confirmModal && (
+        <ConfirmModal
+          title={confirmModal.title}
+          message={confirmModal.message}
+          confirmLabel="Delete"
+          destructive
+          onConfirm={confirmModal.onConfirm}
+          onCancel={() => setConfirmModal(null)}
+        />
       )}
     </div>
   )

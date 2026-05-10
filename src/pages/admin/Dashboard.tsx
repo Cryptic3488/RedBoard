@@ -13,6 +13,12 @@ interface QuickAction {
 
 const QUICK_ACTIONS: QuickAction[] = [
   {
+    icon: '👤',
+    label: 'Roster',
+    description: 'Add players, set names, edit positions and class years.',
+    to: '/admin/roster',
+  },
+  {
     icon: '🎬',
     label: 'Share Film',
     description: 'Send a Hudl clip with notes to the team or individual players.',
@@ -39,6 +45,7 @@ const QUICK_ACTIONS: QuickAction[] = [
 ]
 
 interface StatusCounts {
+  players: number | null
   filmPosts: number | null
   statUploads: number | null
   openWellness: number | null
@@ -50,6 +57,7 @@ export default function AdminDashboard() {
   const firstName = profile?.name?.split(' ')[0] ?? 'Coach'
 
   const [counts, setCounts] = useState<StatusCounts>({
+    players: null,
     filmPosts: null,
     statUploads: null,
     openWellness: null,
@@ -58,12 +66,14 @@ export default function AdminDashboard() {
 
   useEffect(() => {
     Promise.all([
+      supabase.from('profiles').select('id', { count: 'exact', head: true }).eq('role', 'player'),
       supabase.from('film_posts').select('id', { count: 'exact', head: true }),
       supabase.from('stat_uploads').select('id', { count: 'exact', head: true }),
       supabase.from('wellness_forms').select('id', { count: 'exact', head: true }).eq('is_active', true),
       supabase.from('playbook_files').select('id', { count: 'exact', head: true }),
-    ]).then(([film, stats, wellness, playbook]) => {
+    ]).then(([roster, film, stats, wellness, playbook]) => {
       setCounts({
+        players:       roster.count ?? 0,
         filmPosts:     film.count ?? 0,
         statUploads:   stats.count ?? 0,
         openWellness:  wellness.count ?? 0,
@@ -126,12 +136,13 @@ export default function AdminDashboard() {
           </span>
           <div className="flex-1 h-px bg-gray-200" />
         </div>
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
           {([
-            { label: 'Film posts',     value: counts.filmPosts },
-            { label: 'Stat uploads',   value: counts.statUploads },
+            { label: 'Players',         value: counts.players },
+            { label: 'Film posts',      value: counts.filmPosts },
+            { label: 'Stat uploads',    value: counts.statUploads },
             { label: 'Active wellness', value: counts.openWellness },
-            { label: 'Playbook items', value: counts.playbookItems },
+            { label: 'Playbook items',  value: counts.playbookItems },
           ] as const).map(({ label, value }) => (
             <div key={label} className="bg-white/80 dark:bg-[#2C2C2E] border border-gray-200 rounded-xl p-4">
               <p className="font-display text-3xl font-bold text-near-black dark:text-gray-100 mb-1">

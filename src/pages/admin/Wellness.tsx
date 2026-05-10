@@ -1,7 +1,8 @@
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { supabase } from '../../lib/supabase'
 import { useAuth } from '../../context/AuthContext'
 import { useWellnessForms } from '../../hooks/useWellnessForms'
+import { ConfirmModal } from '../../components/ConfirmModal'
 import type { Profile, WellnessForm, WellnessQuestion, WellnessResponse } from '../../types/database'
 
 // ── Calendar helpers ───────────────────────────────────────────────────────────
@@ -165,7 +166,7 @@ export default function AdminWellness() {
   const [scheduleMap, setScheduleMap] = useState<Map<string, { id: string; formId: string }>>(new Map())
   const [pickingDate, setPickingDate] = useState<string | null>(null)
   const [pickFormId, setPickFormId] = useState('')
-  const autoActivatedRef = useRef(false)
+  const [confirmModal, setConfirmModal] = useState<{ title: string; message: string; onConfirm: () => void } | null>(null)
 
   const activeForm = forms.find(f => f.is_active) ?? null
   const today = new Date().toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })
@@ -206,25 +207,6 @@ export default function AdminWellness() {
   }, [calMonth])
 
   useEffect(() => { fetchSchedule() }, [fetchSchedule])
-
-  // ── Auto-activate today's scheduled form on first load ────────────────────
-  useEffect(() => {
-    if (forms.length === 0 || autoActivatedRef.current) return
-    autoActivatedRef.current = true
-    supabase
-      .from('wellness_schedule')
-      .select('form_id')
-      .eq('scheduled_date', todayISO)
-      .maybeSingle()
-      .then(({ data }) => {
-        if (!data) return
-        const scheduledId = (data as { form_id: string }).form_id
-        if (forms.some(f => f.is_active && f.id === scheduledId)) return
-        ;(supabase as any).from('wellness_forms').update({ is_active: false }).eq('is_active', true)
-          .then(() => (supabase as any).from('wellness_forms').update({ is_active: true }).eq('id', scheduledId))
-          .then(() => refresh())
-      })
-  }, [forms])
 
   // ── Form builder actions ──────────────────────────────────────────────────
   const handleEdit = (form: WellnessForm) => {
@@ -294,10 +276,16 @@ export default function AdminWellness() {
   }
 
   // ── Delete form ───────────────────────────────────────────────────────────
-  const handleDelete = async (formId: string) => {
-    if (!confirm('Delete this form and all its responses?')) return
-    await supabase.from('wellness_forms').delete().eq('id', formId)
-    refresh()
+  const handleDelete = (formId: string) => {
+    setConfirmModal({
+      title: 'Delete form',
+      message: 'This will permanently delete the form and all player responses. This cannot be undone.',
+      onConfirm: async () => {
+        setConfirmModal(null)
+        await supabase.from('wellness_forms').delete().eq('id', formId)
+        refresh()
+      },
+    })
   }
 
   // ── Schedule actions ──────────────────────────────────────────────────────
@@ -631,7 +619,7 @@ export default function AdminWellness() {
               </div>
 
               <p className="font-ui text-gray-300 text-xs mt-2">
-                Click any day to schedule a form. The active form auto-updates at midnight when a scheduled day begins.
+                Click any day to schedule a form. The scheduled form activates automatically at midnight.
               </p>
             </section>
           )}
@@ -707,6 +695,17 @@ export default function AdminWellness() {
             </section>
           )}
         </>
+      )}
+
+      {confirmModal && (
+        <ConfirmModal
+          title={confirmModal.title}
+          message={confirmModal.message}
+          confirmLabel="Delete"
+          destructive
+          onConfirm={confirmModal.onConfirm}
+          onCancel={() => setConfirmModal(null)}
+        />
       )}
     </div>
   )

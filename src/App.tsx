@@ -6,6 +6,8 @@ import { AppLayout } from './components/AppLayout'
 import { AdminLayout } from './components/AdminLayout'
 
 import Login from './pages/Login'
+import ForgotPassword from './pages/ForgotPassword'
+import ResetPassword from './pages/ResetPassword'
 import Feed from './pages/app/Feed'
 import Stats from './pages/app/Stats'
 import Film from './pages/app/Film'
@@ -13,6 +15,7 @@ import Wellness from './pages/app/Wellness'
 import Playbook from './pages/app/Playbook'
 import Profile from './pages/app/Profile'
 import AdminDashboard from './pages/admin/Dashboard'
+import AdminRoster from './pages/admin/Roster'
 import AdminFilm from './pages/admin/Film'
 import AdminStats from './pages/admin/Stats'
 import AdminWellness from './pages/admin/Wellness'
@@ -26,6 +29,8 @@ export default function App() {
         <Routes>
           {/* Public */}
           <Route path="/login" element={<Login />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/reset-password" element={<ResetPassword />} />
 
           {/* Authenticated player routes */}
           <Route element={<AuthGuard />}>
@@ -42,6 +47,7 @@ export default function App() {
             <Route element={<AdminGuard />}>
               <Route element={<AdminLayout />}>
                 <Route path="/admin" element={<AdminDashboard />} />
+                <Route path="/admin/roster" element={<AdminRoster />} />
                 <Route path="/admin/film" element={<AdminFilm />} />
                 <Route path="/admin/stats" element={<AdminStats />} />
                 <Route path="/admin/wellness" element={<AdminWellness />} />
