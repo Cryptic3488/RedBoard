@@ -7,7 +7,6 @@ import {
   aggregateWeek,
   contributionPct,
   type StatEntryWithUpload,
-  type WeekBucket,
   type StandardStatKey,
   STANDARD_STAT_KEYS,
 } from '../lib/statParser'
