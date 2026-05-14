@@ -3,44 +3,60 @@ import { Link } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext'
 import { supabase } from '../../lib/supabase'
 import { greeting } from '../../lib/greeting'
+import {
+  IconRoster, IconFilm, IconStats, IconWellnessAdmin,
+  IconPlaybook, IconChevronRight,
+} from '../../components/icons'
 
 interface QuickAction {
-  icon: string
+  Icon: React.ComponentType<{ size?: number; className?: string; strokeWidth?: number }>
   label: string
   description: string
   to: string
+  accent: string
+  iconBg: string
 }
 
 const QUICK_ACTIONS: QuickAction[] = [
   {
-    icon: '👤',
+    Icon: IconRoster,
     label: 'Roster',
-    description: 'Add players, set names, edit positions and class years.',
+    description: 'Add players, set positions and class years.',
     to: '/admin/roster',
+    accent: 'border-l-violet-500',
+    iconBg: 'bg-violet-50 dark:bg-violet-500/10 text-violet-600 dark:text-violet-400',
   },
   {
-    icon: '🎬',
+    Icon: IconFilm,
     label: 'Share Film',
-    description: 'Send a Hudl clip with notes to the team or individual players.',
+    description: 'Send a Hudl clip with notes to team or individuals.',
     to: '/admin/film',
+    accent: 'border-l-blue-500',
+    iconBg: 'bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400',
   },
   {
-    icon: '📊',
+    Icon: IconStats,
     label: 'Manage Stats',
-    description: 'Upload a dataset and publish chart views for players.',
+    description: 'Upload a dataset and publish for players.',
     to: '/admin/stats',
+    accent: 'border-l-brand',
+    iconBg: 'bg-brand/8 dark:bg-brand/15 text-brand',
   },
   {
-    icon: '💪',
+    Icon: IconWellnessAdmin,
     label: 'Wellness',
-    description: 'Create a daily check-in and review player responses.',
+    description: 'Create a daily check-in and review responses.',
     to: '/admin/wellness',
+    accent: 'border-l-emerald-500',
+    iconBg: 'bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400',
   },
   {
-    icon: '📖',
+    Icon: IconPlaybook,
     label: 'Playbook',
-    description: 'Upload and organize playbook PDFs by category.',
+    description: 'Upload and organize playbook PDFs by folder.',
     to: '/admin/playbook',
+    accent: 'border-l-amber-500',
+    iconBg: 'bg-amber-50 dark:bg-amber-500/10 text-amber-600 dark:text-amber-400',
   },
 ]
 
@@ -57,11 +73,8 @@ export default function AdminDashboard() {
   const firstName = profile?.name?.split(' ')[0] ?? 'Coach'
 
   const [counts, setCounts] = useState<StatusCounts>({
-    players: null,
-    filmPosts: null,
-    statUploads: null,
-    openWellness: null,
-    playbookItems: null,
+    players: null, filmPosts: null, statUploads: null,
+    openWellness: null, playbookItems: null,
   })
 
   useEffect(() => {
@@ -73,86 +86,81 @@ export default function AdminDashboard() {
       supabase.from('playbook_files').select('id', { count: 'exact', head: true }),
     ]).then(([roster, film, stats, wellness, playbook]) => {
       setCounts({
-        players:       roster.count ?? 0,
-        filmPosts:     film.count ?? 0,
-        statUploads:   stats.count ?? 0,
-        openWellness:  wellness.count ?? 0,
+        players:      roster.count ?? 0,
+        filmPosts:    film.count ?? 0,
+        statUploads:  stats.count ?? 0,
+        openWellness: wellness.count ?? 0,
         playbookItems: playbook.count ?? 0,
       })
     })
   }, [])
 
+  const kpis = [
+    { label: 'Players',    value: counts.players,       to: '/admin/roster' },
+    { label: 'Film Posts', value: counts.filmPosts,      to: '/admin/film' },
+    { label: 'Stat Sets',  value: counts.statUploads,    to: '/admin/stats' },
+    { label: 'Wellness',   value: counts.openWellness,   to: '/admin/wellness' },
+    { label: 'Plays',      value: counts.playbookItems,  to: '/admin/playbook' },
+  ]
+
   return (
     <div className="max-w-3xl">
 
-      {/* Editorial greeting */}
-      <div className="mb-10">
-        <p className="font-ui text-xs tracking-widest uppercase text-gray-500 dark:text-gray-400 mb-2">
+      {/* Header */}
+      <div className="mb-8">
+        <p className="font-ui text-xs tracking-widest uppercase text-gray-400 dark:text-gray-500 mb-1">
           {greeting()}
         </p>
-        <h1 className="font-display text-5xl font-bold text-near-black dark:text-gray-100 leading-none">
+        <h1 className="font-display text-4xl font-black text-near-black dark:text-white leading-none">
           {firstName}.
         </h1>
-        <p className="font-display text-xl italic text-brand mt-1">
-          Let's build something great.
-        </p>
+        <p className="font-display text-lg italic text-brand mt-1">Let's build something great.</p>
+      </div>
+
+      {/* KPI strip */}
+      <div className="grid grid-cols-5 gap-2 mb-8 p-4 bg-white dark:bg-[#1C1C1E]
+                      rounded-2xl border border-gray-100 dark:border-gray-800/60 shadow-sm">
+        {kpis.map(({ label, value, to }) => (
+          <Link key={label} to={to} className="text-center group">
+            <p className="font-display text-2xl font-black text-near-black dark:text-white
+                          group-hover:text-brand transition-colors leading-none">
+              {value === null
+                ? <span className="text-gray-200 dark:text-gray-700 text-xl">—</span>
+                : value}
+            </p>
+            <p className="font-ui text-[10px] text-gray-400 uppercase tracking-wider mt-1 leading-tight">{label}</p>
+          </Link>
+        ))}
       </div>
 
       {/* Quick actions */}
-      <section className="mb-10">
-        <div className="flex items-center gap-3 mb-5">
-          <span className="font-ui text-xs font-semibold tracking-widest uppercase text-gray-400">
-            Quick Actions
-          </span>
-          <div className="flex-1 h-px bg-gray-200" />
-        </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          {QUICK_ACTIONS.map(({ icon, label, description, to }) => (
+      <div>
+        <p className="font-ui text-xs font-semibold tracking-widest uppercase text-gray-400 dark:text-gray-500 mb-3">
+          Quick Actions
+        </p>
+        <div className="space-y-2">
+          {QUICK_ACTIONS.map(({ Icon, label, description, to, accent, iconBg }) => (
             <Link
               key={to}
               to={to}
-              className="group bg-white/80 dark:bg-[#2C2C2E] border border-gray-200 border-l-2 border-l-brand
-                         rounded-xl p-5 flex gap-4 items-start
-                         hover:border-gray-300 hover:border-l-brand-light transition-all"
+              className={`flex items-center gap-4 bg-white dark:bg-[#1C1C1E] rounded-xl px-4 py-3.5
+                          border border-gray-100 dark:border-gray-800/60 border-l-2 ${accent}
+                          hover:border-gray-200 dark:hover:border-gray-700 shadow-sm
+                          active:scale-[0.99] transition-all group`}
             >
-              <span className="text-2xl leading-none mt-0.5 shrink-0">{icon}</span>
-              <div>
-                <p className="font-ui font-semibold text-sm text-near-black dark:text-gray-100 mb-1
-                               group-hover:text-brand transition-colors">
-                  {label}
-                </p>
-                <p className="font-ui text-xs text-gray-500 dark:text-gray-400 leading-relaxed">{description}</p>
+              <div className={`w-9 h-9 rounded-lg flex items-center justify-center shrink-0 ${iconBg}`}>
+                <Icon size={18} strokeWidth={2} />
               </div>
+              <div className="flex-1 min-w-0">
+                <p className="font-ui text-sm font-semibold text-near-black dark:text-gray-100
+                               group-hover:text-brand transition-colors">{label}</p>
+                <p className="font-ui text-xs text-gray-400 dark:text-gray-500 truncate mt-0.5">{description}</p>
+              </div>
+              <IconChevronRight size={16} strokeWidth={2} className="text-gray-300 dark:text-gray-700 shrink-0" />
             </Link>
           ))}
         </div>
-      </section>
-
-      {/* Status strip */}
-      <section>
-        <div className="flex items-center gap-3 mb-5">
-          <span className="font-ui text-xs font-semibold tracking-widest uppercase text-gray-400">
-            Status
-          </span>
-          <div className="flex-1 h-px bg-gray-200" />
-        </div>
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
-          {([
-            { label: 'Players',         value: counts.players },
-            { label: 'Film posts',      value: counts.filmPosts },
-            { label: 'Stat uploads',    value: counts.statUploads },
-            { label: 'Active wellness', value: counts.openWellness },
-            { label: 'Playbook items',  value: counts.playbookItems },
-          ] as const).map(({ label, value }) => (
-            <div key={label} className="bg-white/80 dark:bg-[#2C2C2E] border border-gray-200 rounded-xl p-4">
-              <p className="font-display text-3xl font-bold text-near-black dark:text-gray-100 mb-1">
-                {value === null ? <span className="text-gray-300 text-2xl">—</span> : value}
-              </p>
-              <p className="font-ui text-xs text-gray-400 uppercase tracking-wide">{label}</p>
-            </div>
-          ))}
-        </div>
-      </section>
+      </div>
     </div>
   )
 }
