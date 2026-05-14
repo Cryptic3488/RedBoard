@@ -86,7 +86,7 @@ function WellnessSummaryCard({
   const submitted = responses.length
 
   return (
-    <div className="bg-white/80 dark:bg-[#2C2C2E] border border-gray-200 rounded-2xl px-5 py-4 mb-4">
+    <div className="bg-white dark:bg-[#1C1C1E] border border-gray-100 dark:border-gray-800/60 rounded-2xl px-5 py-4 mb-4">
       <div className="flex items-center justify-between mb-4">
         <span className="text-xs font-semibold uppercase tracking-widest text-gray-400 dark:text-gray-500">
           Team Summary
@@ -332,7 +332,7 @@ export default function AdminWellness() {
   return (
     <div className="space-y-8 pb-12">
       <div className="flex items-center justify-between">
-        <h1 className="text-near-black dark:text-gray-100 text-xl font-bold">Wellness</h1>
+        <h1 className="font-display text-2xl font-black text-near-black dark:text-white">Wellness</h1>
         {mode === 'list' && (
           <button
             onClick={() => setMode('build')}
@@ -345,7 +345,7 @@ export default function AdminWellness() {
 
       {/* ── Form Builder ────────────────────────────────────────────────── */}
       {mode === 'build' && (
-        <section className="bg-white/80 dark:bg-[#2C2C2E] border border-gray-200 rounded-2xl p-6">
+        <section className="bg-white dark:bg-[#1C1C1E] border border-gray-100 dark:border-gray-800/60 rounded-2xl p-6">
           <h2 className="text-near-black dark:text-gray-100 font-semibold text-base mb-5">{editingForm ? 'Edit Form' : 'New Form'}</h2>
           <form onSubmit={handleSave} className="space-y-5">
             <div>
@@ -358,7 +358,7 @@ export default function AdminWellness() {
                 onChange={e => setFormTitle(e.target.value)}
                 placeholder="e.g. Daily Wellness Check"
                 maxLength={120}
-                className="w-full bg-gray-50 dark:bg-[#3A3A3C] border border-gray-200 dark:border-gray-600 rounded-lg px-3 py-2 text-sm text-near-black dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:border-brand"
+                className="w-full bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-gray-700 rounded-xl px-3 py-2.5 text-sm text-near-black dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:border-brand"
               />
             </div>
 
@@ -373,7 +373,7 @@ export default function AdminWellness() {
                     <select
                       value={q.type}
                       onChange={e => updateQuestion(q.id, { type: e.target.value as WellnessQuestion['type'] })}
-                      className="bg-gray-50 dark:bg-[#3A3A3C] border border-gray-200 dark:border-gray-600 rounded-lg px-2 py-2 text-xs text-near-black dark:text-gray-100 focus:outline-none focus:border-brand flex-shrink-0"
+                      className="bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-gray-700 rounded-xl px-2 py-2 text-xs text-near-black dark:text-gray-100 focus:outline-none focus:border-brand flex-shrink-0"
                     >
                       <option value="rating">Rating 1–5</option>
                       <option value="yesno">Yes / No</option>
@@ -449,7 +449,7 @@ export default function AdminWellness() {
             ) : (
               <div className="space-y-3">
                 {forms.map(form => (
-                  <div key={form.id} className="bg-white/80 dark:bg-[#2C2C2E] border border-gray-200 rounded-2xl px-5 py-4 flex items-center gap-3">
+                  <div key={form.id} className="bg-white dark:bg-[#1C1C1E] border border-gray-100 dark:border-gray-800/60 rounded-2xl px-5 py-4 flex items-center gap-3">
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2">
                         <p className="text-sm font-medium text-near-black dark:text-gray-100 truncate">{form.title}</p>
@@ -504,7 +504,7 @@ export default function AdminWellness() {
                 <div className="flex-1 h-px bg-gray-200" />
               </div>
 
-              <div className="bg-white/80 dark:bg-[#2C2C2E] border border-gray-200 rounded-2xl p-4">
+              <div className="bg-white dark:bg-[#1C1C1E] border border-gray-100 dark:border-gray-800/60 rounded-2xl p-4">
                 {/* Month navigation */}
                 <div className="flex items-center justify-between mb-4">
                   <button
@@ -656,7 +656,7 @@ export default function AdminWellness() {
                     const isExpanded = expandedId === player.id
 
                     return (
-                      <div key={player.id} className="bg-white/80 dark:bg-[#2C2C2E] border border-gray-200 rounded-2xl overflow-hidden">
+                      <div key={player.id} className="bg-white dark:bg-[#1C1C1E] border border-gray-100 dark:border-gray-800/60 rounded-2xl overflow-hidden">
                         <button
                           className="w-full flex items-center gap-3 px-5 py-3.5 text-left"
                           onClick={() => resp && setExpandedId(isExpanded ? null : player.id)}

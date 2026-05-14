@@ -200,7 +200,7 @@ export default function AdminPlaybook() {
   // ── Render ────────────────────────────────────────────────────────────────────
   return (
     <div className="space-y-8 pb-12">
-      <h1 className="text-near-black dark:text-gray-100 text-xl font-bold">Playbook</h1>
+      <h1 className="font-display text-2xl font-black text-near-black dark:text-white">Playbook</h1>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-start">
 
@@ -218,7 +218,7 @@ export default function AdminPlaybook() {
               onChange={e => setNewFolderName(e.target.value)}
               placeholder="New folder name…"
               maxLength={80}
-              className="flex-1 bg-gray-50 dark:bg-[#3A3A3C] border border-gray-200 dark:border-gray-600 rounded-lg px-3 py-2 text-sm
+              className="flex-1 bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-gray-700 rounded-xl px-3 py-2.5 text-sm
                          text-near-black dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:border-brand"
             />
             <button
@@ -248,7 +248,7 @@ export default function AdminPlaybook() {
                               border transition-all ${
                     selectedFolder?.id === folder.id
                       ? 'bg-brand/5 border-brand/30 border-l-2 border-l-brand'
-                      : 'bg-white/80 dark:bg-[#2C2C2E] border-gray-200 hover:border-gray-300'
+                      : 'bg-white dark:bg-[#1C1C1E] border-gray-100 dark:border-gray-800/60 hover:border-gray-200 dark:hover:border-gray-700'
                   }`}
                 >
                   <span className="text-base flex-shrink-0">📁</span>
