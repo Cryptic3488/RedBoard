@@ -5,10 +5,17 @@
 @layer base {
   html {
     -webkit-tap-highlight-color: transparent;
+    overscroll-behavior: none;
+    background-color: #f9fafb;
+  }
+
+  html.dark {
+    background-color: #111113;
   }
 
   body {
-    @apply bg-near-black text-cream antialiased font-ui;
+    @apply bg-gray-50 dark:bg-[#111113] text-near-black dark:text-gray-100 antialiased font-ui;
+    overscroll-behavior: none;
   }
 
   /* Prevent iOS auto-zoom on input focus — triggers when font-size < 16px */

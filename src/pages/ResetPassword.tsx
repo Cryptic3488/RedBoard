@@ -57,7 +57,7 @@ export default function ResetPassword() {
   }
 
   return (
-    <div className="min-h-screen bg-cream dark:bg-[#1C1C1E] flex flex-col items-center justify-center px-4">
+    <div className="min-h-screen bg-gray-50 dark:bg-[#111113] flex flex-col items-center justify-center px-4">
       <div className="w-full max-w-sm">
 
         {/* Logo lockup */}
@@ -122,7 +122,7 @@ export default function ResetPassword() {
                   minLength={8}
                   value={password}
                   onChange={e => setPassword(e.target.value)}
-                  className="w-full bg-gray-50 dark:bg-[#2C2C2E] text-near-black dark:text-gray-100 rounded-lg px-4 py-3 font-ui text-sm
+                  className="w-full bg-white dark:bg-[#1C1C1E] text-near-black dark:text-gray-100 rounded-2xl px-4 py-3.5 shadow-sm font-ui text-sm
                              border border-gray-200 dark:border-gray-600 focus:outline-none focus:border-brand
                              placeholder-gray-400 dark:placeholder-gray-500 transition-colors"
                   placeholder="At least 8 characters"
@@ -140,7 +140,7 @@ export default function ResetPassword() {
                   required
                   value={confirm}
                   onChange={e => setConfirm(e.target.value)}
-                  className="w-full bg-gray-50 dark:bg-[#2C2C2E] text-near-black dark:text-gray-100 rounded-lg px-4 py-3 font-ui text-sm
+                  className="w-full bg-white dark:bg-[#1C1C1E] text-near-black dark:text-gray-100 rounded-2xl px-4 py-3.5 shadow-sm font-ui text-sm
                              border border-gray-200 dark:border-gray-600 focus:outline-none focus:border-brand
                              placeholder-gray-400 dark:placeholder-gray-500 transition-colors"
                   placeholder="••••••••"

@@ -25,7 +25,7 @@ export default function ForgotPassword() {
   }
 
   return (
-    <div className="min-h-screen bg-cream dark:bg-[#1C1C1E] flex flex-col items-center justify-center px-4">
+    <div className="min-h-screen bg-gray-50 dark:bg-[#111113] flex flex-col items-center justify-center px-6 pt-safe-top pb-safe">
       <div className="w-full max-w-sm">
 
         {/* Logo lockup */}
@@ -88,9 +88,9 @@ export default function ForgotPassword() {
                   required
                   value={email}
                   onChange={e => setEmail(e.target.value)}
-                  className="w-full bg-gray-50 dark:bg-[#2C2C2E] text-near-black dark:text-gray-100 rounded-lg px-4 py-3 font-ui text-sm
-                             border border-gray-200 dark:border-gray-600 focus:outline-none focus:border-brand
-                             placeholder-gray-400 dark:placeholder-gray-500 transition-colors"
+                  className="w-full bg-white dark:bg-[#1C1C1E] text-near-black dark:text-gray-100 rounded-2xl px-4 py-3.5 font-ui
+                             border border-gray-200 dark:border-gray-700 focus:outline-none focus:border-brand
+                             placeholder-gray-300 dark:placeholder-gray-600 shadow-sm transition-colors"
                   placeholder="you@denison.edu"
                 />
               </div>
@@ -104,9 +104,9 @@ export default function ForgotPassword() {
               <button
                 type="submit"
                 disabled={submitting}
-                className="w-full bg-brand hover:bg-brand-dark disabled:opacity-50 disabled:cursor-not-allowed
-                           text-white font-ui font-semibold rounded-lg py-3.5 text-sm tracking-wide
-                           transition-colors flex items-center justify-center gap-2 mt-2"
+                className="w-full bg-brand hover:bg-brand/90 disabled:opacity-50
+                           text-white font-ui font-semibold rounded-2xl py-4 text-sm
+                           transition-all active:scale-[0.98] shadow-sm flex items-center justify-center gap-2 mt-2"
               >
                 {submitting && (
                   <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
