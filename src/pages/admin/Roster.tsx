@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from 'react'
 import { supabase } from '../../lib/supabase'
 import { ConfirmModal } from '../../components/ConfirmModal'
 import type { Profile } from '../../types/database'
+import { IconPlus, IconEdit, IconTrash, IconRoster } from '../../components/icons'
 
 // ── Types ──────────────────────────────────────────────────────────────────────
 
@@ -226,7 +227,7 @@ function EditPlayerModal({
     )
   }
 
-  const inputCls = 'w-full bg-gray-50 dark:bg-[#3A3A3C] border border-gray-200 dark:border-gray-600 rounded-lg px-3 py-2 text-sm text-near-black dark:text-gray-100 focus:outline-none focus:border-brand'
+  const inputCls = 'w-full bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-gray-700 rounded-xl px-3 py-2.5 text-sm text-near-black dark:text-gray-100 focus:outline-none focus:border-brand transition-colors'
 
   return (
     <div
@@ -413,56 +414,48 @@ export default function AdminRoster() {
   const adminCount  = players.filter(p => p.role === 'admin').length
 
   return (
-    <div className="max-w-3xl space-y-6 pb-12">
+    <div className="max-w-3xl space-y-5 pb-12">
 
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="font-display text-2xl font-bold text-near-black dark:text-gray-100">Roster</h1>
+          <h1 className="font-display text-2xl font-black text-near-black dark:text-white">Roster</h1>
           {!loading && (
             <p className="font-ui text-sm text-gray-400 dark:text-gray-500 mt-0.5">
               {playerCount} player{playerCount !== 1 ? 's' : ''}
-              {adminCount > 0 ? ` · ${adminCount} admin${adminCount !== 1 ? 's' : ''}` : ''}
+              {adminCount > 0 ? ` · ${adminCount} staff` : ''}
             </p>
           )}
         </div>
         {!showAddForm && (
           <button
             onClick={() => setShowAddForm(true)}
-            className="bg-brand text-white px-4 py-2 rounded-xl font-ui text-sm font-semibold
-                       hover:bg-brand/90 transition-colors"
+            className="flex items-center gap-1.5 bg-brand text-white px-4 py-2 rounded-xl
+                       font-ui text-sm font-semibold hover:bg-brand/90 transition-colors shadow-sm"
           >
-            + Add Player
+            <IconPlus size={16} strokeWidth={2.5} />
+            Add Player
           </button>
         )}
       </div>
 
       {/* Success banner */}
       {banner && (
-        <div className="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800
-                        rounded-xl px-4 py-3 font-ui text-sm text-green-700 dark:text-green-400">
+        <div className="bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-200 dark:border-emerald-500/20
+                        rounded-xl px-4 py-3 font-ui text-sm text-emerald-700 dark:text-emerald-400">
           {banner}
         </div>
       )}
 
-      {/* Add Player form */}
       {showAddForm && (
-        <AddPlayerForm
-          onSuccess={handleAddSuccess}
-          onCancel={() => setShowAddForm(false)}
-        />
+        <AddPlayerForm onSuccess={handleAddSuccess} onCancel={() => setShowAddForm(false)} />
       )}
 
-      {/* Delete error */}
       {deleteError && (
-        <div className="bg-red-50 border border-red-200 rounded-xl px-4 py-3 font-ui text-sm text-red-600">
+        <div className="bg-red-50 dark:bg-red-500/10 border border-red-200 dark:border-red-500/20
+                        rounded-xl px-4 py-3 font-ui text-sm text-red-600 dark:text-red-400 flex items-center justify-between">
           {deleteError}
-          <button
-            onClick={() => setDeleteError(null)}
-            className="ml-2 text-red-400 hover:text-red-600"
-          >
-            ×
-          </button>
+          <button onClick={() => setDeleteError(null)} className="text-red-400 hover:text-red-600 ml-3">×</button>
         </div>
       )}
 
@@ -473,50 +466,47 @@ export default function AdminRoster() {
         </div>
       ) : players.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-16 text-center
-                        border-2 border-dashed border-gray-200 rounded-2xl">
-          <span className="text-4xl mb-3">👤</span>
+                        border-2 border-dashed border-gray-200 dark:border-gray-800 rounded-2xl">
+          <div className="w-12 h-12 rounded-xl bg-gray-100 dark:bg-white/8 flex items-center justify-center mb-3">
+            <IconRoster size={22} className="text-gray-300 dark:text-gray-600" />
+          </div>
           <p className="font-ui font-semibold text-near-black dark:text-gray-100">No players yet</p>
-          <p className="font-ui text-sm text-gray-400 mt-1">
-            Click "Add Player" to create the first account.
-          </p>
+          <p className="font-ui text-sm text-gray-400 mt-1">Click "Add Player" to create the first account.</p>
         </div>
       ) : (
-        <div className="space-y-2">
-          {players.map(player => (
+        <div className="bg-white dark:bg-[#1C1C1E] rounded-2xl border border-gray-100 dark:border-gray-800/60 shadow-sm overflow-hidden">
+          {players.map((player, i) => (
             <div
               key={player.id}
-              className="bg-white/80 dark:bg-[#2C2C2E] border border-gray-200 rounded-2xl
-                         px-4 py-3.5 flex items-center gap-3"
+              className={`flex items-center gap-3 px-4 py-3.5
+                ${i < players.length - 1 ? 'border-b border-gray-50 dark:border-gray-800' : ''}`}
             >
               <Avatar name={player.name} avatarUrl={player.avatar_url} />
-
               <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-2 flex-wrap">
-                  <p className="font-ui font-medium text-sm text-near-black dark:text-gray-100 truncate">
+                <div className="flex items-center gap-1.5 flex-wrap">
+                  <p className="font-ui font-semibold text-sm text-near-black dark:text-gray-100 truncate">
                     {player.name || <span className="text-gray-400 italic">No name set</span>}
                   </p>
-                  {player.role === 'admin' && <Pill color="brand">Admin</Pill>}
-                  {player.jersey_number !== null && (
-                    <Pill color="gray">#{player.jersey_number}</Pill>
-                  )}
-                  {player.position && <Pill color="gray">{player.position}</Pill>}
+                  {player.role === 'admin' && <Pill color="brand">Staff</Pill>}
+                  {player.jersey_number !== null && <Pill color="gray">#{player.jersey_number}</Pill>}
+                  {player.position && <Pill color="gray">{player.position.charAt(0)}</Pill>}
                   {player.class_year && <Pill color="gray">{player.class_year}</Pill>}
                 </div>
               </div>
-
-              <div className="flex items-center gap-3 flex-shrink-0">
+              <div className="flex items-center gap-1 shrink-0">
                 <button
                   onClick={() => { setEditingPlayer(player); setEditError(null) }}
-                  className="font-ui text-xs text-gray-500 dark:text-gray-400
-                             hover:text-near-black dark:hover:text-gray-100 font-medium transition-colors"
+                  className="p-2 rounded-lg text-gray-400 hover:text-brand hover:bg-brand/8 transition-colors"
+                  title="Edit"
                 >
-                  Edit
+                  <IconEdit size={15} strokeWidth={2} />
                 </button>
                 <button
                   onClick={() => { setConfirmDelete(player); setDeleteError(null) }}
-                  className="font-ui text-xs text-gray-400 hover:text-red-600 transition-colors"
+                  className="p-2 rounded-lg text-gray-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-500/10 transition-colors"
+                  title="Remove"
                 >
-                  Remove
+                  <IconTrash size={15} strokeWidth={2} />
                 </button>
               </div>
             </div>

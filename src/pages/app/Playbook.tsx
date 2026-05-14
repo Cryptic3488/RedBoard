@@ -1,68 +1,34 @@
 import { useCallback, useEffect, useState } from 'react'
 import { supabase } from '../../lib/supabase'
-// Note: activePdfUrl replaces window.open for Capacitor WKWebView compatibility.
-// In Phase 6, swap the iframe for @capacitor/browser if needed.
+import { IconFolder, IconFile, IconChevronRight, IconX, IconPlaybook } from '../../components/icons'
 
-interface PlaybookFolder {
-  id: string
-  name: string
-  sort_order: number
-}
-
-interface PlaybookFile {
-  id: string
-  name: string
-  storage_path: string
-  mime_type: string
-  sort_order: number
-}
+interface PlaybookFolder { id: string; name: string; sort_order: number }
+interface PlaybookFile   { id: string; name: string; storage_path: string; mime_type: string; sort_order: number }
 
 export default function Playbook() {
-  const [folders, setFolders] = useState<PlaybookFolder[]>([])
+  const [folders, setFolders]         = useState<PlaybookFolder[]>([])
   const [foldersLoading, setFoldersLoading] = useState(true)
-
   const [selectedFolder, setSelectedFolder] = useState<PlaybookFolder | null>(null)
-  const [files, setFiles] = useState<PlaybookFile[]>([])
-  const [signedUrls, setSignedUrls] = useState<Record<string, string>>({})
+  const [files, setFiles]             = useState<PlaybookFile[]>([])
+  const [signedUrls, setSignedUrls]   = useState<Record<string, string>>({})
   const [filesLoading, setFilesLoading] = useState(false)
-
-  // Lightbox state (images) and PDF viewer
   const [lightboxIdx, setLightboxIdx] = useState<number | null>(null)
   const [activePdfUrl, setActivePdfUrl] = useState<string | null>(null)
 
-  // ── Fetch folders ─────────────────────────────────────────────────────────────
   useEffect(() => {
-    supabase
-      .from('playbook_folders')
-      .select('*')
-      .order('sort_order')
-      .order('created_at')
-      .then(({ data }) => {
-        setFolders((data ?? []) as PlaybookFolder[])
-        setFoldersLoading(false)
-      })
+    supabase.from('playbook_folders').select('*').order('sort_order').order('created_at')
+      .then(({ data }) => { setFolders((data ?? []) as PlaybookFolder[]); setFoldersLoading(false) })
   }, [])
 
-  // ── Fetch files when folder selected ─────────────────────────────────────────
   const openFolder = useCallback(async (folder: PlaybookFolder) => {
-    setSelectedFolder(folder)
-    setFiles([])
-    setSignedUrls({})
-    setFilesLoading(true)
-
-    const { data } = await supabase
-      .from('playbook_files')
+    setSelectedFolder(folder); setFiles([]); setSignedUrls({}); setFilesLoading(true)
+    const { data } = await supabase.from('playbook_files')
       .select('id, name, storage_path, mime_type, sort_order')
-      .eq('folder_id', folder.id)
-      .order('sort_order')
-      .order('created_at')
-
+      .eq('folder_id', folder.id).order('sort_order').order('created_at')
     const rows = (data ?? []) as PlaybookFile[]
     setFiles(rows)
-
     if (rows.length > 0) {
-      const { data: urls } = await supabase.storage
-        .from('playbook')
+      const { data: urls } = await supabase.storage.from('playbook')
         .createSignedUrls(rows.map(f => f.storage_path), 3600)
       if (urls) {
         const map: Record<string, string> = {}
@@ -73,7 +39,6 @@ export default function Playbook() {
     setFilesLoading(false)
   }, [])
 
-  // ── Lightbox navigation (images only) ────────────────────────────────────────
   const imageFiles = files.filter(f => f.mime_type !== 'application/pdf')
   const lightboxUrls = imageFiles.map(f => signedUrls[f.id]).filter(Boolean)
 
@@ -88,9 +53,8 @@ export default function Playbook() {
     return () => window.removeEventListener('keydown', handler)
   }, [lightboxIdx, lightboxUrls.length])
 
-  // ── Render ────────────────────────────────────────────────────────────────────
   return (
-    <div className="px-4 pt-8 pb-24 max-w-lg mx-auto">
+    <div className="px-4 pt-8 pb-4 max-w-lg mx-auto">
 
       {/* Header */}
       <div className="mb-6">
@@ -98,193 +62,156 @@ export default function Playbook() {
           <div className="flex items-center gap-3">
             <button
               onClick={() => { setSelectedFolder(null); setFiles([]) }}
-              className="text-brand text-sm font-medium hover:text-brand-light transition-colors"
+              className="font-ui text-sm font-medium text-brand hover:text-brand/80 transition-colors"
             >
               ← Back
             </button>
-            <div className="w-px h-4 bg-gray-300" />
-            <h1 className="font-display text-2xl font-bold text-near-black dark:text-gray-100 truncate">
+            <div className="w-px h-4 bg-gray-200 dark:bg-gray-700" />
+            <h1 className="font-display text-2xl font-black text-near-black dark:text-white truncate">
               {selectedFolder.name}
             </h1>
           </div>
         ) : (
           <>
-            <p className="font-ui text-xs tracking-widest uppercase text-gray-500 mb-1">Browse</p>
-            <h1 className="font-display text-4xl font-bold text-near-black dark:text-gray-100 leading-none">Playbook.</h1>
+            <p className="font-ui text-xs tracking-widest uppercase text-gray-400 dark:text-gray-500 mb-1">Browse</p>
+            <h1 className="font-display text-4xl font-black text-near-black dark:text-white leading-none">Playbook.</h1>
           </>
         )}
       </div>
 
-      {/* ── Folder list ──────────────────────────────────────────────────────── */}
+      {/* Folder list */}
       {!selectedFolder && (
-        <>
-          {foldersLoading ? (
-            <div className="flex justify-center py-16">
-              <div className="w-6 h-6 border-2 border-brand border-t-transparent rounded-full animate-spin" />
+        foldersLoading ? (
+          <div className="flex justify-center py-16">
+            <div className="w-6 h-6 border-2 border-gray-200 border-t-brand rounded-full animate-spin" />
+          </div>
+        ) : folders.length === 0 ? (
+          <div className="flex flex-col items-center justify-center py-20 text-center">
+            <div className="w-14 h-14 rounded-2xl bg-gray-100 dark:bg-white/8 flex items-center justify-center mb-4">
+              <IconPlaybook size={24} className="text-gray-300 dark:text-gray-600" />
             </div>
-          ) : folders.length === 0 ? (
-            <div className="flex flex-col items-center justify-center py-16 text-center">
-              <span className="text-4xl mb-3">📖</span>
-              <p className="font-semibold text-near-black dark:text-gray-100">Nothing here yet</p>
-              <p className="text-sm text-gray-400 mt-1">Your coaches will add playbook content here.</p>
-            </div>
-          ) : (
-            <div className="space-y-2">
-              {folders.map(folder => (
-                <button
-                  key={folder.id}
-                  onClick={() => openFolder(folder)}
-                  className="w-full flex items-center gap-3 bg-white/80 dark:bg-[#2C2C2E] border border-gray-200
-                             border-l-2 border-l-brand rounded-xl px-4 py-3.5
-                             hover:border-gray-300 hover:border-l-brand-light transition-all text-left"
-                >
-                  <span className="text-xl flex-shrink-0">📁</span>
-                  <span className="font-ui font-medium text-sm text-near-black dark:text-gray-100 flex-1">
-                    {folder.name}
-                  </span>
-                  <span className="text-gray-400 text-sm">→</span>
-                </button>
-              ))}
-            </div>
-          )}
-        </>
+            <p className="font-ui font-semibold text-near-black dark:text-gray-100">Nothing here yet</p>
+            <p className="font-ui text-sm text-gray-400 dark:text-gray-500 mt-1">Your coaches will add playbook content here.</p>
+          </div>
+        ) : (
+          <div className="space-y-2">
+            {folders.map(folder => (
+              <button
+                key={folder.id}
+                onClick={() => openFolder(folder)}
+                className="w-full flex items-center gap-4 bg-white dark:bg-[#1C1C1E] border border-gray-100
+                           dark:border-gray-800/60 rounded-2xl px-4 py-4 shadow-sm
+                           hover:border-gray-200 dark:hover:border-gray-700 active:scale-[0.98] transition-all text-left"
+              >
+                <div className="w-10 h-10 rounded-xl bg-amber-50 dark:bg-amber-500/10 flex items-center justify-center shrink-0">
+                  <IconFolder size={20} className="text-amber-600 dark:text-amber-400" />
+                </div>
+                <span className="font-ui font-semibold text-sm text-near-black dark:text-gray-100 flex-1">
+                  {folder.name}
+                </span>
+                <IconChevronRight size={16} className="text-gray-300 dark:text-gray-600 shrink-0" />
+              </button>
+            ))}
+          </div>
+        )
       )}
 
-      {/* ── File grid ────────────────────────────────────────────────────────── */}
+      {/* File grid */}
       {selectedFolder && (
-        <>
-          {filesLoading ? (
-            <div className="flex justify-center py-16">
-              <div className="w-6 h-6 border-2 border-brand border-t-transparent rounded-full animate-spin" />
+        filesLoading ? (
+          <div className="flex justify-center py-16">
+            <div className="w-6 h-6 border-2 border-gray-200 border-t-brand rounded-full animate-spin" />
+          </div>
+        ) : files.length === 0 ? (
+          <div className="flex flex-col items-center justify-center py-20 text-center">
+            <div className="w-14 h-14 rounded-2xl bg-gray-100 dark:bg-white/8 flex items-center justify-center mb-4">
+              <IconFile size={24} className="text-gray-300 dark:text-gray-600" />
             </div>
-          ) : files.length === 0 ? (
-            <div className="flex flex-col items-center justify-center py-16 text-center">
-              <span className="text-4xl mb-3">📄</span>
-              <p className="text-near-black dark:text-gray-100 font-semibold">No plays yet</p>
-              <p className="text-sm text-gray-400 mt-1">Your coaches haven't added files to this folder.</p>
-            </div>
-          ) : (
-            <div className="grid grid-cols-2 gap-3">
-              {files.map(file => {
-                const url = signedUrls[file.id]
-                const isPdf = file.mime_type === 'application/pdf'
-                const imageIdx = isPdf ? -1 : imageFiles.indexOf(file)
-                return (
-                  <button
-                    key={file.id}
-                    onClick={() => {
-                      if (!url) return
-                      if (isPdf) setActivePdfUrl(url)
-                      else setLightboxIdx(imageIdx)
-                    }}
-                    className="group relative bg-gray-100 dark:bg-[#3A3A3C] rounded-xl overflow-hidden aspect-square
-                               border border-gray-200 hover:border-brand/40 transition-all
-                               focus:outline-none"
-                  >
-                    {isPdf ? (
-                      <div className="w-full h-full flex flex-col items-center justify-center gap-2">
-                        <span className="text-4xl">📄</span>
-                        <p className="font-ui text-[10px] font-medium text-gray-600 dark:text-gray-300 px-2 truncate w-full text-center">
-                          {file.name}
-                        </p>
-                      </div>
-                    ) : url ? (
-                      <img
-                        src={url}
-                        alt={file.name}
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200"
-                      />
-                    ) : (
-                      <div className="w-full h-full flex items-center justify-center">
-                        <div className="w-5 h-5 border-2 border-gray-300 border-t-brand rounded-full animate-spin" />
-                      </div>
-                    )}
-                    {/* Name label — only for images */}
-                    {!isPdf && (
-                      <div className="absolute bottom-0 inset-x-0 bg-gradient-to-t from-black/60 to-transparent
-                                      px-2 pt-4 pb-2">
-                        <p className="text-white text-[10px] font-medium truncate">{file.name}</p>
-                      </div>
-                    )}
-                  </button>
-                )
-              })}
-            </div>
-          )}
-        </>
+            <p className="font-ui font-semibold text-near-black dark:text-gray-100">No plays yet</p>
+            <p className="font-ui text-sm text-gray-400 dark:text-gray-500 mt-1">Your coaches haven't added files here.</p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-2 gap-3">
+            {files.map(file => {
+              const url = signedUrls[file.id]
+              const isPdf = file.mime_type === 'application/pdf'
+              const imageIdx = isPdf ? -1 : imageFiles.indexOf(file)
+              return (
+                <button
+                  key={file.id}
+                  onClick={() => { if (!url) return; isPdf ? setActivePdfUrl(url) : setLightboxIdx(imageIdx) }}
+                  className="group relative bg-gray-100 dark:bg-white/5 rounded-2xl overflow-hidden aspect-square
+                             border border-gray-200 dark:border-gray-800/60
+                             hover:border-brand/30 active:scale-[0.97] transition-all focus:outline-none"
+                >
+                  {isPdf ? (
+                    <div className="w-full h-full flex flex-col items-center justify-center gap-2 p-3">
+                      <IconFile size={32} className="text-gray-400 dark:text-gray-500" />
+                      <p className="font-ui text-[10px] font-medium text-gray-500 dark:text-gray-400 truncate w-full text-center">
+                        {file.name}
+                      </p>
+                    </div>
+                  ) : url ? (
+                    <img src={url} alt={file.name}
+                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200" />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center">
+                      <div className="w-5 h-5 border-2 border-gray-300 border-t-brand rounded-full animate-spin" />
+                    </div>
+                  )}
+                  {!isPdf && (
+                    <div className="absolute bottom-0 inset-x-0 bg-gradient-to-t from-black/60 to-transparent px-2 pt-6 pb-2">
+                      <p className="text-white text-[10px] font-medium truncate">{file.name}</p>
+                    </div>
+                  )}
+                </button>
+              )
+            })}
+          </div>
+        )
       )}
 
-      {/* ── PDF viewer ────────────────────────────────────────────────────────── */}
+      {/* PDF viewer */}
       {activePdfUrl && (
-        <div
-          className="fixed inset-0 bg-black/90 z-50 flex flex-col pb-safe"
-          onClick={() => setActivePdfUrl(null)}
-        >
-          <div className="flex items-center justify-end px-4 py-3 flex-shrink-0">
-            <button
-              onClick={() => setActivePdfUrl(null)}
-              className="text-white/70 hover:text-white text-3xl leading-none transition-colors"
-            >
-              ×
+        <div className="fixed inset-0 bg-black/95 z-50 flex flex-col pb-safe pt-safe-top">
+          <div className="flex items-center justify-end px-4 py-3 shrink-0">
+            <button onClick={() => setActivePdfUrl(null)}
+                    className="w-9 h-9 rounded-full bg-white/10 flex items-center justify-center text-white
+                               hover:bg-white/20 transition-colors">
+              <IconX size={18} />
             </button>
           </div>
-          <iframe
-            src={activePdfUrl}
-            className="flex-1 w-full border-0"
-            onClick={e => e.stopPropagation()}
-            title="PDF viewer"
-          />
+          <iframe src={activePdfUrl} className="flex-1 w-full border-0" title="PDF viewer" />
         </div>
       )}
 
-      {/* ── Lightbox ──────────────────────────────────────────────────────────── */}
+      {/* Lightbox */}
       {lightboxIdx !== null && lightboxUrls[lightboxIdx] && (
-        <div
-          className="fixed inset-0 bg-black/90 z-50 flex items-center justify-center"
-          onClick={() => setLightboxIdx(null)}
-        >
-          {/* Image */}
-          <img
-            src={lightboxUrls[lightboxIdx]}
-            alt={imageFiles[lightboxIdx]?.name}
-            className="max-w-[92vw] max-h-[85vh] object-contain rounded-xl"
-            onClick={e => e.stopPropagation()}
-          />
-
-          {/* Close */}
-          <button
-            onClick={() => setLightboxIdx(null)}
-            className="absolute top-4 right-5 text-white/70 hover:text-white text-3xl leading-none transition-colors"
-          >
-            ×
+        <div className="fixed inset-0 bg-black/95 z-50 flex items-center justify-center"
+             onClick={() => setLightboxIdx(null)}>
+          <img src={lightboxUrls[lightboxIdx]} alt={imageFiles[lightboxIdx]?.name}
+               className="max-w-[92vw] max-h-[85vh] object-contain rounded-2xl"
+               onClick={e => e.stopPropagation()} />
+          <button onClick={() => setLightboxIdx(null)}
+                  className="absolute top-4 right-4 w-9 h-9 rounded-full bg-white/10 flex items-center
+                             justify-center text-white hover:bg-white/20 transition-colors">
+            <IconX size={18} />
           </button>
-
-          {/* Prev */}
           {lightboxIdx > 0 && (
-            <button
-              onClick={e => { e.stopPropagation(); setLightboxIdx(i => i! - 1) }}
-              className="absolute left-3 top-1/2 -translate-y-1/2 text-white/70 hover:text-white
-                         text-3xl leading-none bg-black/30 rounded-full w-10 h-10
-                         flex items-center justify-center transition-colors"
-            >
+            <button onClick={e => { e.stopPropagation(); setLightboxIdx(i => i! - 1) }}
+                    className="absolute left-3 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-black/40
+                               flex items-center justify-center text-white text-2xl hover:bg-black/60 transition-colors">
               ‹
             </button>
           )}
-
-          {/* Next */}
           {lightboxIdx < lightboxUrls.length - 1 && (
-            <button
-              onClick={e => { e.stopPropagation(); setLightboxIdx(i => i! + 1) }}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-white/70 hover:text-white
-                         text-3xl leading-none bg-black/30 rounded-full w-10 h-10
-                         flex items-center justify-center transition-colors"
-            >
+            <button onClick={e => { e.stopPropagation(); setLightboxIdx(i => i! + 1) }}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-black/40
+                               flex items-center justify-center text-white text-2xl hover:bg-black/60 transition-colors">
               ›
             </button>
           )}
-
-          {/* Counter */}
-          <div className="absolute bottom-5 left-1/2 -translate-x-1/2 text-white/60 text-xs font-ui">
+          <div className="absolute bottom-5 left-1/2 -translate-x-1/2 font-ui text-white/50 text-xs">
             {lightboxIdx + 1} / {lightboxUrls.length}
           </div>
         </div>

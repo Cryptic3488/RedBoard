@@ -4,6 +4,7 @@ import { useAuth } from '../../context/AuthContext'
 import { useFilmPosts } from '../../hooks/useFilmPosts'
 import { FilmCard } from '../../components/FilmCard'
 import type { Profile, LinkType, Visibility } from '../../types/database'
+import { IconUpload } from '../../components/icons'
 
 // ─── Form state ───────────────────────────────────────────────────────────────
 
@@ -150,138 +151,88 @@ export default function AdminFilm() {
 
   // ─── Render ───────────────────────────────────────────────────────────────
 
-  return (
-    <div className="px-4 pt-6 pb-10 max-w-2xl mx-auto">
-      <h1 className="font-display text-2xl font-bold text-near-black dark:text-gray-100 mb-1">Film</h1>
-      <p className="font-ui text-sm text-gray-500 dark:text-gray-400 mb-8">Post Hudl clips or upload video to share with players.</p>
+  const inputCls = 'w-full bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-gray-700 rounded-xl px-3 py-2.5 font-ui text-sm text-near-black dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-600 focus:outline-none focus:border-brand transition-colors'
+  const labelCls = 'font-ui text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400 block mb-1.5'
 
-      {/* ── Upload form ── */}
-      <section className="bg-white/80 dark:bg-[#2C2C2E] border border-gray-200 rounded-xl p-5 mb-10">
-        <h2 className="font-ui text-xs font-semibold tracking-widest uppercase text-gray-500 dark:text-gray-400 mb-5">
-          New Post
-        </h2>
+  return (
+    <div className="max-w-2xl pb-12">
+      <h1 className="font-display text-2xl font-black text-near-black dark:text-white mb-0.5">Film</h1>
+      <p className="font-ui text-sm text-gray-400 dark:text-gray-500 mb-7">Post Hudl clips or upload video to share with players.</p>
+
+      {/* Form */}
+      <div className="bg-white dark:bg-[#1C1C1E] border border-gray-100 dark:border-gray-800/60 rounded-2xl p-5 shadow-sm mb-8">
+        <p className="font-ui text-xs font-semibold tracking-widest uppercase text-gray-400 dark:text-gray-500 mb-5">New Post</p>
 
         {banner && (
-          <div className={`mb-4 px-4 py-3 rounded-lg font-ui text-sm ${
+          <div className={`mb-5 px-4 py-3 rounded-xl font-ui text-sm ${
             banner.type === 'error'
-              ? 'bg-red-50 border border-red-200 text-red-600'
-              : 'bg-green-50 border border-green-200 text-green-700'
-          }`}>
-            {banner.message}
-          </div>
+              ? 'bg-red-50 dark:bg-red-500/10 border border-red-200 dark:border-red-500/20 text-red-600 dark:text-red-400'
+              : 'bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-200 dark:border-emerald-500/20 text-emerald-700 dark:text-emerald-400'
+          }`}>{banner.message}</div>
         )}
 
         <form onSubmit={handleSubmit} className="space-y-5">
-          {/* Title */}
           <div>
-            <label className="font-ui text-xs text-gray-600 dark:text-gray-400 block mb-1.5">Title</label>
-            <input
-              type="text"
-              value={form.title}
-              onChange={e => setForm(f => ({ ...f, title: e.target.value }))}
-              maxLength={120}
-              placeholder="e.g. Defensive rotations — vs. Notre Dame"
-              className="w-full bg-gray-100/60 dark:bg-[#3A3A3C] border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2
-                         font-ui text-sm text-near-black dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500
-                         focus:outline-none focus:border-brand/60 transition-colors"
-            />
+            <label className={labelCls}>Title</label>
+            <input type="text" value={form.title} onChange={e => setForm(f => ({ ...f, title: e.target.value }))}
+              maxLength={120} placeholder="e.g. Defensive rotations — vs. Notre Dame" className={inputCls} />
           </div>
 
-          {/* Link type toggle */}
           <div>
-            <label className="font-ui text-xs text-gray-600 dark:text-gray-400 block mb-1.5">Type</label>
-            <div className="flex rounded-lg overflow-hidden border border-gray-300 w-fit">
+            <label className={labelCls}>Type</label>
+            <div className="flex rounded-xl overflow-hidden border border-gray-200 dark:border-gray-700 w-fit">
               {(['hudl', 'file'] as LinkType[]).map(type => (
-                <button
-                  key={type}
-                  type="button"
+                <button key={type} type="button"
                   onClick={() => setForm(f => ({ ...f, linkType: type, hudlUrl: '', file: null }))}
-                  className={`px-4 py-1.5 font-ui text-xs font-medium transition-colors capitalize
-                    ${form.linkType === type
-                      ? 'bg-brand/20 text-brand'
-                      : 'bg-transparent text-gray-500 hover:text-gray-300'
-                    }`}
-                >
+                  className={`px-4 py-2 font-ui text-xs font-semibold transition-colors
+                    ${form.linkType === type ? 'bg-brand text-white' : 'text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-white/5'}`}>
                   {type === 'hudl' ? 'Hudl link' : 'Upload file'}
                 </button>
               ))}
             </div>
           </div>
 
-          {/* Hudl URL */}
           {form.linkType === 'hudl' && (
             <div>
-              <label className="font-ui text-xs text-gray-600 dark:text-gray-400 block mb-1.5">Hudl URL</label>
-              <input
-                type="url"
-                value={form.hudlUrl}
-                onChange={e => setForm(f => ({ ...f, hudlUrl: e.target.value }))}
-                placeholder="https://www.hudl.com/video/..."
-                className="w-full bg-gray-100/60 dark:bg-[#3A3A3C] border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2
-                           font-ui text-sm text-near-black placeholder-gray-400
-                           focus:outline-none focus:border-brand/60 transition-colors"
-              />
-              <p className="font-ui text-[11px] text-gray-400 mt-1">
-                Paste the share link from Hudl (hudl.com/video/…)
-              </p>
+              <label className={labelCls}>Hudl URL</label>
+              <input type="url" value={form.hudlUrl} onChange={e => setForm(f => ({ ...f, hudlUrl: e.target.value }))}
+                placeholder="https://www.hudl.com/video/..." className={inputCls} />
+              <p className="font-ui text-[11px] text-gray-400 mt-1">Paste the share link from Hudl</p>
             </div>
           )}
 
-          {/* File upload */}
           {form.linkType === 'file' && (
             <div>
-              <label className="font-ui text-xs text-gray-600 dark:text-gray-400 block mb-1.5">File</label>
-              <label className="flex flex-col items-center justify-center w-full h-28
-                                border-2 border-dashed border-gray-300 rounded-lg cursor-pointer
-                                hover:border-brand/40 transition-colors bg-gray-100/60 dark:bg-[#3A3A3C]">
+              <label className={labelCls}>File</label>
+              <label className="flex flex-col items-center justify-center w-full h-28 border-2 border-dashed
+                                border-gray-200 dark:border-gray-700 rounded-xl cursor-pointer
+                                hover:border-brand/40 transition-colors bg-gray-50 dark:bg-white/5">
+                <IconUpload size={20} className="text-gray-400 mb-2" />
                 <span className="font-ui text-sm text-gray-500 dark:text-gray-400">
                   {form.file ? form.file.name : 'Click to select video or audio'}
                 </span>
-                {form.file && (
-                  <span className="font-ui text-xs text-gray-400 mt-1">
-                    {(form.file.size / 1024 / 1024).toFixed(1)} MB
-                  </span>
-                )}
-                <input
-                  ref={fileInputRef}
-                  type="file"
-                  accept="video/*,audio/*"
-                  className="hidden"
-                  onChange={e => setForm(f => ({ ...f, file: e.target.files?.[0] ?? null }))}
-                />
+                {form.file && <span className="font-ui text-xs text-gray-400 mt-0.5">{(form.file.size / 1024 / 1024).toFixed(1)} MB</span>}
+                <input ref={fileInputRef} type="file" accept="video/*,audio/*" className="hidden"
+                  onChange={e => setForm(f => ({ ...f, file: e.target.files?.[0] ?? null }))} />
               </label>
             </div>
           )}
 
-          {/* Note */}
           <div>
-            <label className="font-ui text-xs text-gray-600 dark:text-gray-400 block mb-1.5">Coaching note (optional)</label>
-            <textarea
-              value={form.note}
-              onChange={e => setForm(f => ({ ...f, note: e.target.value }))}
-              rows={3}
-              placeholder="Key takeaways, focus areas…"
-              className="w-full bg-gray-100/60 dark:bg-[#3A3A3C] border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2
-                         font-ui text-sm text-near-black placeholder-gray-400 resize-none
-                         focus:outline-none focus:border-brand/60 transition-colors"
-            />
+            <label className={labelCls}>Coaching note <span className="normal-case font-normal text-gray-400">(optional)</span></label>
+            <textarea value={form.note} onChange={e => setForm(f => ({ ...f, note: e.target.value }))}
+              rows={3} placeholder="Key takeaways, focus areas…"
+              className={`${inputCls} resize-none`} />
           </div>
 
-          {/* Audience */}
           <div>
-            <label className="font-ui text-xs text-gray-600 dark:text-gray-400 block mb-2">Audience</label>
-            <div className="flex gap-4">
+            <label className={labelCls}>Audience</label>
+            <div className="flex gap-5">
               {(['team', 'individual'] as Visibility[]).map(v => (
                 <label key={v} className="flex items-center gap-2 cursor-pointer">
-                  <input
-                    type="radio"
-                    name="visibility"
-                    value={v}
-                    checked={form.visibility === v}
-                    onChange={() => setForm(f => ({ ...f, visibility: v, recipientIds: [] }))}
-                    className="accent-brand"
-                  />
-                  <span className="font-ui text-sm text-gray-700 dark:text-gray-300 capitalize">
+                  <input type="radio" name="visibility" value={v} checked={form.visibility === v}
+                    onChange={() => setForm(f => ({ ...f, visibility: v, recipientIds: [] }))} className="accent-brand" />
+                  <span className="font-ui text-sm text-near-black dark:text-gray-100">
                     {v === 'team' ? 'Whole team' : 'Individual players'}
                   </span>
                 </label>
@@ -289,80 +240,45 @@ export default function AdminFilm() {
             </div>
           </div>
 
-          {/* Player checkboxes */}
           {form.visibility === 'individual' && (
             <div>
-              <label className="font-ui text-xs text-gray-600 dark:text-gray-400 block mb-2">Select players</label>
-              <div className="space-y-1.5 max-h-48 overflow-y-auto pr-1">
+              <label className={labelCls}>Select players</label>
+              <div className="space-y-1.5 max-h-48 overflow-y-auto border border-gray-100 dark:border-gray-800 rounded-xl p-3">
                 {players.map(p => (
-                  <label key={p.id} className="flex items-center gap-2.5 cursor-pointer group">
-                    <input
-                      type="checkbox"
-                      checked={form.recipientIds.includes(p.id)}
-                      onChange={() => toggleRecipient(p.id)}
-                      className="accent-brand w-4 h-4 rounded"
-                    />
-                    <span className="font-ui text-sm text-gray-700 dark:text-gray-300 group-hover:text-near-black dark:group-hover:text-gray-100 transition-colors">
-                      {p.name}
-                    </span>
+                  <label key={p.id} className="flex items-center gap-2.5 cursor-pointer py-1">
+                    <input type="checkbox" checked={form.recipientIds.includes(p.id)}
+                      onChange={() => toggleRecipient(p.id)} className="accent-brand w-4 h-4 rounded" />
+                    <span className="font-ui text-sm text-near-black dark:text-gray-100">{p.name}</span>
                   </label>
                 ))}
-                {players.length === 0 && (
-                  <p className="font-ui text-xs text-gray-400">No players found.</p>
-                )}
+                {players.length === 0 && <p className="font-ui text-xs text-gray-400">No players found.</p>}
               </div>
             </div>
           )}
 
-          {/* Submit */}
-          <button
-            type="submit"
-            disabled={submitting}
-            className="w-full py-2.5 bg-brand hover:bg-brand-light disabled:opacity-50
-                       font-ui text-sm font-semibold text-white rounded-lg transition-colors
-                       flex items-center justify-center gap-2"
-          >
+          <button type="submit" disabled={submitting}
+            className="w-full py-3 bg-brand hover:bg-brand/90 disabled:opacity-50 font-ui text-sm font-semibold
+                       text-white rounded-xl transition-colors flex items-center justify-center gap-2 shadow-sm">
             {submitting ? (
-              <>
-                <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                {uploadProgress ? 'Uploading…' : 'Publishing…'}
-              </>
+              <><span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+              {uploadProgress ? 'Uploading…' : 'Publishing…'}</>
             ) : 'Publish'}
           </button>
         </form>
-      </section>
+      </div>
 
-      {/* ── Published posts ── */}
-      <section>
-        <div className="flex items-center gap-3 mb-5">
-          <span className="font-ui text-xs font-semibold tracking-widest uppercase text-gray-400">
-            Published
-          </span>
-          <div className="flex-1 h-px bg-gray-200" />
+      {/* Published posts */}
+      <div>
+        <div className="flex items-center gap-3 mb-4">
+          <span className="font-ui text-xs font-semibold tracking-widest uppercase text-gray-400 dark:text-gray-500">Published</span>
+          <div className="flex-1 h-px bg-gray-100 dark:bg-gray-800" />
         </div>
-
-        {postsLoading && (
-          <div className="flex justify-center py-8">
-            <span className="w-5 h-5 border-2 border-gray-300 border-t-brand rounded-full animate-spin" />
-          </div>
-        )}
-
-        {!postsLoading && posts.length === 0 && (
-          <p className="font-ui text-sm text-gray-400 text-center py-8">No posts yet.</p>
-        )}
-
-        <div className="space-y-4">
-          {posts.map(post => (
-            <FilmCard
-              key={post.id}
-              post={post}
-              isPersonal={false}
-              showDelete
-              onDelete={handleDelete}
-            />
-          ))}
+        {postsLoading && <div className="flex justify-center py-8"><span className="w-5 h-5 border-2 border-gray-200 border-t-brand rounded-full animate-spin" /></div>}
+        {!postsLoading && posts.length === 0 && <p className="font-ui text-sm text-gray-400 text-center py-8">No posts yet.</p>}
+        <div className="space-y-3">
+          {posts.map(post => <FilmCard key={post.id} post={post} isPersonal={false} showDelete onDelete={handleDelete} />)}
         </div>
-      </section>
+      </div>
     </div>
   )
 }
