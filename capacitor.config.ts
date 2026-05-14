@@ -1,7 +1,7 @@
 import { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
-  appId: 'com.denisonwbb.redboard',
+  appId: 'com.arborik.redboard',
   appName: 'RedBoard',
   webDir: 'dist',
   plugins: {

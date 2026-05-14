@@ -53,7 +53,7 @@ jobs:
       - name: Download provisioning profile
         uses: apple-actions/download-provisioning-profiles@v1
         with:
-          bundle-id: com.denisonwbb.redboard
+          bundle-id: com.arborik.redboard
           profile-type: IOS_APP_STORE
           issuer-id: ${{ secrets.APPSTORE_API_ISSUER_ID }}
           api-key-id: ${{ secrets.APPSTORE_API_KEY_ID }}
