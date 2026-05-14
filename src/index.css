@@ -10,12 +10,23 @@
   body {
     @apply bg-near-black text-cream antialiased font-ui;
   }
+
+  /* Prevent iOS auto-zoom on input focus — triggers when font-size < 16px */
+  input:not([type="checkbox"]):not([type="radio"]):not([type="range"]),
+  textarea,
+  select {
+    font-size: 1rem;
+  }
 }
 
 @layer utilities {
   /* Safe-area padding for iPhone notch / Dynamic Island / home indicator */
   .pb-safe {
     padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+  /* Top safe area for Dynamic Island / notch */
+  .pt-safe-top {
+    padding-top: env(safe-area-inset-top, 0px);
   }
   /* Bottom nav content area — base pb-20 (5rem) + home indicator clearance */
   .pb-nav-safe {

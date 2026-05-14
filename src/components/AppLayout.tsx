@@ -24,48 +24,49 @@ export function AppLayout() {
       {/* Top bar */}
       <header className="bg-white/90 dark:bg-[#1A1A1A]/95 backdrop-blur
                          border-b border-gray-200/60
-                         px-4 py-3 flex items-center justify-between sticky top-0 z-10">
+                         px-4 pt-safe-top sticky top-0 z-10">
+        <div className="flex items-center justify-between py-3">
         <Link to="/app/feed" className="flex items-center gap-1.5">
           <span className="font-ui font-black text-lg text-brand">Red</span>
           <span className="font-ui font-black text-lg text-near-black dark:text-gray-100">Board</span>
           <div className="w-px h-3.5 bg-gray-300 dark:bg-gray-600 mx-1.5" />
           <span className="font-ui text-xs text-gray-400 tracking-widest uppercase">WBB</span>
         </Link>
-        <div className="flex items-center gap-3">
-          {role === 'admin' && (
-            <NavLink
-              to="/admin"
-              className="font-ui text-xs text-gray-500 dark:text-gray-400 hover:text-near-black dark:hover:text-gray-100
-                         px-2.5 py-1 rounded border border-gray-200
-                         hover:border-gray-600 transition-colors"
-            >
-              Admin
-            </NavLink>
-          )}
-          <button
-            type="button"
-            onClick={() => setDim(!dim)}
-            aria-label="Toggle dim mode"
-            className="font-ui text-xs text-gray-400 dark:text-gray-500 hover:text-near-black dark:hover:text-gray-100 transition-colors px-2 py-1"
-          >
-            {dim ? '☀' : '◗'}
-          </button>
-          {/* Avatar — links to Profile page */}
-          <Link to="/app/profile" aria-label="Profile">
-            {avatarUrl ? (
-              <img
-                src={avatarUrl}
-                alt="Profile"
-                className="w-8 h-8 rounded-full object-cover ring-2 ring-gray-200 dark:ring-gray-600
-                           hover:ring-brand transition-all"
-              />
-            ) : (
-              <div className="w-8 h-8 rounded-full bg-brand flex items-center justify-center
-                              ring-2 ring-gray-200 dark:ring-gray-600 hover:ring-brand transition-all">
-                <span className="font-ui font-bold text-white text-sm leading-none">{initial}</span>
-              </div>
+          <div className="flex items-center gap-3">
+            {role === 'admin' && (
+              <NavLink
+                to="/admin"
+                className="font-ui text-xs text-gray-500 dark:text-gray-400 hover:text-near-black dark:hover:text-gray-100
+                           px-2.5 py-1 rounded border border-gray-200
+                           hover:border-gray-600 transition-colors"
+              >
+                Admin
+              </NavLink>
             )}
-          </Link>
+            <button
+              type="button"
+              onClick={() => setDim(!dim)}
+              aria-label="Toggle dim mode"
+              className="font-ui text-xs text-gray-400 dark:text-gray-500 hover:text-near-black dark:hover:text-gray-100 transition-colors px-2 py-1"
+            >
+              {dim ? '☀' : '◗'}
+            </button>
+            <Link to="/app/profile" aria-label="Profile">
+              {avatarUrl ? (
+                <img
+                  src={avatarUrl}
+                  alt="Profile"
+                  className="w-8 h-8 rounded-full object-cover ring-2 ring-gray-200 dark:ring-gray-600
+                             hover:ring-brand transition-all"
+                />
+              ) : (
+                <div className="w-8 h-8 rounded-full bg-brand flex items-center justify-center
+                                ring-2 ring-gray-200 dark:ring-gray-600 hover:ring-brand transition-all">
+                  <span className="font-ui font-bold text-white text-sm leading-none">{initial}</span>
+                </div>
+              )}
+            </Link>
+          </div>
         </div>
       </header>
 

@@ -24,40 +24,42 @@ export function AdminLayout() {
   return (
     <div className="min-h-screen bg-cream dark:bg-[#1C1C1E] flex flex-col transition-colors">
       {/* Top bar */}
-      <header className="bg-white/90 dark:bg-[#1A1A1A]/95 backdrop-blur border-b border-gray-200/60 px-4 py-3
-                         flex items-center justify-between sticky top-0 z-10">
-        <div className="flex items-center gap-3">
-          <Link to="/admin" className="flex items-center gap-1.5">
-            <span className="font-ui font-black text-lg text-brand">Red</span>
-            <span className="font-ui font-black text-lg text-near-black dark:text-gray-100">Board</span>
-          </Link>
-          <div className="w-px h-3.5 bg-gray-300 dark:bg-gray-600" />
-          <span className="font-ui text-xs tracking-widest uppercase text-brand font-semibold">
-            Admin
-          </span>
-        </div>
-        <div className="flex items-center gap-3">
-          <Link
-            to="/app/feed"
-            className="font-ui text-xs text-gray-500 dark:text-gray-400 hover:text-near-black dark:hover:text-gray-100 px-2.5 py-1 rounded
-                       border border-gray-200 hover:border-gray-400 transition-colors"
-          >
-            Player view
-          </Link>
-          <button
-            type="button"
-            onClick={() => setDim(!dim)}
-            aria-label="Toggle dim mode"
-            className="font-ui text-xs text-gray-400 dark:text-gray-500 hover:text-near-black dark:hover:text-gray-100 transition-colors px-2 py-1"
-          >
-            {dim ? '☀' : '◗'}
-          </button>
-          <button
-            onClick={handleSignOut}
-            className="font-ui text-xs text-gray-400 dark:text-gray-500 hover:text-near-black dark:hover:text-gray-100 transition-colors"
-          >
-            Sign out
-          </button>
+      <header className="bg-white/90 dark:bg-[#1A1A1A]/95 backdrop-blur border-b border-gray-200/60 px-4 pt-safe-top
+                         sticky top-0 z-10">
+        <div className="flex items-center justify-between py-3">
+          <div className="flex items-center gap-3">
+            <Link to="/admin" className="flex items-center gap-1.5">
+              <span className="font-ui font-black text-lg text-brand">Red</span>
+              <span className="font-ui font-black text-lg text-near-black dark:text-gray-100">Board</span>
+            </Link>
+            <div className="w-px h-3.5 bg-gray-300 dark:bg-gray-600" />
+            <span className="font-ui text-xs tracking-widest uppercase text-brand font-semibold">
+              Admin
+            </span>
+          </div>
+          <div className="flex items-center gap-3">
+            <Link
+              to="/app/feed"
+              className="font-ui text-xs text-gray-500 dark:text-gray-400 hover:text-near-black dark:hover:text-gray-100 px-2.5 py-1 rounded
+                         border border-gray-200 hover:border-gray-400 transition-colors"
+            >
+              Player view
+            </Link>
+            <button
+              type="button"
+              onClick={() => setDim(!dim)}
+              aria-label="Toggle dim mode"
+              className="font-ui text-xs text-gray-400 dark:text-gray-500 hover:text-near-black dark:hover:text-gray-100 transition-colors px-2 py-1"
+            >
+              {dim ? '☀' : '◗'}
+            </button>
+            <button
+              onClick={handleSignOut}
+              className="font-ui text-xs text-gray-400 dark:text-gray-500 hover:text-near-black dark:hover:text-gray-100 transition-colors"
+            >
+              Sign out
+            </button>
+          </div>
         </div>
       </header>
 
