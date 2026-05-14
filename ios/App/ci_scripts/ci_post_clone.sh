@@ -1,21 +1,21 @@
 #!/bin/sh
-
-# Xcode Cloud runs this after cloning the repo, before building.
-# We need to install Node dependencies and build the web app so
-# Capacitor's Swift packages can find the bundled assets.
-
 set -e
 
-# Xcode Cloud's macOS image has Node via Homebrew but it may not be on PATH
-export HOMEBREW_NO_AUTO_UPDATE=1
-brew install node@20 || true
-export PATH="/usr/local/opt/node@20/bin:$PATH"
+# Xcode Cloud post-clone: build web app and sync Capacitor before Xcode compiles.
+# Node.js is pre-installed on Xcode Cloud runners — no brew install needed.
 
-# Move to repo root (ci_scripts is at ios/App/ci_scripts)
+# Ensure Homebrew-managed binaries are on PATH (handles both Intel and Apple Silicon)
+if [ -f "/opt/homebrew/bin/brew" ]; then
+  eval "$(/opt/homebrew/bin/brew shellenv)"
+elif [ -f "/usr/local/bin/brew" ]; then
+  eval "$(/usr/local/bin/brew shellenv)"
+fi
+
+echo "Node: $(node --version)"
+echo "npm:  $(npm --version)"
+
+# Repo root is two levels up from ios/App/ci_scripts
 cd "$CI_PRIMARY_REPOSITORY_PATH"
-
-node --version
-npm --version
 
 npm ci
 npm run build
