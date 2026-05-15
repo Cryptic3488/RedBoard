@@ -1,6 +1,7 @@
 import { useEffect } from 'react'
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { SplashScreen } from '@capacitor/splash-screen'
+import { Capacitor } from '@capacitor/core'
 import { AuthProvider, useAuth } from './context/AuthContext'
 import { ThemeProvider } from './context/ThemeContext'
 import { AuthGuard, AdminGuard } from './components/AuthGuard'
@@ -37,6 +38,27 @@ function SmartRedirect() {
 export default function App() {
   useEffect(() => {
     SplashScreen.hide().catch(() => {})
+
+    if (!Capacitor.isNativePlatform()) return
+
+    // Prevent WebKit document rubber-band bounce. scrollView.bounces=false only
+    // controls the UIScrollView layer; the WebCore document scroll has its own
+    // rubber-band that requires preventDefault() at the touch-input layer.
+    let startY = 0
+    const onStart = (e: TouchEvent) => { startY = e.touches[0].pageY }
+    const onMove = (e: TouchEvent) => {
+      const y = e.touches[0].pageY
+      const el = document.documentElement
+      const atTop    = el.scrollTop <= 0 && y > startY
+      const atBottom = el.scrollTop + el.clientHeight >= el.scrollHeight - 1 && y < startY
+      if (atTop || atBottom) e.preventDefault()
+    }
+    document.addEventListener('touchstart', onStart, { passive: true })
+    document.addEventListener('touchmove',  onMove,  { passive: false })
+    return () => {
+      document.removeEventListener('touchstart', onStart)
+      document.removeEventListener('touchmove',  onMove)
+    }
   }, [])
 
   return (
