@@ -119,7 +119,7 @@ export function AdminLayout() {
         </aside>
 
         {/* ── Main content ────────────────────────────────────────────────────── */}
-        <main className="flex-1 overflow-y-auto pb-20 md:pb-8 px-4 py-6 max-w-5xl">
+        <main className="flex-1 overflow-y-auto pb-nav-safe md:pb-8 px-4 py-6 max-w-5xl">
           <Outlet />
         </main>
       </div>

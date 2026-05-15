@@ -1,7 +1,7 @@
 import { useEffect } from 'react'
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { SplashScreen } from '@capacitor/splash-screen'
-import { AuthProvider } from './context/AuthContext'
+import { AuthProvider, useAuth } from './context/AuthContext'
 import { ThemeProvider } from './context/ThemeContext'
 import { AuthGuard, AdminGuard } from './components/AuthGuard'
 import { AppLayout } from './components/AppLayout'
@@ -23,6 +23,16 @@ import AdminFilm from './pages/admin/Film'
 import AdminStats from './pages/admin/Stats'
 import AdminWellness from './pages/admin/Wellness'
 import AdminPlaybook from './pages/admin/Playbook'
+
+function SmartRedirect() {
+  const { session, loading } = useAuth()
+  if (loading) return (
+    <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-[#111113]">
+      <div className="w-8 h-8 border-4 border-brand border-t-transparent rounded-full animate-spin" />
+    </div>
+  )
+  return <Navigate to={session ? '/app/feed' : '/login'} replace />
+}
 
 export default function App() {
   useEffect(() => {
@@ -64,8 +74,8 @@ export default function App() {
             </Route>
           </Route>
 
-          {/* Catch-all */}
-          <Route path="*" element={<Navigate to="/login" replace />} />
+          {/* Catch-all — waits for auth before redirecting to avoid login flash */}
+          <Route path="*" element={<SmartRedirect />} />
         </Routes>
       </AuthProvider>
       </ThemeProvider>
