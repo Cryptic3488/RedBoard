@@ -1,4 +1,6 @@
+import { useEffect } from 'react'
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
+import { SplashScreen } from '@capacitor/splash-screen'
 import { AuthProvider } from './context/AuthContext'
 import { ThemeProvider } from './context/ThemeContext'
 import { AuthGuard, AdminGuard } from './components/AuthGuard'
@@ -22,6 +24,10 @@ import AdminWellness from './pages/admin/Wellness'
 import AdminPlaybook from './pages/admin/Playbook'
 
 export default function App() {
+  useEffect(() => {
+    SplashScreen.hide().catch(() => {})
+  }, [])
+
   return (
     <BrowserRouter>
       <ThemeProvider>
