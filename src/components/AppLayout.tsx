@@ -24,7 +24,7 @@ export function AppLayout() {
   const initial  = (profile?.name ?? '?').charAt(0).toUpperCase()
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-[#111113] flex flex-col transition-colors">
+    <div className="min-h-screen bg-gray-50 dark:bg-[#111113] transition-colors">
 
       {/* ── Top bar ─────────────────────────────────────────────────────────── */}
       <header className="bg-white dark:bg-[#1C1C1E] border-b border-gray-100 dark:border-gray-800/60
@@ -74,7 +74,7 @@ export function AppLayout() {
       </header>
 
       {/* ── Page content ────────────────────────────────────────────────────── */}
-      <main className="flex-1 overflow-y-auto overscroll-none pb-nav-safe bg-gray-50 dark:bg-[#111113]">
+      <main className="pb-nav-safe">
         <Outlet />
       </main>
 

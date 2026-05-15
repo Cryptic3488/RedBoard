@@ -29,7 +29,7 @@ export function AdminLayout() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-[#111113] flex flex-col transition-colors">
+    <div className="min-h-screen bg-gray-50 dark:bg-[#111113] transition-colors">
 
       {/* ── Top bar ─────────────────────────────────────────────────────────── */}
       <header className="bg-white dark:bg-[#1C1C1E] border-b border-gray-200 dark:border-gray-800/60
@@ -78,7 +78,7 @@ export function AdminLayout() {
         </div>
       </header>
 
-      <div className="flex flex-1">
+      <div className="md:flex">
 
         {/* ── Desktop sidebar ─────────────────────────────────────────────────── */}
         <aside className="hidden md:flex flex-col w-56 bg-white dark:bg-[#1C1C1E]
@@ -119,7 +119,7 @@ export function AdminLayout() {
         </aside>
 
         {/* ── Main content ────────────────────────────────────────────────────── */}
-        <main className="flex-1 overflow-y-auto overscroll-none pb-nav-safe md:pb-8 px-4 py-6 max-w-5xl bg-gray-50 dark:bg-[#111113]">
+        <main className="md:flex-1 pb-nav-safe md:pb-8 px-4 py-6 max-w-5xl">
           <Outlet />
         </main>
       </div>
