@@ -5,7 +5,8 @@
 @layer base {
   html {
     -webkit-tap-highlight-color: transparent;
-    overscroll-behavior: none;
+    overscroll-behavior-y: none;
+    height: 100%;
     background-color: #f9fafb;
   }
 
@@ -15,15 +16,21 @@
 
   body {
     @apply bg-gray-50 dark:bg-[#111113] text-near-black dark:text-gray-100 antialiased font-ui;
-    overscroll-behavior: none;
+    overscroll-behavior-y: none;
+    height: 100%;
   }
 
-  /* Prevent iOS auto-zoom on input focus — triggers when font-size < 16px */
-  input:not([type="checkbox"]):not([type="radio"]):not([type="range"]),
-  textarea,
-  select {
-    font-size: 1rem;
+  #root {
+    height: 100%;
+    overscroll-behavior-y: none;
   }
+}
+
+/* Prevent iOS auto-zoom — must be outside @layer base to win over Tailwind utilities */
+input:not([type="checkbox"]):not([type="radio"]):not([type="range"]),
+textarea,
+select {
+  font-size: 1rem !important;
 }
 
 @layer utilities {
