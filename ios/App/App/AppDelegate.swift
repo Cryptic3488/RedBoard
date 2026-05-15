@@ -26,16 +26,19 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
     func applicationDidBecomeActive(_ application: UIApplication) {
-        disableScrollBounce(in: window?.rootViewController?.view)
+        // Run immediately and again after a short delay — Capacitor finishes
+        // bridge/webView init asynchronously, so the first call may be a no-op
+        // on cold launch. The second call is guaranteed to find the webView.
+        disableWebViewBounce()
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+            self.disableWebViewBounce()
+        }
     }
 
-    private func disableScrollBounce(in view: UIView?) {
-        guard let view = view else { return }
-        if let scrollView = view as? UIScrollView {
-            scrollView.bounces = false
-            scrollView.alwaysBounceVertical = false
-        }
-        view.subviews.forEach { disableScrollBounce(in: $0) }
+    private func disableWebViewBounce() {
+        guard let capVC = window?.rootViewController as? CAPBridgeViewController else { return }
+        capVC.webView?.scrollView.bounces = false
+        capVC.webView?.scrollView.alwaysBounceVertical = false
     }
 
     func applicationWillTerminate(_ application: UIApplication) {
