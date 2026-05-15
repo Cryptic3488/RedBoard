@@ -1,5 +1,6 @@
 import { useState, type FormEvent } from 'react'
 import { Link } from 'react-router-dom'
+import { Capacitor } from '@capacitor/core'
 import { supabase } from '../lib/supabase'
 
 export default function ForgotPassword() {
@@ -13,7 +14,9 @@ export default function ForgotPassword() {
     setError(null)
     setSubmitting(true)
 
-    const redirectTo = `${import.meta.env.VITE_APP_URL}/reset-password`
+    const redirectTo = Capacitor.isNativePlatform()
+      ? 'com.arborik.redboard://reset-password'
+      : `${import.meta.env.VITE_APP_URL}/reset-password`
     const { error } = await supabase.auth.resetPasswordForEmail(email, { redirectTo })
 
     if (error) {

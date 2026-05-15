@@ -30,7 +30,7 @@ React + TypeScript + Vite SPA wrapped in Capacitor iOS. Team management app for 
 | Description + Keywords | ⏳ Ready to paste — see docs_dev/appstore_metadata.md |
 | Copyright | ⏳ User to fill in (suggest: 2026 Andrew Byerly) |
 | Screenshots | ❌ Not yet captured — user will take from iPhone on latest build |
-| Build attached to submission | ⏳ Pending Build 25 (see below) |
+| Build attached to submission | ⏳ Pending Build 27 (see below) |
 
 **Metadata file:** `docs_dev/appstore_metadata.md` — contains full description, keywords, URLs ready to paste into App Store Connect.
 
@@ -38,16 +38,26 @@ React + TypeScript + Vite SPA wrapped in Capacitor iOS. Team management app for 
 
 ## Immediate Next Steps
 
-### 1. Upload Build 25 (fix for black screen)
-The last committed fix resolves the persistent black screen bug. Run:
+### 1. Upload Build 27 (password reset deep link + overscroll fix)
+Run:
 ```
 npm run build && npx cap sync ios
 ```
 Then: **Product → Archive → Distribute App → App Store Connect → Upload**
 Answer encryption compliance: **None of the algorithms mentioned above**
 
-### 2. Verify Build 25 loads correctly on TestFlight
-The black screen bug was caused by `SplashScreen.hide()` firing before React painted. It's now moved to `App.tsx useEffect` so it fires after first render. Build 25 should load correctly.
+**Before archiving** — add `com.arborik.redboard://` to Supabase allowed redirect URLs:
+Supabase Dashboard → Authentication → URL Configuration → Redirect URLs → Add `com.arborik.redboard://`
+
+### 2. Verify password reset on TestFlight (Build 26 confirmed loading)
+Build 25 fixed the black screen. Build 26 was uploaded. Build 27 adds password reset deep link and overscroll fix.
+
+Password reset flow (Build 27+):
+- User taps "Forgot password" → enters email → Supabase sends email
+- Email link uses `com.arborik.redboard://reset-password` as redirect
+- iOS intercepts the scheme, opens the app
+- `DeepLinkHandler.tsx` parses the URL, sets the session, navigates to `/reset-password`
+- User sets new password
 
 ### 3. Take screenshots on iPhone
 Once Build 25 is confirmed working, take screenshots of:
@@ -84,11 +94,15 @@ useEffect(() => {
 }, [])
 ```
 
-### Password Reset Issue (known, unresolved)
-Password reset emails redirect to `https://hrwcudlahhvokyvabext.supabase.co/reset-password` which doesn't work as a deep link into the Capacitor app. Requires `redboard.drewn8n.com` to be set up (Phase 7 blocker for reset flow — not blocking App Store submission).
+### Password Reset Deep Link (fixed in Build 27)
+Uses custom URL scheme `com.arborik.redboard://reset-password`. 
+- `Info.plist` registers `com.arborik.redboard` as a URL scheme
+- `DeepLinkHandler.tsx` listens for `appUrlOpen` via `@capacitor/app`, parses the hash tokens, calls `supabase.auth.setSession()`, navigates to `/reset-password`
+- `ForgotPassword.tsx` uses `com.arborik.redboard://reset-password` on native, falls back to `VITE_APP_URL` on web
+- **Supabase dashboard action required**: Authentication → URL Configuration → Redirect URLs → add `com.arborik.redboard://`
 
 ### Overscroll Black Boxes
-Partially addressed: body/html background-color matches dark mode. Full native fix (WKWebView bounces=false) was reverted because it caused the black screen. Revisit after submission.
+CSS fix applied in Build 27: `overscroll-behavior: none` on both `html` and `body` in `index.css`. This prevents the WKWebView from rubber-banding and revealing the background behind the web content. Full native WKWebView `bounces=false` was previously reverted — this CSS approach is sufficient.
 
 ---
 

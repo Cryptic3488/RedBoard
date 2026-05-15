@@ -6,6 +6,7 @@ import { ThemeProvider } from './context/ThemeContext'
 import { AuthGuard, AdminGuard } from './components/AuthGuard'
 import { AppLayout } from './components/AppLayout'
 import { AdminLayout } from './components/AdminLayout'
+import { DeepLinkHandler } from './components/DeepLinkHandler'
 
 import Login from './pages/Login'
 import ForgotPassword from './pages/ForgotPassword'
@@ -32,6 +33,7 @@ export default function App() {
     <BrowserRouter>
       <ThemeProvider>
       <AuthProvider>
+        <DeepLinkHandler />
         <Routes>
           {/* Public */}
           <Route path="/login" element={<Login />} />
