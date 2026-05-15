@@ -74,7 +74,7 @@ export function AppLayout() {
       </header>
 
       {/* ── Page content ────────────────────────────────────────────────────── */}
-      <main className="flex-1 overflow-y-auto pb-nav-safe">
+      <main className="flex-1 overflow-y-auto overscroll-none pb-nav-safe bg-gray-50 dark:bg-[#111113]">
         <Outlet />
       </main>
 

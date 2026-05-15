@@ -119,7 +119,7 @@ export function AdminLayout() {
         </aside>
 
         {/* ── Main content ────────────────────────────────────────────────────── */}
-        <main className="flex-1 overflow-y-auto pb-nav-safe md:pb-8 px-4 py-6 max-w-5xl">
+        <main className="flex-1 overflow-y-auto overscroll-none pb-nav-safe md:pb-8 px-4 py-6 max-w-5xl bg-gray-50 dark:bg-[#111113]">
           <Outlet />
         </main>
       </div>

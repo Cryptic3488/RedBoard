@@ -7,7 +7,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     var window: UIWindow?
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-        // Override point for customization after application launch.
+        // UIWindow defaults to black background. Setting it to systemBackground
+        // (white in light mode, dark gray in dark mode) prevents black strips
+        // from bleeding through at screen edges if anything scrolls past them.
+        window?.backgroundColor = UIColor.systemBackground
         return true
     }
 
@@ -26,19 +29,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
     func applicationDidBecomeActive(_ application: UIApplication) {
-        // Run immediately and again after a short delay — Capacitor finishes
-        // bridge/webView init asynchronously, so the first call may be a no-op
-        // on cold launch. The second call is guaranteed to find the webView.
-        disableWebViewBounce()
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-            self.disableWebViewBounce()
-        }
-    }
-
-    private func disableWebViewBounce() {
-        guard let capVC = window?.rootViewController as? CAPBridgeViewController else { return }
-        capVC.webView?.scrollView.bounces = false
-        capVC.webView?.scrollView.alwaysBounceVertical = false
     }
 
     func applicationWillTerminate(_ application: UIApplication) {

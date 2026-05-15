@@ -2,6 +2,14 @@
 @tailwind components;
 @tailwind utilities;
 
+/* overscroll-behavior is not inherited — must use * to cover every CSS scroll
+   container WKWebView creates natively from overflow:auto/scroll elements.
+   Capacitor already sets bounces=false on the root WKScrollView; this covers
+   all child scroll layers (main, modals, lists, etc). */
+* {
+  overscroll-behavior: none;
+}
+
 @layer base {
   html {
     -webkit-tap-highlight-color: transparent;
