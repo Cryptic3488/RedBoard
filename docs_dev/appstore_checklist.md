@@ -33,6 +33,7 @@ npm install
 npm run build
 npx cap sync ios
 ```
+> `delete-self` Edge Function is already deployed to Supabase. ✅
 Then open `ios/App/App.xcworkspace` in Xcode.
 
 ### Step 3 — Xcode checks before archiving
@@ -116,7 +117,7 @@ When prompted: Export Compliance → "None of the algorithms mentioned above" (C
 | D6 | No third-party tracking SDKs | ✅ |
 | D7 | No ATT prompt needed (`NSPrivacyTracking = false`) | ✅ |
 | D8 | Data retention + account deletion mentioned in Privacy Policy | ⚠️ Add if missing |
-| D10 | **Account deletion — DONE** | ✅ See below |
+| D10 | **Account deletion — DONE** | ✅ Edge function deployed, UI complete |
 
 **D10 — Account Deletion (complete):**
 - Edge function `supabase/functions/delete-self/index.ts` deployed to Supabase
