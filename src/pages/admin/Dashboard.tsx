@@ -107,18 +107,17 @@ export default function AdminDashboard() {
     <div className="max-w-3xl">
 
       {/* Header */}
-      <div className="mb-8">
-        <p className="font-ui text-xs tracking-widest uppercase text-gray-400 dark:text-gray-500 mb-1">
+      <div className="mb-4">
+        <p className="font-ui text-xs tracking-widest uppercase text-gray-400 dark:text-gray-500 mb-0.5">
           {greeting()}
         </p>
         <h1 className="font-display text-4xl font-black text-near-black dark:text-white leading-none">
           {firstName}.
         </h1>
-        <p className="font-display text-lg italic text-brand mt-1">Let's build something great.</p>
       </div>
 
       {/* KPI strip */}
-      <div className="grid grid-cols-5 gap-2 mb-8 p-4 bg-white dark:bg-[#1C1C1E]
+      <div className="grid grid-cols-5 gap-2 mb-4 p-3 bg-white dark:bg-[#1C1C1E]
                       rounded-2xl border border-gray-100 dark:border-gray-800/60 shadow-sm">
         {kpis.map(({ label, value, to }) => (
           <Link key={label} to={to} className="text-center group">
@@ -128,33 +127,33 @@ export default function AdminDashboard() {
                 ? <span className="text-gray-200 dark:text-gray-700 text-xl">—</span>
                 : value}
             </p>
-            <p className="font-ui text-[10px] text-gray-400 uppercase tracking-wider mt-1 leading-tight">{label}</p>
+            <p className="font-ui text-[10px] text-gray-400 uppercase tracking-wider mt-0.5 leading-tight">{label}</p>
           </Link>
         ))}
       </div>
 
       {/* Quick actions */}
       <div>
-        <p className="font-ui text-xs font-semibold tracking-widest uppercase text-gray-400 dark:text-gray-500 mb-3">
+        <p className="font-ui text-xs font-semibold tracking-widest uppercase text-gray-400 dark:text-gray-500 mb-2">
           Quick Actions
         </p>
-        <div className="space-y-2">
+        <div className="space-y-1.5">
           {QUICK_ACTIONS.map(({ Icon, label, description, to, accent, iconBg }) => (
             <Link
               key={to}
               to={to}
-              className={`flex items-center gap-4 bg-white dark:bg-[#1C1C1E] rounded-xl px-4 py-3.5
+              className={`flex items-center gap-3 bg-white dark:bg-[#1C1C1E] rounded-xl px-4 py-2.5
                           border border-gray-100 dark:border-gray-800/60 border-l-2 ${accent}
                           hover:border-gray-200 dark:hover:border-gray-700 shadow-sm
                           active:scale-[0.99] transition-all group`}
             >
-              <div className={`w-9 h-9 rounded-lg flex items-center justify-center shrink-0 ${iconBg}`}>
-                <Icon size={18} strokeWidth={2} />
+              <div className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 ${iconBg}`}>
+                <Icon size={16} strokeWidth={2} />
               </div>
               <div className="flex-1 min-w-0">
                 <p className="font-ui text-sm font-semibold text-near-black dark:text-gray-100
                                group-hover:text-brand transition-colors">{label}</p>
-                <p className="font-ui text-xs text-gray-400 dark:text-gray-500 truncate mt-0.5">{description}</p>
+                <p className="font-ui text-xs text-gray-400 dark:text-gray-500 truncate">{description}</p>
               </div>
               <IconChevronRight size={16} strokeWidth={2} className="text-gray-300 dark:text-gray-700 shrink-0" />
             </Link>

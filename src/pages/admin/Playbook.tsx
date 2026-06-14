@@ -45,7 +45,7 @@ export default function AdminPlaybook() {
   const [confirmModal, setConfirmModal] = useState<{ title: string; message: string; onConfirm: () => void } | null>(null)
 
   // ── Lightbox / PDF viewer ──────────────────────────────────────────────────────
-  const [lightboxUrl, setLightboxUrl] = useState<string | null>(null)
+  const [lightboxIdx, setLightboxIdx] = useState<number | null>(null)
   const [activePdfUrl, setActivePdfUrl] = useState<string | null>(null)
   const [signedUrls, setSignedUrls] = useState<Record<string, string>>({})
 
@@ -92,6 +92,20 @@ export default function AdminPlaybook() {
     if (selectedFolder) fetchFiles(selectedFolder.id)
     else { setFiles([]); setSignedUrls({}) }
   }, [selectedFolder, fetchFiles])
+
+  const imageFiles  = files.filter(f => f.mime_type !== 'application/pdf')
+  const lightboxUrls = imageFiles.map(f => signedUrls[f.id]).filter(Boolean)
+
+  useEffect(() => {
+    if (lightboxIdx === null) return
+    const handler = (e: KeyboardEvent) => {
+      if (e.key === 'ArrowRight') setLightboxIdx(i => i !== null ? Math.min(i + 1, lightboxUrls.length - 1) : null)
+      if (e.key === 'ArrowLeft')  setLightboxIdx(i => i !== null ? Math.max(i - 1, 0) : null)
+      if (e.key === 'Escape')     setLightboxIdx(null)
+    }
+    window.addEventListener('keydown', handler)
+    return () => window.removeEventListener('keydown', handler)
+  }, [lightboxIdx, lightboxUrls.length])
 
   // ── Create folder ─────────────────────────────────────────────────────────────
   const handleCreateFolder = async (e: React.FormEvent) => {
@@ -360,36 +374,37 @@ export default function AdminPlaybook() {
                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
                   {files.map(file => {
                     const url = signedUrls[file.id]
+                    const isPdf = file.mime_type === 'application/pdf'
+                    const imageIdx = isPdf ? -1 : imageFiles.indexOf(file)
                     return (
                       <div
                         key={file.id}
+                        onClick={() => {
+                          if (!url) return
+                          isPdf ? setActivePdfUrl(url) : setLightboxIdx(imageIdx)
+                        }}
                         className="group relative bg-gray-100 dark:bg-[#3A3A3C] rounded-xl overflow-hidden aspect-square
-                                   border border-gray-200 hover:border-brand/40 transition-all"
+                                   border border-gray-200 hover:border-brand/40 transition-all cursor-pointer"
                       >
-                        {file.mime_type === 'application/pdf' ? (
-                          /* PDF tile */
-                          <button
-                            className="w-full h-full flex flex-col items-center justify-center gap-1.5 cursor-pointer"
-                            onClick={() => url && setActivePdfUrl(url)}
-                          >
+                        {isPdf ? (
+                          <div className="w-full h-full flex flex-col items-center justify-center gap-1.5">
                             <span className="text-3xl">📄</span>
                             <p className="text-[10px] font-medium text-gray-600 dark:text-gray-400 px-2 truncate w-full text-center">
                               {file.name}
                             </p>
-                          </button>
+                          </div>
                         ) : url ? (
                           <img
                             src={url}
                             alt={file.name}
-                            className="w-full h-full object-cover cursor-pointer"
-                            onClick={() => setLightboxUrl(url)}
+                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200"
                           />
                         ) : (
                           <div className="w-full h-full flex items-center justify-center">
                             <div className="w-5 h-5 border-2 border-gray-300 border-t-brand rounded-full animate-spin" />
                           </div>
                         )}
-                        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition-all
+                        <div className="pointer-events-none absolute inset-0 bg-black/0 group-hover:bg-black/40 transition-all
                                         flex flex-col items-center justify-end p-2
                                         opacity-0 group-hover:opacity-100">
                           <p className="text-white text-[10px] font-medium truncate w-full text-center mb-1.5">
@@ -397,7 +412,7 @@ export default function AdminPlaybook() {
                           </p>
                           <button
                             onClick={e => { e.stopPropagation(); handleDeleteFile(file) }}
-                            className="text-white/80 hover:text-white text-xs bg-black/40 rounded px-2 py-0.5 transition-colors"
+                            className="pointer-events-auto text-white/80 hover:text-white text-xs bg-black/40 rounded px-2 py-0.5 transition-colors"
                           >
                             Remove
                           </button>
@@ -413,23 +428,45 @@ export default function AdminPlaybook() {
       </div>
 
       {/* ── Lightbox ──────────────────────────────────────────────────────────── */}
-      {lightboxUrl && (
+      {lightboxIdx !== null && lightboxUrls[lightboxIdx] && (
         <div
-          className="fixed inset-0 bg-black/85 z-50 flex items-center justify-center p-4"
-          onClick={() => setLightboxUrl(null)}
+          className="fixed inset-0 bg-black/95 z-50 flex items-center justify-center"
+          onClick={() => setLightboxIdx(null)}
         >
           <img
-            src={lightboxUrl}
-            alt="Playbook"
-            className="max-w-full max-h-full object-contain rounded-xl shadow-2xl"
+            src={lightboxUrls[lightboxIdx]}
+            alt={imageFiles[lightboxIdx]?.name}
+            className="max-w-[92vw] max-h-[85vh] object-contain rounded-2xl"
             onClick={e => e.stopPropagation()}
           />
           <button
-            onClick={() => setLightboxUrl(null)}
-            className="absolute top-4 right-5 text-white/70 hover:text-white text-3xl leading-none transition-colors"
+            onClick={() => setLightboxIdx(null)}
+            className="absolute top-4 right-4 w-9 h-9 rounded-full bg-white/10 flex items-center
+                       justify-center text-white hover:bg-white/20 transition-colors"
           >
             ×
           </button>
+          {lightboxIdx > 0 && (
+            <button
+              onClick={e => { e.stopPropagation(); setLightboxIdx(i => i! - 1) }}
+              className="absolute left-3 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-black/40
+                         flex items-center justify-center text-white text-2xl hover:bg-black/60 transition-colors"
+            >
+              ‹
+            </button>
+          )}
+          {lightboxIdx < lightboxUrls.length - 1 && (
+            <button
+              onClick={e => { e.stopPropagation(); setLightboxIdx(i => i! + 1) }}
+              className="absolute right-3 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-black/40
+                         flex items-center justify-center text-white text-2xl hover:bg-black/60 transition-colors"
+            >
+              ›
+            </button>
+          )}
+          <div className="absolute bottom-5 left-1/2 -translate-x-1/2 font-ui text-white/50 text-xs">
+            {lightboxIdx + 1} / {lightboxUrls.length}
+          </div>
         </div>
       )}
 
