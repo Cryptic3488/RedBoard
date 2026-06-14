@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { supabase } from '../../lib/supabase'
 import { useAuth } from '../../context/AuthContext'
 import { useTheme } from '../../context/ThemeContext'
-import { IconLogOut, IconSun, IconMoon, IconCheck } from '../../components/icons'
+import { IconLogOut, IconSun, IconMoon, IconCheck, IconTrash, IconX } from '../../components/icons'
 
 type Position  = 'Guard' | 'Forward' | 'Center'
 type ClassYear = 'Fr' | 'So' | 'Jr' | 'Sr'
@@ -55,6 +55,9 @@ export default function PlayerProfile() {
   const [saving, setSaving]             = useState(false)
   const [dirty, setDirty]               = useState(false)
   const [saveOk, setSaveOk]             = useState(false)
+  const [deleteConfirm, setDeleteConfirm] = useState(false)
+  const [deleting, setDeleting]           = useState(false)
+  const [deleteError, setDeleteError]     = useState<string | null>(null)
 
   const initialRef = useRef({ jerseyNumber: '' as number | '', position: '' as Position | '', classYear: '' as ClassYear | '' })
 
@@ -106,6 +109,32 @@ export default function PlayerProfile() {
   }
 
   const handleSignOut = async () => { await signOut(); navigate('/login', { replace: true }) }
+
+  const handleDeleteAccount = async () => {
+    setDeleting(true)
+    setDeleteError(null)
+    try {
+      const { data: { session } } = await supabase.auth.getSession()
+      const res = await fetch(
+        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/delete-self`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${session?.access_token}`,
+            'apikey': import.meta.env.VITE_SUPABASE_ANON_KEY,
+          },
+        }
+      )
+      const json = await res.json()
+      if (!res.ok) throw new Error(json.error ?? 'Deletion failed')
+      await signOut()
+      navigate('/login', { replace: true })
+    } catch (err: any) {
+      setDeleteError(err.message ?? 'Something went wrong. Please try again.')
+      setDeleting(false)
+    }
+  }
 
   const name    = profile?.name ?? ''
   const initial = name.charAt(0).toUpperCase()
@@ -219,13 +248,52 @@ export default function PlayerProfile() {
         <p className="font-ui text-xs font-semibold tracking-widest uppercase text-gray-400 dark:text-gray-500 mb-3">
           Account
         </p>
-        <div className="bg-white dark:bg-[#1C1C1E] rounded-2xl border border-gray-100 dark:border-gray-800/60 shadow-sm">
+        <div className="bg-white dark:bg-[#1C1C1E] rounded-2xl border border-gray-100 dark:border-gray-800/60 shadow-sm overflow-hidden">
           <button onClick={handleSignOut}
                   className="w-full flex items-center gap-3 px-5 py-4 text-left group hover:bg-red-50 dark:hover:bg-red-500/5
-                             rounded-2xl transition-colors">
+                             border-b border-gray-50 dark:border-gray-800 transition-colors">
             <IconLogOut size={18} className="text-red-500 shrink-0" />
             <span className="font-ui text-sm font-medium text-red-500">Sign out</span>
           </button>
+
+          {!deleteConfirm ? (
+            <button onClick={() => { setDeleteConfirm(true); setDeleteError(null) }}
+                    className="w-full flex items-center gap-3 px-5 py-4 text-left group
+                               hover:bg-red-50 dark:hover:bg-red-500/5 transition-colors">
+              <IconTrash size={18} className="text-red-400 shrink-0" />
+              <span className="font-ui text-sm font-medium text-red-400">Delete account</span>
+            </button>
+          ) : (
+            <div className="px-5 py-4">
+              <p className="font-ui text-sm font-semibold text-near-black dark:text-gray-100 mb-1">
+                Delete your account?
+              </p>
+              <p className="font-ui text-xs text-gray-400 dark:text-gray-500 mb-3">
+                Your profile, stats, wellness history, and all personal data will be permanently removed. This cannot be undone.
+              </p>
+              {deleteError && (
+                <p className="font-ui text-xs text-red-500 mb-3">{deleteError}</p>
+              )}
+              <div className="flex gap-2">
+                <button
+                  onClick={handleDeleteAccount}
+                  disabled={deleting}
+                  className="flex-1 bg-red-500 text-white py-2.5 rounded-xl font-ui text-sm font-semibold
+                             hover:bg-red-600 disabled:opacity-50 active:scale-[0.98] transition-all"
+                >
+                  {deleting ? 'Deleting…' : 'Yes, delete'}
+                </button>
+                <button
+                  onClick={() => { setDeleteConfirm(false); setDeleteError(null) }}
+                  disabled={deleting}
+                  className="flex items-center justify-center w-10 rounded-xl bg-gray-100 dark:bg-white/8
+                             hover:bg-gray-200 dark:hover:bg-white/12 transition-colors disabled:opacity-50"
+                >
+                  <IconX size={16} className="text-gray-500 dark:text-gray-400" />
+                </button>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </div>
